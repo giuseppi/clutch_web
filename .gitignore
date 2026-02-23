@@ -50,5 +50,8 @@ coverage/
 .vite/
 .eslintcache
 
+# Vercel
+.vercel/
+
 # Optional
 *.pem

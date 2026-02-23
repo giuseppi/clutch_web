@@ -11,7 +11,7 @@ const steps = [
     title: "Set Up Your Phone",
     description:
       "Point your phone at the court. Clutch's computer vision engine activates instantly.",
-    spec: "CAM: 30fps | MODEL: YOLOv8",
+    spec: "REAL-TIME CV ENGINE | ON-DEVICE",
     accent: "primary" as const,
   },
   {
@@ -20,7 +20,7 @@ const steps = [
     title: "Play Your Game",
     description:
       "Shoot, drill, compete. Clutch tracks every shot, make or miss, in real-time.",
-    spec: "TRACKING: 120 data points/sec",
+    spec: "AI TRACKING | EVERY SHOT",
     accent: "accent" as const,
   },
   {
@@ -29,7 +29,7 @@ const steps = [
     title: "Get Your Stats",
     description:
       "Instant analytics. Shooting %, session trends, and your MMR — all on your phone.",
-    spec: "OUTPUT: FG% | 3PT% | MMR",
+    spec: "INSTANT STATS | FG% | 3PT% | MMR",
     accent: "primary" as const,
   },
 ];
