@@ -1,7 +1,8 @@
 import { useScrollProgress } from "@/hooks/useScrollProgress";
-import basketballImg from "@/assets/basketball.png";
-import gameImg from "@/assets/basketball-game.jpg";
 import AROverlay from "./AROverlay";
+
+const basketballImg = "/images/basketball.jpg";
+const gameImg = "/images/basketball-game.jpg";
 
 const ScrollytellingHero = () => {
   const { containerRef, progress } = useScrollProgress();
