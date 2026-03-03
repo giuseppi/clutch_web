@@ -1,15 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
-import AppSidebarHeader from "@/components/AppSidebarHeader";
+import { Link } from "react-router-dom";
+import AppSidebar from "@/components/AppSidebar";
 import PageTransition from "@/components/PageTransition";
-
-const sidebarLinks = [
-  { to: "/app/dashboard", icon: "dashboard", label: "Dashboard" },
-  { to: "/app/leaderboard", icon: "emoji_events", label: "Leaderboard" },
-  { to: "/app/upload", icon: "cloud_upload", label: "Upload Matches" },
-  { to: "/app/analytics", icon: "pie_chart", label: "Analytics" },
-  { to: "/app/roster", icon: "group", label: "Roster" },
-  { to: "/app/settings", icon: "settings", label: "Settings" },
-];
 
 const staffMembers = [
   {
@@ -51,58 +42,12 @@ const LOGO_IMAGE_URL =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuDoBJeJr8XiCnMt5SEGmErMW3XapWuhfhYkywgTvufE5DpO-wW8BEc_tCjqMaGB6hJMKdXVpoTLjGGVHVbq9mLBPCjf3ARA1fKHn_PrKtxttsZiGWvlyqrKZ5FL5Ax4m9UpPylKgZxrtP76zYjK7KNTfTzVaUF5ANiNpym4tF5rKhWpapXg4L7WjC-n2KeWPJqNoiiqYsuaxH5aR9X35EI7IjAWx_TAPEFXwqWoVARA_LcIIOIx0Fw61uFMgAHbhOoHo1PucYGFXLLC";
 
 const SettingsPage = () => {
-  const location = useLocation();
-
   return (
     <div className="bg-[#0a0a0a] font-display text-white min-h-screen flex overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#151515] border-r border-[#262626] flex-col hidden md:flex h-screen fixed top-0 left-0 z-50">
-        <div className="h-16 flex items-center px-6 border-b border-[#262626]">
-          <AppSidebarHeader />
-        </div>
-
-        <nav className="flex-1 flex flex-col gap-1 p-4 overflow-y-auto">
-          {sidebarLinks.map((link) => {
-            const isActive = location.pathname === link.to;
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? "bg-[#ff6a00]/10 text-[#ff6a00] border border-[#ff6a00]/20"
-                    : "text-[#a3a3a3] hover:text-white hover:bg-[#1f1f1f]"
-                }`}
-              >
-                <span className="material-symbols-outlined">{link.icon}</span>
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="p-4 border-t border-[#262626] space-y-2">
-          <div className="flex items-center gap-3 px-4 py-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff6a00] to-[#ff8c40] flex items-center justify-center text-sm font-bold text-white shrink-0">
-              CK
-            </div>
-            <div className="flex flex-col overflow-hidden min-w-0">
-              <span className="text-sm font-semibold text-white truncate">Coach K</span>
-              <span className="text-xs text-[#a3a3a3] truncate">Duke University</span>
-            </div>
-          </div>
-          <Link
-            to="/"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200"
-          >
-            <span className="material-symbols-outlined">logout</span>
-            Logout
-          </Link>
-        </div>
-      </aside>
+      <AppSidebar />
 
       {/* Main Content */}
-      <main className="flex-1 md:ml-64 flex flex-col min-h-screen">
+      <main className="flex-1 flex flex-col min-h-screen">
         {/* Sticky Header */}
         <header className="sticky top-0 z-40 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[#262626] px-6 py-4 flex items-center justify-between">
           <div>
@@ -338,19 +283,6 @@ const SettingsPage = () => {
                   </div>
                 </div>
               </div>
-            </section>
-
-            {/* Logout */}
-            <section className="border border-[#262626] rounded-xl p-6 bg-[#0a0a0a]">
-              <h3 className="text-sm font-semibold text-white mb-2">Account</h3>
-              <p className="text-xs text-[#a3a3a3] mb-4">Sign out of your account. You will return to the home page.</p>
-              <Link
-                to="/"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 transition-colors"
-              >
-                <span className="material-symbols-outlined text-[18px]">logout</span>
-                Logout
-              </Link>
             </section>
           </div>
 

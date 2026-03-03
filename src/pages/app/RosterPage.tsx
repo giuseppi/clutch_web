@@ -1,19 +1,10 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import AppSidebarHeader from "@/components/AppSidebarHeader";
+import { Link } from "react-router-dom";
+import AppSidebar from "@/components/AppSidebar";
 import PageTransition from "@/components/PageTransition";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import PlayerProfilePanel from "./PlayerProfilePanel";
-
-const sidebarLinks = [
-  { to: "/app/dashboard", icon: "dashboard", label: "Dashboard" },
-  { to: "/app/leaderboard", icon: "leaderboard", label: "Leaderboard" },
-  { to: "/app/upload", icon: "upload_file", label: "Upload Matches" },
-  { to: "/app/analytics", icon: "analytics", label: "Analytics" },
-  { to: "/app/roster", icon: "groups", label: "Roster" },
-  { to: "/app/settings", icon: "settings", label: "Settings" },
-];
 
 interface Player {
   id: string;
@@ -42,45 +33,11 @@ function getPerformanceLabel(p: Player) {
 }
 
 const RosterPage = () => {
-  const location = useLocation();
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
 
   return (
     <div className="dark bg-[#0a0a0a] font-display text-slate-100 min-h-screen flex overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#151515] border-r border-[#262626] flex-col hidden md:flex h-screen sticky top-0 z-50">
-        <div className="h-16 flex items-center px-6 border-b border-[#262626]">
-          <AppSidebarHeader />
-        </div>
-        <nav className="flex-1 overflow-y-auto py-6 flex flex-col gap-1 px-4">
-          {sidebarLinks.map((link) => {
-            const isActive = location.pathname === link.to;
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all group ${
-                  isActive
-                    ? "bg-[#ff6a00]/10 text-[#ff6a00] border border-[#ff6a00]/20 shadow-[0_0_15px_-5px_rgba(255,106,0,0.3)]"
-                    : "text-[#a3a3a3] hover:bg-[#202020] hover:text-white"
-                }`}
-              >
-                <span className={`material-symbols-outlined text-[20px] ${!isActive ? "group-hover:text-[#ff6a00] transition-colors" : ""}`}>{link.icon}</span>
-                <span className={`text-sm ${isActive ? "font-bold" : "font-medium"}`}>{link.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="p-4 border-t border-[#262626]">
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#202020] cursor-pointer transition-colors">
-            <div className="bg-center bg-no-repeat bg-cover rounded-full size-9 ring-1 ring-[#262626]" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuA1bvNIXmlNd1k6t3aTwwkaOdsdLBiNBk0iDQQFTJkPbNKqDdtZOHrf5rPtMzFu7aGW7xdqL_blidJ4QKOxmrrUkRodx5dCK8HaMnAQCkNpnJYcWstAtARck9OV1kaGJou8AlEIRfQFfXPt5L4rwdgpmfIw3ycqycX1qeEAkczNWJpNM0LARoelQZ1bLgzMie9diJvSZlyPOAlOOnJC6HANj6cT_CpA_k2skf-O9IE84WfaYJNKEAS51sisvSSP3tQou2UwLvuYpGl4")' }} />
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-medium text-white truncate">Coach K.</span>
-              <span className="text-xs text-[#a3a3a3] truncate">Duke University</span>
-            </div>
-          </div>
-        </div>
-      </aside>
+      <AppSidebar />
 
       {/* Main */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#0a0a0a] relative">

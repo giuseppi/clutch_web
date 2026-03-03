@@ -1,16 +1,6 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import AppSidebar from "@/components/AppSidebar";
 import AppSidebarHeader from "@/components/AppSidebarHeader";
-
-const sidebarLinks = [
-  { to: "/app/dashboard", icon: "dashboard", label: "Dashboard" },
-  { to: "/app/leaderboard", icon: "leaderboard", label: "Leaderboard" },
-  { to: "/app/upload", icon: "cloud_upload", label: "Upload Matches" },
-  { to: "/app/analytics", icon: "analytics", label: "Analytics" },
-  { to: "/app/roster", icon: "group", label: "Roster" },
-];
-
-const profileImageUrl =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuA1bvNIXmlNd1k6t3aTwwkaOdsdLBiNBk0iDQQFTJkPbNKqDdtZOHrf5rPtMzFu7aGW7xdqL_blidJ4QKOxmrrUkRodx5dCK8HaMnAQCkNpnJYcWstAtARck9OV1kaGJou8AlEIRfQFfXPt5L4rwdgpmfIw3ycqycX1qeEAkczNWJpNM0LARoelQZ1bLgzMie9diJvSZlyPOAlOOnJC6HANj6cT_CpA_k2skf-O9IE84WfaYJNKEAS51sisvSSP3tQou2UwLvuYpGl4";
 
 type MatchStatus = "complete" | "processing" | "missing";
 
@@ -59,54 +49,9 @@ const matches: MatchCard[] = [
 ];
 
 const AnalyticsPage = () => {
-  const location = useLocation();
-
   return (
     <div className="dark bg-background-dark font-display text-slate-100 min-h-screen flex overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 flex-shrink-0 bg-surface-dark border-r border-[#262626] flex flex-col h-screen">
-        <div className="h-16 flex items-center px-6 border-b border-[#262626]">
-          <AppSidebarHeader />
-        </div>
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-          {sidebarLinks.map((link) => {
-            const isActive = location.pathname === link.to;
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
-                  isActive
-                    ? "bg-[#ff6a00]/10 text-[#ff6a00] border border-[#ff6a00]/20 shadow-[0_0_10px_-2px_rgba(255,106,0,0.2)]"
-                    : "text-slate-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <span className="material-symbols-outlined text-[20px]">{link.icon}</span>
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="p-4 border-t border-[#262626]">
-          <Link
-            to="/app/settings"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors font-medium"
-          >
-            <span className="material-symbols-outlined text-[20px]">settings</span>
-            Settings
-          </Link>
-          <div className="mt-4 flex items-center gap-3 px-3">
-            <div
-              className="size-8 rounded-full bg-[#262626] bg-cover bg-center shrink-0"
-              style={{ backgroundImage: `url("${profileImageUrl}")` }}
-            />
-            <div className="flex flex-col min-w-0">
-              <span className="text-sm font-medium text-white truncate">Coach K</span>
-              <span className="text-xs text-[#a3a3a3] truncate">Head Coach</span>
-            </div>
-          </div>
-        </div>
-      </aside>
+      <AppSidebar />
 
       {/* Main */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">

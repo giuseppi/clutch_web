@@ -1,14 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import AppSidebar from "@/components/AppSidebar";
 import AppSidebarHeader from "@/components/AppSidebarHeader";
 import PageTransition from "@/components/PageTransition";
-
-const sidebarLinks = [
-  { to: "/app/dashboard", icon: "dashboard", label: "Dashboard" },
-  { to: "/app/leaderboard", icon: "leaderboard", label: "Leaderboard" },
-  { to: "/app/upload", icon: "upload_file", label: "Upload Matches" },
-  { to: "/app/analytics", icon: "analytics", label: "Analytics" },
-  { to: "/app/roster", icon: "groups", label: "Roster" },
-];
 
 interface Player {
   rank: number;
@@ -187,75 +180,9 @@ function TrendCell({ value }: { value: number }) {
 }
 
 const LeaderboardPage = () => {
-  const location = useLocation();
-
   return (
     <div className="dark bg-[#0a0a0a] font-display text-slate-100 min-h-screen flex overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#151515] border-r border-[#262626] flex-col hidden md:flex h-screen sticky top-0 z-50">
-        <div className="h-16 flex items-center px-6 border-b border-[#262626]">
-          <AppSidebarHeader />
-        </div>
-        <nav className="flex-1 flex flex-col gap-1 p-4 overflow-y-auto">
-          {sidebarLinks.map((link) => {
-            const isActive = location.pathname === link.to;
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? "bg-[#ff6a00]/10 text-[#ff6a00] border border-[#ff6a00]/20 shadow-[0_0_10px_-2px_rgba(255,106,0,0.2)]"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
-                }`}
-              >
-                <span className="material-symbols-outlined">{link.icon}</span>
-                {link.label}
-              </Link>
-            );
-          })}
-          <div className="mt-auto pt-4 border-t border-[#262626]">
-            <Link
-              to="/app/settings"
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                location.pathname === "/app/settings"
-                  ? "bg-[#ff6a00]/10 text-[#ff6a00] border border-[#ff6a00]/20 shadow-[0_0_10px_-2px_rgba(255,106,0,0.2)]"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
-              }`}
-            >
-              <span className="material-symbols-outlined">settings</span>
-              Settings
-            </Link>
-          </div>
-        </nav>
-        <div className="p-4 border-t border-[#262626]">
-          <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#ff6a00] hover:bg-[#cc5500] text-white text-sm font-bold transition-colors shadow-[0_0_20px_-5px_rgba(255,106,0,0.3)]">
-            <span className="material-symbols-outlined text-[18px]">
-              bolt
-            </span>
-            Upgrade Plan
-          </button>
-        </div>
-        <div className="p-4 border-t border-[#262626]">
-          <div className="flex items-center gap-3">
-            <div
-              className="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-[#262626]"
-              style={{
-                backgroundImage:
-                  'url("https://lh3.googleusercontent.com/aida-public/AB6AXuA1bvNIXmlNd1k6t3aTwwkaOdsdLBiNBk0iDQQFTJkPbNKqDdtZOHrf5rPtMzFu7aGW7xdqL_blidJ4QKOxmrrUkRodx5dCK8HaMnAQCkNpnJYcWstAtARck9OV1kaGJou8AlEIRfQFfXPt5L4rwdgpmfIw3ycqycX1qeEAkczNWJpNM0LARoelQZ1bLgzMie9diJvSZlyPOAlOOnJC6HANj6cT_CpA_k2skf-O9IE84WfaYJNKEAS51sisvSSP3tQou2UwLvuYpGl4")',
-              }}
-            />
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-medium text-slate-200 truncate">
-                Coach K.
-              </span>
-              <span className="text-xs text-[#a3a3a3] truncate">
-                Duke Blue Devils
-              </span>
-            </div>
-          </div>
-        </div>
-      </aside>
+      <AppSidebar />
 
       {/* Main */}
       <main className="flex-1 flex flex-col h-screen overflow-y-auto">

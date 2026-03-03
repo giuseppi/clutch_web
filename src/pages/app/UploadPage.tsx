@@ -1,88 +1,12 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import AppSidebar from "@/components/AppSidebar";
 import AppSidebarHeader from "@/components/AppSidebarHeader";
 import PageTransition from "@/components/PageTransition";
 
-const sidebarLinks = [
-  { to: "/app/dashboard", icon: "dashboard", label: "Dashboard" },
-  { to: "/app/leaderboard", icon: "leaderboard", label: "Leaderboard" },
-  { to: "/app/upload", icon: "upload_file", label: "Upload Matches" },
-  { to: "/app/analytics", icon: "analytics", label: "Analytics" },
-  { to: "/app/roster", icon: "groups", label: "Roster" },
-];
-
 const UploadPage = () => {
-  const location = useLocation();
-
   return (
     <div className="dark bg-[#0a0a0a] font-display text-slate-100 min-h-screen flex overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#151515] border-r border-[#262626] flex-col hidden md:flex h-screen sticky top-0 z-50">
-        <div className="h-16 flex items-center px-6 border-b border-[#262626]">
-          <AppSidebarHeader />
-        </div>
-
-        <nav className="flex-1 flex flex-col gap-1 p-4 overflow-y-auto">
-          {sidebarLinks.map((link) => {
-            const isActive = location.pathname === link.to;
-            return (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? "bg-[#ff6a00]/10 text-[#ff6a00] border border-[#ff6a00]/20 shadow-[0_0_20px_-5px_rgba(255,106,0,0.15)]"
-                    : "text-[#9ca3af] hover:text-white hover:bg-[#1a1a1a]"
-                }`}
-              >
-                <span className="material-symbols-outlined">{link.icon}</span>
-                {link.label}
-              </Link>
-            );
-          })}
-          <div className="mt-auto pt-4 border-t border-[#262626]">
-            <Link
-              to="/app/settings"
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                location.pathname === "/app/settings"
-                  ? "bg-[#ff6a00]/10 text-[#ff6a00] border border-[#ff6a00]/20 shadow-[0_0_20px_-5px_rgba(255,106,0,0.15)]"
-                  : "text-[#9ca3af] hover:text-white hover:bg-[#1a1a1a]"
-              }`}
-            >
-              <span className="material-symbols-outlined">settings</span>
-              Settings
-            </Link>
-          </div>
-        </nav>
-
-        {/* Storage Indicator */}
-        <div className="p-4 border-t border-[#262626]">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-[#9ca3af] font-medium">Storage Used</span>
-            <span className="text-xs text-[#ff6a00] font-bold">85%</span>
-          </div>
-          <div className="w-full h-1.5 bg-[#262626] rounded-full overflow-hidden">
-            <div className="h-full w-[85%] bg-[#ff6a00] rounded-full" />
-          </div>
-          <p className="text-[10px] text-[#9ca3af] mt-1.5">8.5 GB of 10 GB used</p>
-        </div>
-
-        {/* Profile */}
-        <div className="p-4 border-t border-[#262626]">
-          <div className="flex items-center gap-3">
-            <div
-              className="bg-center bg-no-repeat bg-cover rounded-full size-10 ring-2 ring-[#262626]"
-              style={{
-                backgroundImage:
-                  'url("https://lh3.googleusercontent.com/aida-public/AB6AXuD6qnS3mKT0dGRhr0J1fh20c2WJc0gW8PpJAx5ELf-1z7ScU9kwNmlv4mgVjCCME7QeRtKaqI1Vlr-MTVXCZ2ZpO1ILFDpkCKxhFVUBv1HVwP07132C7FEHYQEQz0GzXTwPxSOYuuIFVg7qT6EYhzLkp8HezVQAkNlshaKkAXI56UvRnXFxcm4f18D5SI9pVeXWlI3WZgwYsU2TaXBAYhhYlDxrKtU0DujUe_jyekKyX5DeMW4laqgYfarHb2Co8e2lQG2P4y3E8tuJ")',
-              }}
-            />
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-medium text-slate-200 truncate">Coach Scheyer</span>
-              <span className="text-xs text-[#9ca3af] truncate">Head Coach</span>
-            </div>
-          </div>
-        </div>
-      </aside>
+      <AppSidebar />
 
       {/* Main */}
       <main className="flex-1 flex flex-col h-screen overflow-y-auto">
