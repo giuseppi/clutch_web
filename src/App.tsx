@@ -11,6 +11,7 @@ import LeaderboardPage from "./pages/app/LeaderboardPage";
 import RosterPage from "./pages/app/RosterPage";
 import UploadPage from "./pages/app/UploadPage";
 import AnalyticsPage from "./pages/app/AnalyticsPage";
+import MatchAnalyticsPage from "./pages/app/MatchAnalyticsPage";
 import SettingsPage from "./pages/app/SettingsPage";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/app/roster" element={<RosterPage />} />
           <Route path="/app/upload" element={<UploadPage />} />
           <Route path="/app/analytics" element={<AnalyticsPage />} />
+          <Route path="/app/analytics/:matchId" element={<MatchAnalyticsPage />} />
           <Route path="/app/settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
