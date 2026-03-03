@@ -4,10 +4,10 @@ import clutchLogo from "@/assets/clutch_logo.png";
 const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-5 flex justify-between items-center mix-blend-difference">
-      <div className="flex items-center gap-2.5">
+      <Link to="/" className="flex items-center gap-2.5">
         <img src={clutchLogo} alt="Clutch logo" className="w-10 h-10 rounded object-contain" />
         <span className="font-extrabold tracking-tighter text-xl text-foreground">CLUTCH</span>
-      </div>
+      </Link>
 
       <div className="hidden md:flex items-center gap-8 text-sm font-medium text-foreground/70">
         <a href="#features" className="hover:text-primary transition-colors">Features</a>

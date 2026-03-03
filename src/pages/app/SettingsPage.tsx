@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import AppSidebarHeader from "@/components/AppSidebarHeader";
 
 const sidebarLinks = [
   { to: "/app/dashboard", icon: "dashboard", label: "Dashboard" },
@@ -55,16 +56,8 @@ const SettingsPage = () => {
     <div className="bg-[#0a0a0a] font-display text-white min-h-screen flex overflow-hidden">
       {/* Sidebar */}
       <aside className="w-64 bg-[#151515] border-r border-[#262626] flex-col hidden md:flex h-screen fixed top-0 left-0 z-50">
-        <div className="p-6 border-b border-[#262626]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff6a00] to-[#ff8c40] flex items-center justify-center text-sm font-bold text-white">
-              CK
-            </div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-semibold text-white truncate">Coach K</span>
-              <span className="text-xs text-[#a3a3a3] truncate">Duke University</span>
-            </div>
-          </div>
+        <div className="h-16 flex items-center px-6 border-b border-[#262626]">
+          <AppSidebarHeader />
         </div>
 
         <nav className="flex-1 flex flex-col gap-1 p-4 overflow-y-auto">
@@ -87,13 +80,22 @@ const SettingsPage = () => {
           })}
         </nav>
 
-        <div className="p-4 border-t border-[#262626]">
+        <div className="p-4 border-t border-[#262626] space-y-2">
+          <div className="flex items-center gap-3 px-4 py-2">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff6a00] to-[#ff8c40] flex items-center justify-center text-sm font-bold text-white shrink-0">
+              CK
+            </div>
+            <div className="flex flex-col overflow-hidden min-w-0">
+              <span className="text-sm font-semibold text-white truncate">Coach K</span>
+              <span className="text-xs text-[#a3a3a3] truncate">Duke University</span>
+            </div>
+          </div>
           <Link
-            to="/login"
+            to="/"
             className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200"
           >
             <span className="material-symbols-outlined">logout</span>
-            Sign Out
+            Logout
           </Link>
         </div>
       </aside>
@@ -336,11 +338,24 @@ const SettingsPage = () => {
                 </div>
               </div>
             </section>
+
+            {/* Logout */}
+            <section className="border border-[#262626] rounded-xl p-6 bg-[#0a0a0a]">
+              <h3 className="text-sm font-semibold text-white mb-2">Account</h3>
+              <p className="text-xs text-[#a3a3a3] mb-4">Sign out of your account. You will return to the home page.</p>
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 transition-colors"
+              >
+                <span className="material-symbols-outlined text-[18px]">logout</span>
+                Logout
+              </Link>
+            </section>
           </div>
 
           {/* Footer */}
           <footer className="border-t border-[#262626] pt-6 pb-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#a3a3a3]">
-            <p>&copy; 2025 Clutch Coach. All rights reserved.</p>
+            <p>&copy; 2025 Clutch. All rights reserved.</p>
             <div className="flex items-center gap-4">
               <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
               <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
