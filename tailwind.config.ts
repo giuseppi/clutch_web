@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         sans: ["Inter", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
+        display: ["Lexend", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -51,6 +52,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        "background-dark": "#0a0a0a",
+        "surface-dark": "#151515",
+        "surface-highlight": "#1a1a1a",
+        "border-subtle": "#262626",
+        "text-secondary": "#9ca3af",
+        "accent-teal": "#14b8a6",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
