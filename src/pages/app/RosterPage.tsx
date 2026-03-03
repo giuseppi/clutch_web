@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import AppSidebarHeader from "@/components/AppSidebarHeader";
+import PageTransition from "@/components/PageTransition";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import PlayerProfilePanel from "./PlayerProfilePanel";
@@ -103,7 +104,7 @@ const RosterPage = () => {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-8">
+        <PageTransition className="flex-1 overflow-y-auto p-8">
           {/* Filters */}
           <div className="flex flex-col md:flex-row gap-4 mb-8">
             <div className="flex-1 relative">
@@ -191,7 +192,7 @@ const RosterPage = () => {
               <p className="text-xs text-[#a3a3a3]/60 mt-2">Import from scout database</p>
             </div>
           </div>
-        </div>
+        </PageTransition>
 
         {/* Player Detail Sheet */}
         <Sheet open={selectedPlayer !== null} onOpenChange={(open) => { if (!open) setSelectedPlayer(null); }}>

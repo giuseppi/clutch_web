@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import AppSidebarHeader from "@/components/AppSidebarHeader";
+import PageTransition from "@/components/PageTransition";
 
 const sidebarLinks = [
   { to: "/app/dashboard", icon: "dashboard", label: "Dashboard" },
@@ -120,7 +121,7 @@ const SettingsPage = () => {
           </div>
         </header>
 
-        <div className="flex-1 p-6 md:p-8 flex flex-col gap-8 max-w-5xl w-full mx-auto">
+        <PageTransition className="flex-1 p-6 md:p-8 flex flex-col gap-8 max-w-5xl w-full mx-auto">
           {/* Profile & Branding */}
           <section className="bg-[#151515] border border-[#262626] rounded-xl p-6">
             <h2 className="text-lg font-bold text-white mb-6">Profile &amp; Branding</h2>
@@ -361,7 +362,7 @@ const SettingsPage = () => {
               <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
             </div>
           </footer>
-        </div>
+        </PageTransition>
       </main>
     </div>
   );

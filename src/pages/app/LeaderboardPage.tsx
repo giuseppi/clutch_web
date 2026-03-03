@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import AppSidebarHeader from "@/components/AppSidebarHeader";
+import PageTransition from "@/components/PageTransition";
 
 const sidebarLinks = [
   { to: "/app/dashboard", icon: "dashboard", label: "Dashboard" },
@@ -191,7 +192,7 @@ const LeaderboardPage = () => {
   return (
     <div className="dark bg-[#0a0a0a] font-display text-slate-100 min-h-screen flex overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#151515] border-r border-[#262626] flex-col hidden lg:flex h-screen sticky top-0 z-50">
+      <aside className="w-64 bg-[#151515] border-r border-[#262626] flex-col hidden md:flex h-screen sticky top-0 z-50">
         <div className="h-16 flex items-center px-6 border-b border-[#262626]">
           <AppSidebarHeader />
         </div>
@@ -259,14 +260,14 @@ const LeaderboardPage = () => {
       {/* Main */}
       <main className="flex-1 flex flex-col h-screen overflow-y-auto">
         {/* Mobile header */}
-        <header className="flex lg:hidden items-center justify-between border-b border-[#262626] px-4 py-3 bg-[#151515]/90 backdrop-blur-md sticky top-0 z-40">
+        <header className="flex md:hidden items-center justify-between border-b border-[#262626] px-4 py-3 bg-[#151515]/90 backdrop-blur-md sticky top-0 z-40">
           <AppSidebarHeader compact />
           <button type="button" className="text-slate-400" aria-label="Menu">
             <span className="material-symbols-outlined">menu</span>
           </button>
         </header>
 
-        <div className="flex-1 w-full max-w-[1440px] mx-auto p-6 md:p-8 flex flex-col gap-6">
+        <PageTransition className="flex-1 w-full max-w-[1440px] mx-auto p-6 md:p-8 flex flex-col gap-6">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm">
             <Link
@@ -483,7 +484,7 @@ const LeaderboardPage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </PageTransition>
       </main>
     </div>
   );

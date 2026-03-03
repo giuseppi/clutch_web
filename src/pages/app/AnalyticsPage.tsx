@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import AppSidebarHeader from "@/components/AppSidebarHeader";
+import PageTransition from "@/components/PageTransition";
 
 const sidebarLinks = [
   { to: "/app/dashboard", icon: "dashboard", label: "Dashboard" },
@@ -123,7 +124,7 @@ const AnalyticsPage = () => {
           </div>
         </div>
 
-        <div className="flex-1 w-full max-w-[1440px] mx-auto p-6 md:p-8 flex flex-col gap-8">
+        <PageTransition className="flex-1 w-full max-w-[1440px] mx-auto p-6 md:p-8 flex flex-col gap-8">
           {/* AI Assistant Takeaways */}
           <section>
             <div className="flex items-center gap-2 mb-4">
@@ -434,7 +435,7 @@ const AnalyticsPage = () => {
               </div>
             </div>
           </section>
-        </div>
+        </PageTransition>
       </main>
     </div>
   );
