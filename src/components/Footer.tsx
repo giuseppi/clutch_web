@@ -1,3 +1,5 @@
+import clutchLogo from "@/assets/clutch_logo.png";
+
 const Footer = () => {
   return (
     <footer className="py-10 bg-background border-t border-border">
@@ -6,14 +8,7 @@ const Footer = () => {
           {/* Logo + copyright */}
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M4.93 4.93c4.08 2.12 10.06 2.12 14.14 0" />
-                  <path d="M4.93 19.07c4.08-2.12 10.06-2.12 14.14 0" />
-                  <line x1="12" y1="2" x2="12" y2="22" />
-                </svg>
-              </div>
+              <img src={clutchLogo} alt="Clutch logo" className="w-8 h-8 rounded object-contain" />
               <span className="font-bold tracking-tighter text-foreground text-sm">
                 CLUTCH
               </span>
