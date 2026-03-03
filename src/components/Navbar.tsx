@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import clutchLogo from "@/assets/clutch_logo.png";
 
 const Navbar = () => {
