@@ -1,6 +1,8 @@
+import clutchLogo from "@/assets/clutch_logo.png";
+
 const LoginPage = () => {
   return (
-    <div className="dark bg-[#0a0a0a] font-display text-slate-100 min-h-screen flex flex-col relative overflow-hidden">
+    <div className="dark bg-[#0a0a0a] font-display text-slate-100 min-h-screen flex flex-col relative overflow-hidden animate-page-enter">
       {/* Ambient Background Glow */}
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#ff6a00]/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none z-0" />
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#ff6a00]/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3 pointer-events-none z-0" />
@@ -8,9 +10,7 @@ const LoginPage = () => {
       {/* Navigation Header */}
       <header className="relative z-10 w-full px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-[#ff6a00]/10 text-[#ff6a00]">
-            <span className="material-symbols-outlined">sports_basketball</span>
-          </div>
+          <img src={clutchLogo} alt="Clutch" className="w-10 h-10 object-contain" />
           <h2 className="text-xl font-bold tracking-tight text-white">CLUTCH</h2>
         </div>
         <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a1a1a] border border-[#262626] text-sm font-medium text-slate-300 hover:text-white hover:border-[#ff6a00]/50 transition-colors duration-200">

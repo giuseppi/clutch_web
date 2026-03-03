@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import clutchLogo from "@/assets/clutch_logo.png";
+import PageTransition from "@/components/PageTransition";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import PlayerProfilePanel from "./PlayerProfilePanel";
@@ -48,11 +50,7 @@ const RosterPage = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-[#151515] border-r border-[#262626] flex-col hidden md:flex h-screen sticky top-0 z-50">
         <div className="h-16 flex items-center gap-3 px-6 border-b border-[#262626]">
-          <div className="size-8 text-[#ff6a00] drop-shadow-[0_0_8px_rgba(255,106,0,0.5)]">
-            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <path clipRule="evenodd" d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z" fill="currentColor" fillRule="evenodd" />
-            </svg>
-          </div>
+          <img src={clutchLogo} alt="Clutch" className="size-8 object-contain drop-shadow-[0_0_8px_rgba(255,106,0,0.5)]" />
           <h2 className="text-slate-100 text-lg font-bold tracking-tight">Clutch Scout</h2>
         </div>
         <nav className="flex-1 overflow-y-auto py-6 flex flex-col gap-1 px-4">
@@ -107,7 +105,7 @@ const RosterPage = () => {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-8">
+        <PageTransition className="flex-1 overflow-y-auto p-8">
           {/* Filters */}
           <div className="flex flex-col md:flex-row gap-4 mb-8">
             <div className="flex-1 relative">
@@ -195,7 +193,7 @@ const RosterPage = () => {
               <p className="text-xs text-[#a3a3a3]/60 mt-2">Import from scout database</p>
             </div>
           </div>
-        </div>
+        </PageTransition>
 
         {/* Player Detail Sheet */}
         <Sheet open={selectedPlayer !== null} onOpenChange={(open) => { if (!open) setSelectedPlayer(null); }}>

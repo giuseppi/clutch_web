@@ -1,4 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
+import clutchLogo from "@/assets/clutch_logo.png";
+import PageTransition from "@/components/PageTransition";
 
 const sidebarLinks = [
   { to: "/app/dashboard", icon: "dashboard", label: "Dashboard" },
@@ -55,16 +57,9 @@ const SettingsPage = () => {
     <div className="bg-[#0a0a0a] font-display text-white min-h-screen flex overflow-hidden">
       {/* Sidebar */}
       <aside className="w-64 bg-[#151515] border-r border-[#262626] flex-col hidden md:flex h-screen fixed top-0 left-0 z-50">
-        <div className="p-6 border-b border-[#262626]">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#ff6a00] to-[#ff8c40] flex items-center justify-center text-sm font-bold text-white">
-              CK
-            </div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-semibold text-white truncate">Coach K</span>
-              <span className="text-xs text-[#a3a3a3] truncate">Duke University</span>
-            </div>
-          </div>
+        <div className="h-16 flex items-center gap-3 px-6 border-b border-[#262626]">
+          <img src={clutchLogo} alt="Clutch" className="size-8 object-contain drop-shadow-[0_0_8px_rgba(255,106,0,0.5)]" />
+          <h2 className="text-slate-100 text-lg font-bold tracking-tight">Clutch Coach</h2>
         </div>
 
         <nav className="flex-1 flex flex-col gap-1 p-4 overflow-y-auto">
@@ -118,7 +113,7 @@ const SettingsPage = () => {
           </div>
         </header>
 
-        <div className="flex-1 p-6 md:p-8 flex flex-col gap-8 max-w-5xl w-full mx-auto">
+        <PageTransition className="flex-1 p-6 md:p-8 flex flex-col gap-8 max-w-5xl w-full mx-auto">
           {/* Profile & Branding */}
           <section className="bg-[#151515] border border-[#262626] rounded-xl p-6">
             <h2 className="text-lg font-bold text-white mb-6">Profile &amp; Branding</h2>
@@ -346,7 +341,7 @@ const SettingsPage = () => {
               <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
             </div>
           </footer>
-        </div>
+        </PageTransition>
       </main>
     </div>
   );
