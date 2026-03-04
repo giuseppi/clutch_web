@@ -1,62 +1,191 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import AppSidebar from "@/components/AppSidebar";
-import PageTransition from "@/components/PageTransition";
+import { useState, useMemo } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { usePlayers, usePlayer, usePlayerEloHistory, usePlayerStats } from "@/hooks/api/usePlayers";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import PlayerProfilePanel from "./PlayerProfilePanel";
+import AppLayout from "@/components/AppLayout";
+import PageTransition from "@/components/PageTransition";
 
-interface Player {
-  id: string;
-  name: string;
-  position: string;
-  classYear: string;
-  elo: string;
-  performance: number;
-  performanceColor: string;
-  image: string | null;
-  badge?: { label: string; color: string };
+function MmrBadge({ mmr }: { mmr: number }) {
+  const color =
+    mmr >= 80 ? "text-[#ff6a00]" :
+    mmr >= 60 ? "text-[#14b8a6]" :
+    mmr >= 40 ? "text-yellow-400" :
+    "text-slate-400";
+  return <span className={`text-2xl font-bold ${color} drop-shadow-[0_0_8px_rgba(255,106,0,0.3)]`}>{Math.round(mmr)}</span>;
 }
 
-const players: Player[] = [
-  { id: "1", name: "Jalen Green", position: "SG", classYear: "'24", elo: "2,150", performance: 88, performanceColor: "from-[#ff6a00] to-[#cc5500]", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAtCbPF0kMXSGfBn8OTm4vElX4YzCWkP2TPuLMTVmxcZua0QunA24KNB5BDCblGkwOV5kK3pd4kLzxP1jpqWqXpR6oRit5YngMknWx0zhXFB3bktBqexDf5e0a83OFQcsNimXY0Wpio88MGjm2MfJCHt699DLFtsr97AY142efi8v87ybxMTyiPhMbyLCOsQle6-W5Jx-xzA6KS9oAUeBijV02D947IvSw1lorC9jF7gvh20XfRSU4PiSrRmcerb9g2uuOImUb06WME", badge: { label: "ELITE", color: "text-[#14b8a6] bg-black/60 border-white/10" } },
-  { id: "2", name: "Davion Mitchell", position: "PG", classYear: "'25", elo: "1,980", performance: 75, performanceColor: "from-[#14b8a6] to-teal-600", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBL7x86jQ2rjrFk9INGkjDTWiZcSzj-ovHy9SovnbgyAQrleG02Gc08DgGVGcidUOqvq1rYNpMAvTQdrzkge7ZJQKH52evNDUG-VJjz4S1mWjO1PkFB5Wt8OLKUQMzV1u3Gozf5EVWBkz5VWl-bn-1EUQARVE6S9FMA_kn4i00RuTyfhlxw3ovC_u6sex0_D6CBPIhDp3g97xyNW2PNQmRG0notPEnR1pxVIc6FUrV0I4UKH96kygYBo6OIBAZISMW698BDUWi0oBGd" },
-  { id: "3", name: "Caleb Love", position: "SG", classYear: "'24", elo: "2,050", performance: 40, performanceColor: "from-red-500 to-red-700", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAQOqDUKWqjeDsWh9ewAANDdl5uZbE0Yz5_qjdYWR4Rjs3Vr9n9ASYmyA20SVqb_JEyXt2I4Z9N5U7Ilxxwf6py3oRx55vhe_kBdqer6v9_VYD3oMgf_-w4U7BkwMb6NJjlkD5GtRJQgnVlaHyp7UTZ8sVEtNZC9ln3v8Lj3H0epV2VP1DDmjNB7NNoPxVqtg-xJw_Vx11uwqd6XuNnxpOwb8kVOLejY7uuAl7W9BSVx3umAMVEsIQOaJ59L-fjXFEOEEJk6MRIEYxf", badge: { label: "INJURED", color: "text-red-400 bg-red-500/20 border-red-500/30" } },
-  { id: "4", name: "Mark Williams", position: "C", classYear: "'25", elo: "1,890", performance: 65, performanceColor: "from-[#14b8a6] to-teal-600", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBa6hpRzGhxmJn2wijYBeoRxWeT6SOUr8oaRCEKeJ2LeIv_crv3lQ8hG_TDc59EqpL5YSVS0DU0QJm4J7Lj0D4DgPUJRDZyVb6QzNCM-4BiRne7G0QpF7F9dQBGAmAX_WBefvFgKG-FFHXmVnzjTl3Lzd8-6wq4cV2td4BurG_LksZF8MWHExiXAATKABIwyo-LuKTo7ydQYczPDm_0m6xOl0ogJiscksdYox8eUWj3wHc8UgCwp1vRN7THzwWcdS1aXlFhfe7-itWp" },
-  { id: "5", name: "Trevor Keels", position: "SF", classYear: "'26", elo: "1,750", performance: 55, performanceColor: "from-yellow-500 to-yellow-600", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDsSvj_Vkl2Gn43HgJ8_3PLMqjgRvyRo4HdXA8l9zkDGxUueluhRHUOHFOf7SqGwfUat7M399QS8COz1oMru07yJEGI9xrccBG41UINrfX1NQS0Rlz6sio_RCU3lRZ0jgDhB-5eIgzjl_OaMU5YjLOWD3ZRIIaMechGmikKaKhOrz-O-91ufvcWC3uuP73aohitjyVLy70-f34ZwDC2lNMlQvvelTow3Gpd7H_hU1PYwW45l9jdJyhKi9JP9PLX-ZClxDtbWe5H-2P5" },
-  { id: "6", name: "Paolo Banchero", position: "PF", classYear: "'25", elo: "2,100", performance: 82, performanceColor: "from-[#ff6a00] to-[#cc5500]", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuC5H0hbdFR6CRkTbc3xWvCCCaCWImPGgGv2rpyyhr8bd1SNEJ3BL7dcDaGvdzM935EarR4S-SMMNNJkO5m_9uaQOLqPjomy8l3IQrsFr3gSQzrE39kr5r0MdxANFZGCkFv9CDWLV3JwVwYix7ObPH7jlfmydvJhoZutGNHTwKfYDVeqGLJEBCmE25q8vbGftvISRtk1NLAwfktZuwjWLpXz3XNwl-7ga0bp0Ooh9-thZDIAXe9PEqTaLAdRf0yhJJr_TMb9PxvTek4x", badge: { label: "NEW", color: "text-blue-400 bg-blue-500/20 border-blue-500/30" } },
-];
+function PerformanceBar({ mmr }: { mmr: number }) {
+  const pct = Math.min(100, (mmr / 99) * 100);
+  const gradientColor =
+    mmr >= 80 ? "from-[#ff6a00] to-[#cc5500]" :
+    mmr >= 60 ? "from-[#14b8a6] to-teal-600" :
+    mmr >= 40 ? "from-yellow-500 to-yellow-600" :
+    "from-red-500 to-red-700";
+  return (
+    <div className="w-full bg-[#262626] h-1.5 rounded-full overflow-hidden">
+      <div className={`bg-gradient-to-r ${gradientColor} h-full rounded-full`} style={{ width: `${pct}%` }} />
+    </div>
+  );
+}
 
-function getPerformanceLabel(p: Player) {
-  if (p.badge?.label === "INJURED") return { label: "Recovery", color: "text-red-400" };
-  return { label: "Performance", color: p.performance >= 80 ? "text-[#ff6a00]" : p.performance >= 60 ? "text-[#14b8a6]" : "text-yellow-500" };
+function PlayerDetailPanel({ playerId }: { playerId: string }) {
+  const { data: player, isLoading } = usePlayer(playerId);
+  const { data: eloHistory } = usePlayerEloHistory(playerId);
+  const { data: stats } = usePlayerStats(playerId);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <div className="w-8 h-8 border-2 border-[#ff6a00] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!player) {
+    return <div className="text-center text-slate-500 py-16">Player not found.</div>;
+  }
+
+  const history = eloHistory?.data || [];
+  const careerAvg = stats?.careerAverages || {};
+
+  return (
+    <div className="flex flex-col gap-6 font-display text-slate-100">
+      {/* Player Header */}
+      <div className="w-full bg-[#151515]/80 backdrop-blur-md border border-[#262626] rounded-xl p-5">
+        <div className="flex gap-5 items-center">
+          <div className="relative">
+            <div className="size-24 rounded-xl bg-slate-800 border border-[#262626] flex items-center justify-center">
+              <span className="material-symbols-outlined text-slate-500 text-[36px]">person</span>
+            </div>
+            <div className="absolute -bottom-2 -right-2 bg-[#ff6a00] text-white text-xs font-bold px-2 py-0.5 rounded-full border border-[#0a0a0a]">
+              {player.position}
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <h1 className="text-slate-100 text-2xl font-bold leading-tight">{player.firstName} {player.lastName}</h1>
+            <p className="text-[#a3a3a3] text-sm">
+              {player.team?.name || "—"}
+              <span className="mx-1.5 text-[#262626]">&bull;</span>
+              Class of {player.graduationYear}
+            </p>
+            <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 text-sm text-slate-400">
+              {player.heightInches && (
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[#a3a3a3] text-[18px]">height</span>
+                  <span>{Math.floor(player.heightInches / 12)}'{player.heightInches % 12}"</span>
+                </div>
+              )}
+              {player.weightLbs && (
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[#a3a3a3] text-[18px]">fitness_center</span>
+                  <span>{player.weightLbs} lbs</span>
+                </div>
+              )}
+              <div className="flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[#a3a3a3] text-[18px]">tag</span>
+                <span>#{player.jerseyNumber || "00"}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-row gap-4 w-full mt-6">
+          <div className="flex-1 flex items-center justify-between gap-3 bg-[#0a0a0a]/60 border border-[#262626] rounded-lg p-3">
+            <div className="flex flex-col">
+              <span className="text-xs text-[#a3a3a3] font-medium uppercase tracking-wider">MMR</span>
+              <MmrBadge mmr={player.mmr || 50} />
+            </div>
+            <span className="material-symbols-outlined text-[#14b8a6]/20 text-[32px]">trending_up</span>
+          </div>
+          <div className="flex-1 flex items-center justify-between gap-3 bg-[#0a0a0a]/60 border border-[#262626] rounded-lg p-3">
+            <div className="flex flex-col">
+              <span className="text-xs text-[#a3a3a3] font-medium uppercase tracking-wider">Stars</span>
+              <span className="text-2xl font-bold text-[#ff6a00]">{"★".repeat(player.stars || 0)}</span>
+            </div>
+            <span className="material-symbols-outlined text-[#ff6a00]/20 text-[32px]">star</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Elo History */}
+      {history.length > 0 && (
+        <div className="bg-[#151515]/80 border border-[#262626] rounded-xl p-5">
+          <h3 className="text-lg font-bold text-slate-100 mb-4">MMR History</h3>
+          <div className="flex items-end gap-1 h-24">
+            {history.slice(-20).map((entry: any, i: number) => {
+              const height = ((entry.newMmr || 50) / 99) * 100;
+              return (
+                <div
+                  key={i}
+                  className="flex-1 bg-[#ff6a00]/60 hover:bg-[#ff6a00] rounded-t transition-colors cursor-default"
+                  style={{ height: `${height}%` }}
+                  title={`MMR: ${Math.round(entry.newMmr)} (${entry.delta > 0 ? "+" : ""}${entry.delta?.toFixed(1)})`}
+                />
+              );
+            })}
+          </div>
+          <div className="flex justify-between text-[10px] text-slate-500 mt-1">
+            <span>Oldest</span>
+            <span>Latest</span>
+          </div>
+        </div>
+      )}
+
+      {/* Career Averages */}
+      <div className="grid grid-cols-2 gap-4">
+        {[
+          { label: "PPG", value: careerAvg.ppg?.toFixed(1) || "--", icon: "sports_basketball" },
+          { label: "RPG", value: careerAvg.rpg?.toFixed(1) || "--", icon: "sports" },
+          { label: "APG", value: careerAvg.apg?.toFixed(1) || "--", icon: "handshake" },
+          { label: "FG%", value: careerAvg.fgPct ? `${(careerAvg.fgPct * 100).toFixed(1)}%` : "--", icon: "target" },
+        ].map((stat) => (
+          <div key={stat.label} className="bg-[#151515] p-4 rounded-xl border border-[#262626] flex flex-col gap-1">
+            <div className="flex justify-between items-start">
+              <span className="text-[#a3a3a3] text-xs font-medium uppercase">{stat.label}</span>
+              <span className="material-symbols-outlined text-[#a3a3a3] text-[18px]">{stat.icon}</span>
+            </div>
+            <span className="text-2xl font-bold text-slate-100 mt-1">{stat.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 const RosterPage = () => {
+  const { user } = useAuth();
+  const teamId = user?.team?.id;
+  const teamName = user?.team?.name || "Your Team";
+
+  const [search, setSearch] = useState("");
+  const [posFilter, setPositionFilter] = useState("");
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
 
-  return (
-    <div className="dark bg-[#0a0a0a] font-display text-slate-100 min-h-screen flex overflow-hidden">
-      <AppSidebar />
+  const { data: playerData, isLoading } = usePlayers({
+    teamId,
+    position: posFilter || undefined,
+    search: search || undefined,
+    limit: 50,
+  });
 
-      {/* Main */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#0a0a0a] relative">
+  const players = playerData?.data || [];
+
+  return (
+    <AppLayout>
+      <main className="flex-1 flex flex-col overflow-hidden relative">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#ff6a00]/5 rounded-full blur-[100px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#14b8a6]/5 rounded-full blur-[80px] pointer-events-none" />
 
         <header className="flex items-center justify-between px-8 py-5 border-b border-[#262626] bg-[#0a0a0a]/80 backdrop-blur-sm z-10">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Team Roster - Duke University</h1>
+            <h1 className="text-2xl font-bold text-white tracking-tight">Team Roster - {teamName}</h1>
             <p className="text-[#a3a3a3] text-sm mt-1">Manage your active roster and player performance metrics.</p>
           </div>
           <div className="flex items-center gap-4">
             <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#262626] bg-[#151515] hover:bg-[#202020] text-sm font-medium transition-colors">
               <span className="material-symbols-outlined text-[18px]">download</span>
               Export CSV
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#ff6a00] hover:bg-[#cc5500] text-white text-sm font-bold shadow-[0_0_15px_-3px_rgba(255,106,0,0.4)] transition-all">
-              <span className="material-symbols-outlined text-[18px]">person_add</span>
-              Add Player
             </button>
           </div>
         </header>
@@ -66,89 +195,98 @@ const RosterPage = () => {
           <div className="flex flex-col md:flex-row gap-4 mb-8">
             <div className="flex-1 relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-[#a3a3a3] text-[20px]">search</span>
-              <input className="w-full pl-10 pr-4 py-2.5 bg-[#151515] border border-[#262626] rounded-xl text-sm focus:ring-1 focus:ring-[#ff6a00] focus:border-[#ff6a00]/50 placeholder:text-[#a3a3a3]/70 text-white transition-all" placeholder="Search players by name or position..." type="text" />
+              <input
+                className="w-full pl-10 pr-4 py-2.5 bg-[#151515] border border-[#262626] rounded-xl text-sm focus:ring-1 focus:ring-[#ff6a00] focus:border-[#ff6a00]/50 placeholder:text-[#a3a3a3]/70 text-white transition-all"
+                placeholder="Search players by name..."
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
             <div className="flex gap-3">
-              <select className="px-4 py-2.5 bg-[#151515] border border-[#262626] rounded-xl text-sm text-white focus:ring-1 focus:ring-[#ff6a00] focus:border-[#ff6a00]/50 cursor-pointer min-w-[140px]">
-                <option>Position: All</option>
-                <option>Point Guard</option>
-                <option>Shooting Guard</option>
-                <option>Small Forward</option>
-                <option>Power Forward</option>
-                <option>Center</option>
+              <select
+                value={posFilter}
+                onChange={(e) => setPositionFilter(e.target.value)}
+                className="px-4 py-2.5 bg-[#151515] border border-[#262626] rounded-xl text-sm text-white focus:ring-1 focus:ring-[#ff6a00] focus:border-[#ff6a00]/50 cursor-pointer min-w-[140px]"
+              >
+                <option value="">Position: All</option>
+                <option value="PG">Point Guard</option>
+                <option value="SG">Shooting Guard</option>
+                <option value="SF">Small Forward</option>
+                <option value="PF">Power Forward</option>
+                <option value="C">Center</option>
               </select>
-              <select className="px-4 py-2.5 bg-[#151515] border border-[#262626] rounded-xl text-sm text-white focus:ring-1 focus:ring-[#ff6a00] focus:border-[#ff6a00]/50 cursor-pointer min-w-[140px]">
-                <option>Class: All</option>
-                <option>2024</option>
-                <option>2025</option>
-                <option>2026</option>
-              </select>
-              <button className="px-3 py-2.5 bg-[#151515] border border-[#262626] rounded-xl hover:bg-[#202020] text-[#a3a3a3] hover:text-white transition-colors">
-                <span className="material-symbols-outlined text-[20px]">sort</span>
-              </button>
             </div>
           </div>
 
           {/* Player Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {players.map((player) => {
-              const perfLabel = getPerformanceLabel(player);
-              return (
-                <div
-                  key={player.id}
-                  className="group relative bg-[#151515] border border-[#262626] rounded-xl overflow-hidden hover:border-[#ff6a00]/50 hover:shadow-[0_0_20px_-5px_rgba(255,106,0,0.15)] transition-all duration-300 cursor-pointer"
-                  onClick={() => setSelectedPlayer(player.id)}
-                >
-                  <div className="aspect-[4/5] w-full relative overflow-hidden bg-[#121212]">
-                    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: `url("${player.image}")` }} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
-                      <button className="px-6 py-2.5 bg-[#ff6a00] hover:bg-[#cc5500] text-white font-bold rounded-lg shadow-[0_0_20px_rgba(255,106,0,0.4)] transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                        View Profile
-                      </button>
-                    </div>
-                    {player.badge && (
-                      <div className={`absolute top-3 right-3 backdrop-blur-md border px-2 py-1 rounded-md ${player.badge.color}`}>
-                        <span className="text-xs font-bold">{player.badge.label}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4 relative">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="text-lg font-bold text-white group-hover:text-[#ff6a00] transition-colors">{player.name}</h3>
-                        <div className="flex items-center gap-2 text-[#a3a3a3] text-sm mt-0.5">
-                          <span className="font-medium text-slate-300">{player.position}</span>
-                          <span className="text-[10px] text-[#262626]">&bull;</span>
-                          <span>Class of {player.classYear}</span>
-                        </div>
-                      </div>
-                      <div className="flex flex-col items-end">
-                        <span className="text-[10px] uppercase tracking-wider text-[#a3a3a3] font-medium">Elo Score</span>
-                        <span className="text-lg font-bold text-white">{player.elo}</span>
-                      </div>
-                    </div>
-                    <div className="w-full bg-[#262626] h-1.5 rounded-full overflow-hidden mt-3">
-                      <div className={`bg-gradient-to-r ${player.performanceColor} h-full rounded-full shadow-[0_0_10px_rgba(255,106,0,0.5)]`} style={{ width: `${player.performance}%` }} />
-                    </div>
-                    <div className="flex justify-between items-center mt-1">
-                      <span className="text-[10px] text-[#a3a3a3]">{perfLabel.label}</span>
-                      <span className={`text-[10px] font-bold ${perfLabel.color}`}>{player.performance}/100</span>
-                    </div>
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="bg-[#151515] border border-[#262626] rounded-xl overflow-hidden animate-pulse">
+                  <div className="aspect-[4/5] bg-[#121212]" />
+                  <div className="p-4">
+                    <div className="h-4 w-24 bg-[#262626] rounded mb-2" />
+                    <div className="h-3 w-16 bg-[#262626] rounded" />
                   </div>
                 </div>
-              );
-            })}
-
-            {/* Add New Player card */}
-            <div className="group relative bg-[#151515]/50 border-2 border-dashed border-[#262626] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-[#ff6a00]/50 hover:bg-[#151515] transition-all duration-300 aspect-[4/5] sm:aspect-auto">
-              <div className="w-16 h-16 rounded-full bg-[#202020] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
-                <span className="material-symbols-outlined text-[#a3a3a3] text-[32px] group-hover:text-[#ff6a00] transition-colors">add</span>
-              </div>
-              <h3 className="text-lg font-bold text-[#a3a3a3] group-hover:text-white transition-colors">Add New Player</h3>
-              <p className="text-xs text-[#a3a3a3]/60 mt-2">Import from scout database</p>
+              ))}
             </div>
-          </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {players.map((player: any) => {
+                const mmr = player.mmr || 50;
+                return (
+                  <div
+                    key={player.id}
+                    className="group relative bg-[#151515] border border-[#262626] rounded-xl overflow-hidden hover:border-[#ff6a00]/50 hover:shadow-[0_0_20px_-5px_rgba(255,106,0,0.15)] transition-all duration-300 cursor-pointer"
+                    onClick={() => setSelectedPlayer(player.id)}
+                  >
+                    <div className="aspect-[4/5] w-full relative overflow-hidden bg-[#121212] flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[64px] text-[#262626]">person</span>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
+                        <button className="px-6 py-2.5 bg-[#ff6a00] hover:bg-[#cc5500] text-white font-bold rounded-lg shadow-[0_0_20px_rgba(255,106,0,0.4)] transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                          View Profile
+                        </button>
+                      </div>
+                      <div className="absolute top-3 right-3 backdrop-blur-md border bg-black/60 border-white/10 px-2 py-1 rounded-md">
+                        <span className="text-xs font-bold text-[#ff6a00]">{player.position}</span>
+                      </div>
+                    </div>
+                    <div className="p-4 relative">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h3 className="text-lg font-bold text-white group-hover:text-[#ff6a00] transition-colors">{player.firstName} {player.lastName}</h3>
+                          <div className="flex items-center gap-2 text-[#a3a3a3] text-sm mt-0.5">
+                            <span className="font-medium text-slate-300">#{player.jerseyNumber || "00"}</span>
+                            <span className="text-[10px] text-[#262626]">&bull;</span>
+                            <span>Class of {player.graduationYear}</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="text-[10px] uppercase tracking-wider text-[#a3a3a3] font-medium">MMR</span>
+                          <span className="text-lg font-bold text-white">{Math.round(mmr)}</span>
+                        </div>
+                      </div>
+                      <PerformanceBar mmr={mmr} />
+                      <div className="flex justify-between items-center mt-1">
+                        <span className="text-[10px] text-[#a3a3a3]">Performance</span>
+                        <span className="text-[10px] font-bold text-slate-400">{Math.round(mmr)}/99</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {players.length === 0 && (
+                <div className="col-span-full text-center py-16">
+                  <span className="material-symbols-outlined text-slate-600 text-[48px] mb-4">group_off</span>
+                  <p className="text-slate-500">No players found.</p>
+                </div>
+              )}
+            </div>
+          )}
         </PageTransition>
 
         {/* Player Detail Sheet */}
@@ -158,12 +296,12 @@ const RosterPage = () => {
               <SheetTitle>Player Profile</SheetTitle>
             </VisuallyHidden>
             <div className="p-6">
-              <PlayerProfilePanel />
+              {selectedPlayer && <PlayerDetailPanel playerId={selectedPlayer} />}
             </div>
           </SheetContent>
         </Sheet>
       </main>
-    </div>
+    </AppLayout>
   );
 };
 

@@ -1,168 +1,273 @@
 import { Link } from "react-router-dom";
-import AppSidebar from "@/components/AppSidebar";
-import AppSidebarHeader from "@/components/AppSidebarHeader";
+import { useAuth } from "@/contexts/AuthContext";
+import { useMatches } from "@/hooks/api/useMatches";
+import { usePlayers } from "@/hooks/api/usePlayers";
+import AppLayout from "@/components/AppLayout";
 import PageTransition from "@/components/PageTransition";
 
-const DashboardPage = () => {
+function MmrBadge({ mmr }: { mmr: number }) {
+  const color =
+    mmr >= 80 ? "text-[#ff6a00] bg-[#ff6a00]/10 border-[#ff6a00]/20" :
+    mmr >= 60 ? "text-[#14b8a6] bg-[#14b8a6]/10 border-[#14b8a6]/20" :
+    mmr >= 40 ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" :
+    "text-slate-400 bg-slate-400/10 border-slate-400/20";
   return (
-    <div className="dark bg-[#0a0a0a] font-display text-slate-100 min-h-screen flex overflow-hidden">
-      <AppSidebar />
+    <span className={`text-xs font-bold px-1.5 py-0.5 rounded border ${color}`}>
+      {Math.round(mmr)}
+    </span>
+  );
+}
 
-      {/* Main */}
-      <main className="flex-1 flex flex-col h-screen overflow-y-auto">
-        {/* Mobile header */}
-        <header className="flex md:hidden items-center justify-between border-b border-[#262626] px-4 py-3 bg-[#151515]/90 backdrop-blur-md sticky top-0 z-40">
-          <AppSidebarHeader compact />
-          <button type="button" className="text-slate-400" aria-label="Menu">
-            <span className="material-symbols-outlined">menu</span>
-          </button>
-        </header>
+const DashboardPage = () => {
+  const { user } = useAuth();
+  const teamId = user?.team?.id;
+  const teamName = user?.team?.name || "Your Team";
 
-        <PageTransition className="flex-1 w-full max-w-[1440px] mx-auto p-6 md:p-8 flex flex-col gap-8">
-          {/* Title */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-              <h1 className="text-slate-100 text-2xl md:text-3xl font-bold leading-tight">Duke University Men's Basketball</h1>
-              <p className="text-[#a3a3a3] mt-1">Season Overview &bull; 2024-2025</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a1a1a] border border-[#262626] text-slate-300 hover:text-white hover:bg-[#262626] transition-colors text-sm font-medium">
-                <span className="material-symbols-outlined text-[18px]">calendar_today</span>
-                Schedule
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#ff6a00] hover:bg-[#cc5500] text-white transition-colors text-sm font-bold shadow-[0_0_20px_-5px_rgba(255,106,0,0.15)]">
-                <span className="material-symbols-outlined text-[18px]">add</span>
-                New Session
-              </button>
-            </div>
+  const { data: matchData, isLoading: matchesLoading } = useMatches({ teamId, limit: 10 });
+  const { data: playerData, isLoading: playersLoading } = usePlayers({ teamId, limit: 20 });
+
+  const matches = matchData?.data || [];
+  const players = playerData?.data || [];
+
+  // Compute stats from matches
+  const processedMatches = matches.filter((m: any) => m.isProcessed);
+  const wins = processedMatches.filter((m: any) => {
+    if (!m.homeScore || !m.awayScore) return false;
+    const isHome = m.homeTeamId === teamId;
+    return isHome ? m.homeScore > m.awayScore : m.awayScore > m.homeScore;
+  }).length;
+
+  // Average team MMR
+  const avgMmr = players.length > 0
+    ? (players.reduce((sum: number, p: any) => sum + (p.mmr || 50), 0) / players.length)
+    : 50;
+
+  // Average PPG from processed matches
+  const avgPpg = processedMatches.length > 0
+    ? (processedMatches.reduce((sum: number, m: any) => {
+        const isHome = m.homeTeamId === teamId;
+        return sum + (isHome ? (m.homeScore || 0) : (m.awayScore || 0));
+      }, 0) / processedMatches.length).toFixed(1)
+    : "--";
+
+  // Top performers sorted by MMR
+  const topPerformers = [...players]
+    .sort((a: any, b: any) => (b.mmr || 50) - (a.mmr || 50))
+    .slice(0, 4);
+
+  // Recent matches (last 5)
+  const recentMatches = processedMatches.slice(0, 5);
+
+  return (
+    <AppLayout>
+      <PageTransition className="flex-1 w-full max-w-[1440px] mx-auto p-6 md:p-8 flex flex-col gap-8">
+        {/* Title */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-slate-100 text-2xl md:text-3xl font-bold leading-tight">{teamName}</h1>
+            <p className="text-[#a3a3a3] mt-1">Season Overview &bull; 2025-2026</p>
           </div>
+          <div className="flex items-center gap-3">
+            <Link
+              to="/app/upload"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#ff6a00] hover:bg-[#cc5500] text-white transition-colors text-sm font-bold shadow-[0_0_20px_-5px_rgba(255,106,0,0.15)]"
+            >
+              <span className="material-symbols-outlined text-[18px]">add</span>
+              Upload Film
+            </Link>
+          </div>
+        </div>
 
-          {/* Stat Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { label: "Total Wins", value: "24", badge: "+4", badgeColor: "text-[#14b8a6] bg-[#14b8a6]/10 border-[#14b8a6]/20", sub: "Current streak: 6W", icon: "emoji_events" },
-              { label: "Team Elo Rank", value: "#4", badge: "Top 1%", badgeColor: "text-[#14b8a6] bg-[#14b8a6]/10 border-[#14b8a6]/20", sub: "National Standing", icon: "leaderboard" },
-              { label: "Avg PPG", value: "82.5", badge: "-1.2", badgeColor: "text-red-500 bg-red-500/10 border-red-500/20", sub: "Last 5 games", icon: "sports_basketball" },
-            ].map((stat) => (
-              <div key={stat.label} className="bg-[#151515]/80 backdrop-blur-md border border-[#262626] p-6 rounded-xl flex items-center justify-between group hover:border-[#ff6a00]/30 transition-all duration-300 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#ff6a00]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative z-10">
-                  <p className="text-[#a3a3a3] text-sm font-medium mb-1">{stat.label}</p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-slate-100">{stat.value}</span>
+        {/* Stat Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              label: "Total Wins",
+              value: matchesLoading ? "--" : String(wins),
+              badge: `${processedMatches.length} GP`,
+              badgeColor: "text-[#14b8a6] bg-[#14b8a6]/10 border-[#14b8a6]/20",
+              sub: `of ${processedMatches.length} processed matches`,
+              icon: "emoji_events",
+            },
+            {
+              label: "Avg Team MMR",
+              value: playersLoading ? "--" : avgMmr.toFixed(1),
+              badge: players.length ? `${players.length} players` : "",
+              badgeColor: "text-[#14b8a6] bg-[#14b8a6]/10 border-[#14b8a6]/20",
+              sub: "0-99 Scale",
+              icon: "leaderboard",
+            },
+            {
+              label: "Avg PPG",
+              value: matchesLoading ? "--" : String(avgPpg),
+              badge: processedMatches.length > 0 ? `${processedMatches.length} games` : "",
+              badgeColor: "text-slate-300 bg-slate-500/10 border-slate-500/20",
+              sub: "Points per game",
+              icon: "sports_basketball",
+            },
+          ].map((stat) => (
+            <div key={stat.label} className="bg-[#151515]/80 backdrop-blur-md border border-[#262626] p-6 rounded-xl flex items-center justify-between group hover:border-[#ff6a00]/30 transition-all duration-300 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#ff6a00]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <p className="text-[#a3a3a3] text-sm font-medium mb-1">{stat.label}</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-3xl font-bold text-slate-100">{stat.value}</span>
+                  {stat.badge && (
                     <span className={`text-xs font-bold px-1.5 py-0.5 rounded border ${stat.badgeColor}`}>{stat.badge}</span>
-                  </div>
-                  <p className="text-xs text-slate-500 mt-2">{stat.sub}</p>
+                  )}
                 </div>
-                <div className="relative z-10 size-12 rounded-full bg-[#1a1a1a] border border-[#262626] flex items-center justify-center text-[#ff6a00] shadow-[0_0_15px_-3px_rgba(255,106,0,0.3)]">
-                  <span className="material-symbols-outlined">{stat.icon}</span>
-                </div>
+                <p className="text-xs text-slate-500 mt-2">{stat.sub}</p>
               </div>
-            ))}
-          </div>
+              <div className="relative z-10 size-12 rounded-full bg-[#1a1a1a] border border-[#262626] flex items-center justify-center text-[#ff6a00] shadow-[0_0_15px_-3px_rgba(255,106,0,0.3)]">
+                <span className="material-symbols-outlined">{stat.icon}</span>
+              </div>
+            </div>
+          ))}
+        </div>
 
-          {/* Recent Matches */}
-          <div className="bg-[#151515]/80 backdrop-blur-md border border-[#262626] rounded-xl overflow-hidden flex flex-col shadow-[0_4px_6px_-1px_rgba(0,0,0,0.5),0_2px_4px_-1px_rgba(0,0,0,0.3)]">
-            <div className="p-5 border-b border-[#262626] flex justify-between items-center bg-[#151515]">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#ff6a00] text-[20px]">history</span>
-                <h3 className="text-lg font-bold text-slate-100">Recent Matches</h3>
-              </div>
-              <a className="text-sm font-medium text-[#a3a3a3] hover:text-[#ff6a00] transition-colors" href="#">View All Schedule</a>
+        {/* Recent Matches */}
+        <div className="bg-[#151515]/80 backdrop-blur-md border border-[#262626] rounded-xl overflow-hidden flex flex-col shadow-[0_4px_6px_-1px_rgba(0,0,0,0.5),0_2px_4px_-1px_rgba(0,0,0,0.3)]">
+          <div className="p-5 border-b border-[#262626] flex justify-between items-center bg-[#151515]">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#ff6a00] text-[20px]">history</span>
+              <h3 className="text-lg font-bold text-slate-100">Recent Matches</h3>
             </div>
-            <div className="divide-y divide-[#262626] bg-[#0a0a0a]">
-              {[
-                { month: "Feb", day: "24", opponent: "NC State", opColor: "bg-red-900", opInitial: "N", score: "84 - 76", scoreColor: "text-[#14b8a6]", result: "WIN", resultColor: "bg-green-500/10 text-green-500 border-green-500/20" },
-                { month: "Feb", day: "21", opponent: "Miami", opColor: "bg-orange-900", opInitial: "M", score: "92 - 88", scoreColor: "text-[#14b8a6]", result: "WIN", resultColor: "bg-green-500/10 text-green-500 border-green-500/20" },
-                { month: "Feb", day: "17", opponent: "UNC", opColor: "bg-sky-900", opInitial: "U", score: "78 - 82", scoreColor: "text-red-400", result: "LOSS", resultColor: "bg-red-500/10 text-red-500 border-red-500/20" },
-              ].map((match) => (
-                <div key={match.day} className="p-4 hover:bg-white/5 transition-colors flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-6 w-full md:w-auto">
-                    <div className="flex flex-col items-center w-12 text-center">
-                      <span className="text-xs font-bold text-[#a3a3a3] uppercase">{match.month}</span>
-                      <span className="text-xl font-bold text-slate-100">{match.day}</span>
+            <Link className="text-sm font-medium text-[#a3a3a3] hover:text-[#ff6a00] transition-colors" to="/app/analytics">View All</Link>
+          </div>
+          <div className="divide-y divide-[#262626] bg-[#0a0a0a]">
+            {matchesLoading ? (
+              <div className="p-8 flex justify-center">
+                <div className="w-6 h-6 border-2 border-[#ff6a00] border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : recentMatches.length === 0 ? (
+              <div className="p-8 text-center text-slate-500 text-sm">
+                No processed matches yet. <Link to="/app/upload" className="text-[#ff6a00] hover:underline">Upload game film</Link> to get started.
+              </div>
+            ) : (
+              recentMatches.map((match: any) => {
+                const isHome = match.homeTeamId === teamId;
+                const teamScore = isHome ? match.homeScore : match.awayScore;
+                const opponentScore = isHome ? match.awayScore : match.homeScore;
+                const won = teamScore > opponentScore;
+                const opponentTeam = isHome ? match.awayTeam : match.homeTeam;
+                const date = new Date(match.scheduledDate);
+                const month = date.toLocaleString("default", { month: "short" });
+                const day = date.getDate();
+
+                return (
+                  <div key={match.id} className="p-4 hover:bg-white/5 transition-colors flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-6 w-full md:w-auto">
+                      <div className="flex flex-col items-center w-12 text-center">
+                        <span className="text-xs font-bold text-[#a3a3a3] uppercase">{month}</span>
+                        <span className="text-xl font-bold text-slate-100">{day}</span>
+                      </div>
+                      <div className="h-10 w-px bg-[#262626] hidden md:block" />
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className="flex items-center gap-3 w-32 justify-end">
+                          <span className="font-bold text-slate-100 text-right truncate">{user?.team?.abbreviation || teamName}</span>
+                          <div className="size-8 rounded-full bg-[#ff6a00]/20 border border-[#262626] flex items-center justify-center text-[10px] font-bold text-[#ff6a00]">
+                            {user?.team?.abbreviation?.charAt(0) || "H"}
+                          </div>
+                        </div>
+                        <div className={`px-3 py-1 rounded bg-[#151515] border border-[#262626] text-sm font-mono font-bold ${won ? "text-[#14b8a6]" : "text-red-400"}`}>
+                          {teamScore} - {opponentScore}
+                        </div>
+                        <div className="flex items-center gap-3 w-32">
+                          <div className="size-8 rounded-full bg-slate-700 border border-[#262626] flex items-center justify-center text-[10px] font-bold text-white">
+                            {opponentTeam?.abbreviation?.charAt(0) || "A"}
+                          </div>
+                          <span className="font-bold text-slate-400 truncate">{opponentTeam?.name || "Opponent"}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="h-10 w-px bg-[#262626] hidden md:block" />
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="flex items-center gap-3 w-32 justify-end">
-                        <span className="font-bold text-slate-100 text-right">Duke</span>
-                        <div className="size-8 rounded-full bg-blue-900 border border-[#262626] flex items-center justify-center text-[10px] font-bold text-white">D</div>
-                      </div>
-                      <div className={`px-3 py-1 rounded bg-[#151515] border border-[#262626] text-sm font-mono font-bold ${match.scoreColor}`}>
-                        {match.score}
-                      </div>
-                      <div className="flex items-center gap-3 w-32">
-                        <div className={`size-8 rounded-full ${match.opColor} border border-[#262626] flex items-center justify-center text-[10px] font-bold text-white`}>{match.opInitial}</div>
-                        <span className="font-bold text-slate-400">{match.opponent}</span>
-                      </div>
+                    <div className="flex items-center gap-4 w-full md:w-auto justify-end">
+                      <span className={`px-2 py-0.5 rounded text-xs font-bold border ${
+                        won
+                          ? "bg-green-500/10 text-green-500 border-green-500/20"
+                          : "bg-red-500/10 text-red-500 border-red-500/20"
+                      }`}>
+                        {won ? "WIN" : "LOSS"}
+                      </span>
+                      <Link
+                        to={`/app/analytics?matchId=${match.id}`}
+                        className="text-xs font-medium text-[#ff6a00] hover:text-white transition-colors flex items-center gap-1 group"
+                      >
+                        View Breakdown
+                        <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                      </Link>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 w-full md:w-auto justify-end">
-                    <span className={`px-2 py-0.5 rounded text-xs font-bold border ${match.resultColor}`}>{match.result}</span>
-                    <button className="text-xs font-medium text-[#ff6a00] hover:text-white transition-colors flex items-center gap-1 group">
-                      View Breakdown
-                      <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                    </button>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        {/* Key Performers */}
+        <div className="flex flex-col gap-4 pb-8">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-bold text-slate-100">Key Performers</h3>
+            <Link to="/app/roster" className="text-sm font-medium text-[#a3a3a3] hover:text-[#ff6a00] transition-colors">
+              View Roster
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {playersLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-[#151515]/80 border border-[#262626] p-4 rounded-xl animate-pulse">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="size-12 rounded-full bg-[#262626]" />
+                    <div className="flex flex-col gap-2">
+                      <div className="h-3 w-24 bg-[#262626] rounded" />
+                      <div className="h-2 w-16 bg-[#262626] rounded" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="h-14 bg-[#0a0a0a] rounded" />
+                    <div className="h-14 bg-[#0a0a0a] rounded" />
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Key Performers */}
-          <div className="flex flex-col gap-4 pb-8">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-100">Key Performers</h3>
-              <div className="flex gap-2">
-                <button className="size-8 rounded-full border border-[#262626] bg-[#151515] flex items-center justify-center text-[#a3a3a3] hover:text-white hover:border-[#ff6a00]/50 transition-colors">
-                  <span className="material-symbols-outlined text-[20px]">chevron_left</span>
-                </button>
-                <button className="size-8 rounded-full border border-[#262626] bg-[#151515] flex items-center justify-center text-[#a3a3a3] hover:text-white hover:border-[#ff6a00]/50 transition-colors">
-                  <span className="material-symbols-outlined text-[20px]">chevron_right</span>
-                </button>
+              ))
+            ) : topPerformers.length === 0 ? (
+              <div className="col-span-4 text-center text-slate-500 text-sm py-8">
+                No players on the roster yet. <Link to="/app/roster" className="text-[#ff6a00] hover:underline">Add players</Link> to see key performers.
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                { name: "Jalen Green", num: "#4", year: "Senior", pos: "SG", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAtCbPF0kMXSGfBn8OTm4vElX4YzCWkP2TPuLMTVmxcZua0QunA24KNB5BDCblGkwOV5kK3pd4kLzxP1jpqWqXpR6oRit5YngMknWx0zhXFB3bktBqexDf5e0a83OFQcsNimXY0Wpio88MGjm2MfJCHt699DLFtsr97AY142efi8v87ybxMTyiPhMbyLCOsQle6-W5Jx-xzA6KS9oAUeBijV02D947IvSw1lorC9jF7gvh20XfRSU4PiSrRmcerb9g2uuOImUb06WME", stat1: { label: "PPG", value: "24.5", color: "text-[#14b8a6]" }, stat2: { label: "RPG", value: "6.2", color: "text-slate-300" } },
-                { name: "Marcus Hill", num: "#1", year: "Junior", pos: "PG", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDZMxh2LPiYSR3m2_fHFLCzw7hnyWaLSuuDJhmLCAHygI9dnbRk8nXf1oUqMcPQLV5051yWhBhaE1OQjQp1dMH3DX0mmL8bCtdiOD2kdVPptGQtl2O2jA0v8Wq21tmlZaVxc-ijfNShIhZkvsXXxv6cweDntzryOXy2PXflnB5SFCHKN8T-AUJLOUhV7ElQMGXIqZ7VnccuC4GMNfSQuMsJFwDXbjDp8Iazyk1_iGfa64kn-1Fmubzwwfugw-EMzCBN9kJ2drgkYJjq", stat1: { label: "PPG", value: "18.2", color: "text-slate-300" }, stat2: { label: "APG", value: "7.8", color: "text-[#14b8a6]" } },
-                { name: "David Chen", num: "#32", year: "Soph.", pos: "C", img: null, stat1: { label: "PPG", value: "12.4", color: "text-slate-300" }, stat2: { label: "RPG", value: "10.1", color: "text-[#14b8a6]" } },
-                { name: "Tyrell Jones", num: "#15", year: "Freshman", pos: "SF", img: null, stat1: { label: "PPG", value: "9.8", color: "text-slate-300" }, stat2: { label: "STL", value: "2.3", color: "text-[#14b8a6]" } },
-              ].map((player) => (
-                <div key={player.name} className="bg-[#151515]/80 backdrop-blur-md border border-[#262626] p-4 rounded-xl hover:bg-[#1a1a1a] transition-colors cursor-pointer group">
+            ) : (
+              topPerformers.map((player: any) => (
+                <div key={player.id} className="bg-[#151515]/80 backdrop-blur-md border border-[#262626] p-4 rounded-xl hover:bg-[#1a1a1a] transition-colors cursor-pointer group">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="relative">
-                      {player.img ? (
-                        <div className="size-12 rounded-full bg-cover bg-center border border-[#262626]" style={{ backgroundImage: `url("${player.img}")` }} />
-                      ) : (
-                        <div className="size-12 rounded-full bg-slate-800 border border-[#262626] flex items-center justify-center">
-                          <span className="material-symbols-outlined text-slate-500">person</span>
-                        </div>
-                      )}
-                      <div className="absolute -bottom-1 -right-1 bg-[#ff6a00] text-white text-[10px] font-bold px-1.5 rounded-full border border-[#0a0a0a]">{player.pos}</div>
+                      <div className="size-12 rounded-full bg-slate-800 border border-[#262626] flex items-center justify-center">
+                        <span className="material-symbols-outlined text-slate-500">person</span>
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 bg-[#ff6a00] text-white text-[10px] font-bold px-1.5 rounded-full border border-[#0a0a0a]">
+                        {player.position}
+                      </div>
                     </div>
                     <div>
-                      <h4 className="text-slate-100 font-bold text-sm">{player.name}</h4>
-                      <p className="text-[#a3a3a3] text-xs">{player.num} &bull; {player.year}</p>
+                      <h4 className="text-slate-100 font-bold text-sm">{player.firstName} {player.lastName}</h4>
+                      <p className="text-[#a3a3a3] text-xs">#{player.jerseyNumber || "00"} &bull; {player.graduationYear}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="bg-[#0a0a0a]/50 rounded p-2 text-center border border-[#262626]">
-                      <span className="block text-[10px] text-[#a3a3a3] uppercase">{player.stat1.label}</span>
-                      <span className={`text-lg font-bold ${player.stat1.color}`}>{player.stat1.value}</span>
+                      <span className="block text-[10px] text-[#a3a3a3] uppercase">MMR</span>
+                      <div className="flex items-center justify-center mt-1">
+                        <MmrBadge mmr={player.mmr || 50} />
+                      </div>
                     </div>
                     <div className="bg-[#0a0a0a]/50 rounded p-2 text-center border border-[#262626]">
-                      <span className="block text-[10px] text-[#a3a3a3] uppercase">{player.stat2.label}</span>
-                      <span className={`text-lg font-bold ${player.stat2.color}`}>{player.stat2.value}</span>
+                      <span className="block text-[10px] text-[#a3a3a3] uppercase">Stars</span>
+                      <span className="text-lg font-bold text-slate-300">{"★".repeat(player.stars || 0)}</span>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              ))
+            )}
           </div>
-        </PageTransition>
-      </main>
-    </div>
+        </div>
+      </PageTransition>
+    </AppLayout>
   );
 };
 

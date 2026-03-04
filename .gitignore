@@ -21,9 +21,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Editor / IDE
+# Editor / IDE / Agent worktrees
 .idea/
 .vscode/*
+.claude/
 !.vscode/extensions.json
 !.vscode/settings.json
 *.swp
@@ -55,3 +56,28 @@ coverage/
 
 # Optional
 *.pem
+
+# Server
+server/node_modules/
+server/dist/
+server/.env
+
+# Python Worker
+worker/venv/
+worker/.venv/
+worker/models/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+.python-version
+
+# Prisma — migration files and migration_lock.toml SHOULD be committed
+# (they are required by other engineers to sync their local databases)
+
+# Python test / coverage artifacts
+.pytest_cache/
+**/.pytest_cache/
+htmlcov/
+.coverage
+*.cover
