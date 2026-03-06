@@ -1,6 +1,6 @@
 import { useAuth } from "@/contexts/AuthContext";
-import AppLayout from "@/components/AppLayout";
-import PageTransition from "@/components/PageTransition";
+import AppLayout from "@/components/app/AppLayout";
+import PageTransition from "@/components/app/PageTransition";
 
 const SettingsPage = () => {
   const { user } = useAuth();

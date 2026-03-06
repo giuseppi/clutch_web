@@ -3,8 +3,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { usePlayers, usePlayer, usePlayerEloHistory, usePlayerStats } from "@/hooks/api/usePlayers";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import AppLayout from "@/components/AppLayout";
-import PageTransition from "@/components/PageTransition";
+import AppLayout from "@/components/app/AppLayout";
+import PageTransition from "@/components/app/PageTransition";
 
 function MmrBadge({ mmr }: { mmr: number }) {
   const color =

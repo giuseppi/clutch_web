@@ -5,8 +5,8 @@ import { useMatches } from "@/hooks/api/useMatches";
 import { useMatchAnalytics } from "@/hooks/api/useAnalytics";
 import { usePlayTags } from "@/hooks/api/useAnalytics";
 import { useMatchHighlights } from "@/hooks/api/useAnalytics";
-import AppLayout from "@/components/AppLayout";
-import PageTransition from "@/components/PageTransition";
+import AppLayout from "@/components/app/AppLayout";
+import PageTransition from "@/components/app/PageTransition";
 
 const AnalyticsPage = () => {
   const { user } = useAuth();

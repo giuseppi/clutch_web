@@ -1,8 +1,8 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { usePlayer, usePlayerEloHistory, usePlayerStats } from "@/hooks/api/usePlayers";
 import { usePlayerHighlights } from "@/hooks/api/useAnalytics";
-import AppLayout from "@/components/AppLayout";
-import PageTransition from "@/components/PageTransition";
+import AppLayout from "@/components/app/AppLayout";
+import PageTransition from "@/components/app/PageTransition";
 
 function MmrRing({ mmr }: { mmr: number }) {
   const pct = Math.min(100, (mmr / 99) * 100);

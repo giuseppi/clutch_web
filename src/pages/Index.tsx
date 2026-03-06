@@ -1,9 +1,9 @@
-import Navbar from "@/components/Navbar";
-import ScrollytellingHero from "@/components/ScrollytellingHero";
-import FeaturesGrid from "@/components/FeaturesGrid";
-import HowItWorks from "@/components/HowItWorks";
-import FooterCTA from "@/components/FooterCTA";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/landing/Navbar";
+import ScrollytellingHero from "@/components/landing/ScrollytellingHero";
+import FeaturesGrid from "@/components/landing/FeaturesGrid";
+import HowItWorks from "@/components/landing/HowItWorks";
+import FooterCTA from "@/components/landing/FooterCTA";
+import Footer from "@/components/landing/Footer";
 
 const Index = () => {
   return (

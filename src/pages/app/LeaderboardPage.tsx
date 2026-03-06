@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLeaderboard } from "@/hooks/api/useLeaderboard";
-import AppLayout from "@/components/AppLayout";
-import PageTransition from "@/components/PageTransition";
+import AppLayout from "@/components/app/AppLayout";
+import PageTransition from "@/components/app/PageTransition";
 
 function StarBadge({ count }: { count: number }) {
   if (count >= 5) return <span className="text-[10px] font-bold text-[#ff6a00] bg-[#ff6a00]/10 border border-[#ff6a00]/20 px-1.5 py-0.5 rounded-full">★★★★★</span>;

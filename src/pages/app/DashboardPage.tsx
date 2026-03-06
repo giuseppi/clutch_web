@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMatches } from "@/hooks/api/useMatches";
 import { usePlayers } from "@/hooks/api/usePlayers";
-import AppLayout from "@/components/AppLayout";
-import PageTransition from "@/components/PageTransition";
+import AppLayout from "@/components/app/AppLayout";
+import PageTransition from "@/components/app/PageTransition";
 
 function MmrBadge({ mmr }: { mmr: number }) {
   const color =

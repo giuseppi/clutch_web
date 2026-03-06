@@ -3,8 +3,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useScheduledMatches } from "@/hooks/api/useMatches";
 import { useSessions, useCreateSession } from "@/hooks/api/useSessions";
 import { usePresignedUrl, useConfirmUpload, useJobStatus } from "@/hooks/api/useUpload";
-import AppLayout from "@/components/AppLayout";
-import PageTransition from "@/components/PageTransition";
+import AppLayout from "@/components/app/AppLayout";
+import PageTransition from "@/components/app/PageTransition";
 
 type UploadTab = "match" | "session";
 type UploadStage = "select" | "upload" | "processing" | "complete";
