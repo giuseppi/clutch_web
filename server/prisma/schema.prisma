@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  // For Supabase: add directUrl = env("DIRECT_URL") and set DIRECT_URL to the non-pooler DB URL for migrations.
 }
 
 // ─── Enums ──────────────────────────────────────────────

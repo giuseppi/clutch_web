@@ -205,8 +205,9 @@ def main():
 
     while True:
         try:
-            # Block until a job is available
-            result = r.blpop("clutch:video:pending", timeout=0)
+            # Finite timeout prevents Upstash idle connection drops in production.
+            # The while True loop retries immediately on timeout (result=None).
+            result = r.blpop("clutch:video:pending", timeout=30)
             if not result:
                 continue
 

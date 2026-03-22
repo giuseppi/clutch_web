@@ -12,6 +12,9 @@ import jobRoutes from './routes/jobs.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
+// After all imports: if you never see the next line, something in the import graph is hanging during load.
+console.log('[clutch-api] modules loaded, creating app…');
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -41,6 +44,7 @@ app.use('/api/v1/analytics', analyticsRoutes);
 app.use(errorHandler);
 
 // ─── Start Server ───────────────────────────────────────
+console.log(`[clutch-api] binding port ${PORT}…`);
 app.listen(PORT, () => {
   console.log(`\n🏀 Clutch API server running on http://localhost:${PORT}`);
   console.log(`   Health check: http://localhost:${PORT}/health`);

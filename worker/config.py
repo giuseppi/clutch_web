@@ -1,5 +1,6 @@
 import os
 
+# All values default to local Docker dev. Production (Supabase/Upstash) must set env vars explicitly.
 REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
 S3_BUCKET = os.environ.get("S3_BUCKET", "clutch-uploads")
 S3_TRAJECTORIES_BUCKET = os.environ.get("S3_TRAJECTORIES_BUCKET", "clutch-trajectories")
