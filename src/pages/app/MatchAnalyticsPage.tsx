@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import AppSidebar from "@/components/AppSidebar";
 import AppSidebarHeader from "@/components/AppSidebarHeader";
-import PageTransition from "@/components/PageTransition";
+import PageTransition from "@/components/app/PageTransition";
 
 const profileImageUrl =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuD6qnS3mKT0dGRhr0J1fh20c2WJc0gW8PpJAx5ELf-1z7ScU9kwNmlv4mgVjCCME7QeRtKaqI1Vlr-MTVXCZ2ZpO1ILFDpkCKxhFVUBv1HVwP07132C7FEHYQEQz0GzXTwPxSOYuuIFVg7qT6EYhzLkp8HezVQAkNlshaKkAXI56UvRnXFxcm4f18D5SI9pVeXWlI3WZgwYsU2TaXBAYhhYlDxrKtU0DujUe_jyekKyX5DeMW4laqgYfarHb2Co8e2lQG2P4y3E8tuJ";

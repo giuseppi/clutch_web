@@ -1,0 +1,369 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // For Supabase: add directUrl = env("DIRECT_URL") and set DIRECT_URL to the non-pooler DB URL for migrations.
+}
+
+// ─── Enums ──────────────────────────────────────────────
+
+enum UserRole {
+  COACH
+  SCOUT
+  ATHLETE
+}
+
+enum JobStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum JobType {
+  MATCH
+  SESSION
+}
+
+enum MatchResult {
+  WIN
+  LOSS
+  DRAW
+}
+
+enum SessionType {
+  PRACTICE
+  SCRIMMAGE
+  TRAINING
+}
+
+enum TeamLevel {
+  HIGH_SCHOOL
+  COLLEGE
+}
+
+// ─── Models ─────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  role         UserRole @default(COACH)
+  avatarUrl    String?
+
+  // Coach & Athlete link to a team
+  teamId String?
+  team   Team?   @relation(fields: [teamId], references: [id])
+
+  // Athlete links to their Player record
+  playerId String? @unique
+  player   Player? @relation(fields: [playerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  videoJobs VideoJob[]
+
+  @@map("users")
+}
+
+model Team {
+  id             String    @id @default(uuid())
+  name           String
+  schoolName     String
+  abbreviation   String    @unique
+  conference     String?
+  state          String?
+  classification String?
+  level          TeamLevel @default(HIGH_SCHOOL)
+  logoUrl        String?
+  primaryColor   String?
+  secondaryColor String?
+
+  // Coach-controlled visibility for athletes
+  visibilitySettings Json @default("{\"athleteCanViewTeamStats\":true,\"athleteCanViewOwnAnalytics\":true,\"athleteCanViewLeaderboard\":true}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users       User[]
+  players     Player[]
+  homeMatches Match[]   @relation("HomeTeam")
+  awayMatches Match[]   @relation("AwayTeam")
+  sessions    Session[]
+
+  @@map("teams")
+}
+
+model Player {
+  id             String    @id @default(uuid())
+  firstName      String
+  lastName       String
+  position       String
+  jerseyNumber   String?
+  heightInches   Int?
+  weightLbs      Int?
+  birthDate      DateTime?
+  graduationYear Int
+  photoUrl       String?
+
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id])
+
+  // MMR: 0-99 scale, default 50
+  mmr        Float   @default(50)
+  stars      Int     @default(0)
+  isVerified Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user           User?
+  matchStats     MatchStat[]
+  sessionStats   SessionStat[]
+  eloHistory     EloHistory[]
+  playTags       PlayTag[]
+  highlightClips HighlightClip[]
+
+  @@map("players")
+}
+
+model Match {
+  id            String       @id @default(uuid())
+  scheduledDate DateTime
+  venue         String?
+  matchCode     String       @unique
+  homeTeamId    String
+  homeTeam      Team         @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeamId    String
+  awayTeam      Team         @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  homeScore     Int?
+  awayScore     Int?
+  result        MatchResult?
+  season        String
+  isProcessed   Boolean      @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  videoJobs      VideoJob[]
+  matchStats     MatchStat[]
+  playTags       PlayTag[]
+  highlightClips HighlightClip[]
+
+  @@map("matches")
+}
+
+model Session {
+  id          String      @id @default(uuid())
+  title       String
+  sessionType SessionType @default(PRACTICE)
+  date        DateTime
+  notes       String?
+
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id])
+
+  isProcessed Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  videoJobs    VideoJob[]
+  sessionStats SessionStat[]
+  playTags     PlayTag[]
+
+  @@map("sessions")
+}
+
+model MatchStat {
+  id       String @id @default(uuid())
+  matchId  String
+  match    Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  playerId String
+  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  // Basic box score
+  minutes     Float @default(0)
+  points      Int   @default(0)
+  fgMade      Int   @default(0)
+  fgAttempted Int   @default(0)
+  fg3Made     Int   @default(0)
+  fg3Attempted Int  @default(0)
+  ftMade      Int   @default(0)
+  ftAttempted Int   @default(0)
+  offRebounds Int   @default(0)
+  defRebounds Int   @default(0)
+  assists     Int   @default(0)
+  steals      Int   @default(0)
+  blocks      Int   @default(0)
+  turnovers   Int   @default(0)
+  fouls       Int   @default(0)
+
+  // Advanced stats (computed by analytics engine)
+  ppp       Float? // Points per possession
+  efgPct    Float? // Effective FG%
+  usgPct    Float? // Usage rate
+  toPct     Float? // Turnover rate
+  orbPct    Float? // Offensive rebound %
+  ftr       Float? // Free throw rate
+  plusMinus  Int?   // +/-
+
+  createdAt DateTime @default(now())
+
+  @@unique([matchId, playerId])
+  @@map("match_stats")
+}
+
+model SessionStat {
+  id        String  @id @default(uuid())
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  playerId  String
+  player    Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  // Same shape as MatchStat but isolated — never feeds MMR
+  minutes      Float @default(0)
+  points       Int   @default(0)
+  fgMade       Int   @default(0)
+  fgAttempted  Int   @default(0)
+  fg3Made      Int   @default(0)
+  fg3Attempted Int   @default(0)
+  ftMade       Int   @default(0)
+  ftAttempted  Int   @default(0)
+  offRebounds  Int   @default(0)
+  defRebounds  Int   @default(0)
+  assists      Int   @default(0)
+  steals       Int   @default(0)
+  blocks       Int   @default(0)
+  turnovers    Int   @default(0)
+  fouls        Int   @default(0)
+
+  ppp      Float?
+  efgPct   Float?
+  usgPct   Float?
+  toPct    Float?
+  orbPct   Float?
+  ftr      Float?
+  plusMinus Int?
+
+  createdAt DateTime @default(now())
+
+  @@unique([sessionId, playerId])
+  @@map("session_stats")
+}
+
+model VideoJob {
+  id           String  @id @default(uuid())
+  type         JobType @default(MATCH)
+
+  // Link to either match or session
+  matchId   String?
+  match     Match?   @relation(fields: [matchId], references: [id])
+  sessionId String?
+  session   Session? @relation(fields: [sessionId], references: [id])
+
+  uploadedById String
+  uploadedBy   User   @relation(fields: [uploadedById], references: [id])
+
+  // S3 references
+  rawVideoS3Key String
+  rawVideoSize  BigInt?
+  duration      Float?
+
+  // Jersey metadata (for match uploads)
+  homeJerseyColor String?
+  awayJerseyColor String?
+
+  // Processing state
+  status       JobStatus @default(QUEUED)
+  progress     Int       @default(0)
+  errorMessage String?
+  startedAt    DateTime?
+  completedAt  DateTime?
+
+  trajectoryLog TrajectoryLog?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("video_jobs")
+}
+
+model TrajectoryLog {
+  id         String   @id @default(uuid())
+  videoJobId String   @unique
+  videoJob   VideoJob @relation(fields: [videoJobId], references: [id], onDelete: Cascade)
+
+  trajectoryS3Key String
+  frameCount      Int?
+  playerCount     Int?
+  eventsDetected  Int    @default(0)
+  processingTimeMs Int?
+
+  createdAt DateTime @default(now())
+
+  @@map("trajectory_logs")
+}
+
+model EloHistory {
+  id             String  @id @default(uuid())
+  playerId       String
+  player         Player  @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  matchId        String?
+  previousRating Float
+  newRating      Float
+  delta          Float
+  reason         String?
+
+  createdAt DateTime @default(now())
+
+  @@index([playerId, createdAt])
+  @@map("elo_history")
+}
+
+model PlayTag {
+  id        String @id @default(uuid())
+  label     String
+  notes     String?
+  timestamp Float  // seconds into video
+  statType  String? // e.g. "PPP", "eFG%", "3PT", "assist"
+
+  // Link to match or session video
+  matchId   String?
+  match     Match?   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  sessionId String?
+  session   Session? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  // Optional link to specific player
+  playerId String?
+  player   Player? @relation(fields: [playerId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("play_tags")
+}
+
+model HighlightClip {
+  id             String @id @default(uuid())
+  playerId       String
+  player         Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  matchId        String
+  match          Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
+
+  startTimestamp Float  // seconds
+  endTimestamp   Float  // seconds
+  eventType      String // "3PT_MADE", "BLOCK", "STEAL", "DUNK", "AND1"
+  description    String?
+  clipS3Key      String? // Optional: pre-cut clip stored in S3
+
+  createdAt DateTime @default(now())
+
+  @@map("highlight_clips")
+}
