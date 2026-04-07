@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '@/lib/api';
-import { supabase, useSupabaseAuth } from '@/lib/supabase';
+// import { supabase, useSupabaseAuth } from '@/lib/supabase';
 
 interface User {
   id: string;
@@ -36,15 +36,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const refreshUser = useCallback(async () => {
-    // Check for active session (Supabase or localStorage)
-    let hasSession = false;
-
-    if (useSupabaseAuth && supabase) {
-      const { data: { session } } = await supabase.auth.getSession();
-      hasSession = !!session;
-    } else {
-      hasSession = !!localStorage.getItem('clutch_access_token');
-    }
+    // Supabase session check (disabled):
+    // if (useSupabaseAuth && supabase) {
+    //   const { data: { session } } = await supabase.auth.getSession();
+    //   hasSession = !!session;
+    // } else {
+    const hasSession = !!localStorage.getItem('clutch_access_token');
+    // }
 
     if (!hasSession) {
       setUser(null);
@@ -53,14 +51,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      // /auth/me always works — reads full user profile from our users table
       const { data } = await api.get('/auth/me');
       setUser(data);
     } catch {
-      if (!useSupabaseAuth) {
-        localStorage.removeItem('clutch_access_token');
-        localStorage.removeItem('clutch_refresh_token');
-      }
+      localStorage.removeItem('clutch_access_token');
+      localStorage.removeItem('clutch_refresh_token');
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -70,48 +65,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     refreshUser();
 
-    // Listen for Supabase auth state changes (sign in/out from other tabs, token refresh)
-    if (useSupabaseAuth && supabase) {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (session) {
-          refreshUser();
-        } else {
-          setUser(null);
-        }
-      });
-      return () => subscription.unsubscribe();
-    }
+    // Supabase auth listener (disabled):
+    // if (useSupabaseAuth && supabase) {
+    //   const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    //     ...
+    //   });
+    //   return () => subscription.unsubscribe();
+    // }
   }, [refreshUser]);
 
   const login = async (email: string, password: string): Promise<User> => {
-    if (useSupabaseAuth && supabase) {
-      // Production: sign in via Supabase Auth
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+    // Supabase sign-in (disabled):
+    // if (useSupabaseAuth && supabase) {
+    //   const { error } = await supabase.auth.signInWithPassword({ email, password });
+    //   ...
+    // }
 
-      // Fetch full user profile from our backend
-      const { data } = await api.get('/auth/me');
-      setUser(data);
-      return data;
-    } else {
-      // Local dev: sign in via custom Express endpoint
-      const { data } = await api.post('/auth/login', { email, password });
-      localStorage.setItem('clutch_access_token', data.accessToken);
-      localStorage.setItem('clutch_refresh_token', data.refreshToken);
-      setUser(data.user);
-      return data.user;
-    }
+    const { data } = await api.post('/auth/login', { email, password });
+    localStorage.setItem('clutch_access_token', data.accessToken);
+    localStorage.setItem('clutch_refresh_token', data.refreshToken);
+    setUser(data.user);
+    return data.user;
   };
 
   const logout = async () => {
-    if (useSupabaseAuth && supabase) {
-      await supabase.auth.signOut();
-    } else {
-      localStorage.removeItem('clutch_access_token');
-      localStorage.removeItem('clutch_refresh_token');
-    }
+    // Supabase sign-out (disabled):
+    // if (useSupabaseAuth && supabase) {
+    //   await supabase.auth.signOut();
+    // }
+
+    localStorage.removeItem('clutch_access_token');
+    localStorage.removeItem('clutch_refresh_token');
     setUser(null);
-    window.location.href = '/app/login';
+    window.location.href = "/";
   };
 
   return (

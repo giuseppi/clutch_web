@@ -21,7 +21,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/app/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Role-based access

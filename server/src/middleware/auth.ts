@@ -19,11 +19,8 @@ declare global {
 }
 
 /**
- * Dual-mode JWT verification:
- * - Production (Supabase): verifies with SUPABASE_JWT_SECRET, reads user ID from `sub`
- * - Local dev (custom): verifies with JWT_SECRET, reads user ID from `userId`
- *
- * Both modes produce the same JwtPayload shape for downstream middleware.
+ * JWT verification (custom tokens signed with JWT_SECRET).
+ * Supabase dual-mode (SUPABASE_JWT_SECRET + `sub` claim) is disabled — see commented lines below.
  */
 export function authenticate(req: Request, _res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
@@ -32,13 +29,14 @@ export function authenticate(req: Request, _res: Response, next: NextFunction) {
   }
 
   const token = authHeader.slice(7);
-  const jwtSecret = process.env.SUPABASE_JWT_SECRET || process.env.JWT_SECRET!;
+  // const jwtSecret = process.env.SUPABASE_JWT_SECRET || process.env.JWT_SECRET!;
+  const jwtSecret = process.env.JWT_SECRET!;
 
   try {
     const decoded = jwt.verify(token, jwtSecret) as Record<string, unknown>;
 
     req.user = {
-      // Supabase uses 'sub' for user ID; custom JWTs use 'userId'
+      // `sub` was for Supabase tokens; custom JWTs use `userId`
       userId: (decoded.sub as string) || (decoded.userId as string),
       role: decoded.role as UserRole,
       teamId: decoded.teamId as string | undefined,
