@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
-import { Trophy, Target, Users, Calendar } from "lucide-react";
 import { useInView } from "@/hooks/useInView";
 
-// ---------------------------------------------------------------------------
-// Animated number counter — counts from 0 to `value` with easeOutCubic
-// ---------------------------------------------------------------------------
 const AnimatedNumber = ({
   value,
   decimals = 1,
@@ -42,37 +38,13 @@ const AnimatedNumber = ({
   return <>{display.toFixed(decimals)}</>;
 };
 
-// ---------------------------------------------------------------------------
-// Leaderboard data & climb stages
-// ---------------------------------------------------------------------------
-const players = [
-  { id: "chen", name: "A. Chen" },
-  { id: "davis", name: "M. Davis" },
-  { id: "patel", name: "R. Patel" },
-  { id: "williams", name: "J. Williams" },
+const leaderboardPlayers = [
+  { name: "A. Chen", mmr: 2380, rank: "Gold II", delta: "+45" },
+  { name: "M. Davis", mmr: 2310, rank: "Gold I", delta: "+22" },
+  { name: "R. Patel", mmr: 2240, rank: "Silver III", delta: "+38" },
+  { name: "J. Williams", mmr: 2150, rank: "Silver II", delta: "+67" },
 ];
 
-// Visual position of each player at each climb stage
-// Index = player array index, value = row position (0 = #1)
-const stagePositions = [
-  [0, 1, 2, 3], // Williams at #4
-  [0, 1, 3, 2], // Williams passes Patel → #3
-  [0, 2, 3, 1], // Williams passes Davis → #2
-  [1, 2, 3, 0], // Williams passes Chen  → #1
-];
-
-const williamsMmr = [2100, 2260, 2330, 2450];
-const otherMmrs: Record<string, number> = {
-  chen: 2380,
-  davis: 2310,
-  patel: 2240,
-};
-
-const ROW_H = 32; // px per leaderboard row slot
-
-// ---------------------------------------------------------------------------
-// Stat tracking data
-// ---------------------------------------------------------------------------
 const statLines = [
   { label: "FG%", value: 54.2, delta: 3.1, up: true },
   { label: "3PT%", value: 38.7, delta: 5.4, up: true },
@@ -81,38 +53,8 @@ const statLines = [
 
 const sparklineHeights = [30, 45, 35, 50, 42, 58, 52, 65, 55, 70, 60, 75, 68, 80, 72];
 
-// ---------------------------------------------------------------------------
-// Match history grid (deterministic intensity per cell)
-// ---------------------------------------------------------------------------
-const sessionDots = [
-  [0, 1, 1, 0, 1, 1, 1],
-  [1, 0, 1, 1, 0, 1, 0],
-  [1, 1, 0, 1, 1, 0, 1],
-  [0, 1, 1, 1, 0, 0, 1],
-];
-
-function dotOpacity(wi: number, di: number) {
-  return 0.35 + ((wi * 7 + di * 3) % 7) / 10;
-}
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
 const FeaturesGrid = () => {
-  const { ref, inView } = useInView(0.2);
-  const [climbStage, setClimbStage] = useState(0);
-
-  // Advance leaderboard climb stage every 900ms once in view
-  useEffect(() => {
-    if (!inView) return;
-    if (climbStage >= 3) return;
-
-    const timer = setTimeout(() => {
-      setClimbStage((s) => Math.min(s + 1, 3));
-    }, 900);
-
-    return () => clearTimeout(timer);
-  }, [inView, climbStage]);
+  const { ref, inView } = useInView(0.15);
 
   return (
     <section id="features" className="py-24 bg-background relative overflow-hidden">
@@ -124,281 +66,296 @@ const FeaturesGrid = () => {
             Features
           </span>
           <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground mt-3">
-            Built for ballers.
+            Everything you need to level up.
           </h2>
           <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
-            NBA-level analytics from nothing but your phone camera.
+            Professional-grade basketball analytics powered by AI — no sensors, no wearables, just your phone.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
-          {/* ----------------------------------------------------------- */}
-          {/* Hero Card — Ranked Mode (spans 2 rows on desktop)           */}
-          {/* ----------------------------------------------------------- */}
-          <div className="md:row-span-2 glass-panel rounded-xl p-6 md:p-8 border border-border relative overflow-hidden group">
-            <span className="absolute top-4 right-4 bg-primary text-primary-foreground text-[10px] font-bold font-mono uppercase tracking-wider px-3 py-1 rounded-full">
-              Coming Soon
-            </span>
+        {/* Stripe-style grid: 2 large top, 2 medium bottom */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-6xl mx-auto">
 
-            <div className="flex items-center gap-2 mb-6">
-              <Trophy className="w-5 h-5 text-accent" />
-              <span className="text-xs font-mono text-accent uppercase tracking-widest">
-                Ranked Mode
-              </span>
+          {/* --- Card 1: Professional Stat Tracking (large) --- */}
+          <div className="glass-panel rounded-xl border border-border overflow-hidden group">
+            <div className="p-6 md:p-8">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-2 h-2 rounded-full bg-primary" />
+                <span className="text-xs font-mono text-primary uppercase tracking-widest">
+                  Stat Tracking
+                </span>
+              </div>
+              <h3 className="text-2xl md:text-3xl font-black tracking-tight text-foreground leading-tight">
+                Professional-level stat tracking
+              </h3>
+              <p className="text-muted-foreground mt-3 text-sm max-w-md">
+                Track your shooting percentages, session trends, and improvement over time. See exactly where you're getting better.
+              </p>
             </div>
 
-            <h3 className="text-3xl md:text-4xl font-black tracking-tight text-foreground leading-tight">
-              Compete<br />Globally
-            </h3>
-            <p className="text-muted-foreground mt-3 text-sm max-w-xs">
-              Your performance earns a rank. Climb the leaderboard against players worldwide.
-            </p>
-
-            {/* MMR rank-up badge */}
-            <div className="mt-6 flex items-center gap-3">
-              <div className="glass-panel px-3 py-2 rounded border border-border">
-                <span className="font-mono text-sm text-muted-foreground">Silver II</span>
-              </div>
-              <div
-                className="flex items-center gap-1 text-primary transition-opacity duration-500"
-                style={{ opacity: inView && climbStage >= 2 ? 1 : 0 }}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path d="M5 12h14M12 5l7 7" />
-                </svg>
-              </div>
-              <div
-                className="glass-panel px-3 py-2 rounded border border-accent/40 shadow-[0_0_12px_hsl(168_76%_50%/0.15)] transition-opacity duration-500"
-                style={{ opacity: inView && climbStage >= 3 ? 1 : 0 }}
-              >
-                <span className="font-mono text-sm text-accent animate-pulse-slow">Gold I</span>
-              </div>
-            </div>
-
-            {/* Animated leaderboard */}
-            <div className="mt-8 relative" style={{ height: ROW_H * 4 }}>
-              {players.map((player, i) => {
-                const pos = stagePositions[climbStage][i];
-                const isW = player.id === "williams";
-                const mmr = isW ? williamsMmr[climbStage] : otherMmrs[player.id];
-                const maxMmr = williamsMmr[climbStage];
-                const barPct = (mmr / maxMmr) * 100;
-
-                return (
-                  <div
-                    key={player.id}
-                    className="absolute left-0 right-0 flex items-center gap-3 text-xs font-mono"
-                    style={{
-                      top: pos * ROW_H,
-                      transition: "top 0.7s cubic-bezier(0.4, 0, 0.2, 1)",
-                      opacity: inView ? 1 : 0,
-                      transitionProperty: "top, opacity",
-                      transitionDuration: "0.7s, 0.5s",
-                      transitionDelay: `0s, ${i * 100}ms`,
-                    }}
-                  >
-                    <span className="text-muted-foreground w-4 text-right">{pos + 1}</span>
-                    <span
-                      className={`flex-1 truncate ${isW ? "text-accent font-bold" : "text-foreground"}`}
-                    >
-                      {player.name}
-                    </span>
-                    <div className="w-24 h-1.5 bg-secondary rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-700"
+            {/* Mockup area */}
+            <div className="mx-6 md:mx-8 mb-6 md:mb-8 rounded-lg bg-[hsl(0,0%,5%)] border border-border p-5">
+              <div className="space-y-3">
+                {statLines.map((stat, i) => (
+                  <div key={stat.label} className="flex items-center justify-between font-mono text-sm">
+                    <span className="text-muted-foreground">{stat.label}</span>
+                    <div className="flex items-center gap-3">
+                      <div className="w-24 h-1.5 bg-secondary rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-1000"
+                          style={{
+                            width: inView ? `${stat.value}%` : "0%",
+                            background: "hsl(var(--primary))",
+                            transitionDelay: `${300 + i * 200}ms`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-foreground font-bold w-14 text-right">
+                        <AnimatedNumber value={stat.value} inView={inView} delay={i * 200} />%
+                      </span>
+                      <span
+                        className={`text-xs w-10 text-right transition-opacity duration-500 ${stat.up ? "text-accent" : "text-destructive"}`}
                         style={{
-                          width: inView ? `${barPct}%` : "0%",
-                          background: isW && pos === 0
-                            ? "hsl(var(--accent))"
-                            : "hsl(var(--primary))",
+                          opacity: inView ? 1 : 0,
+                          transitionDelay: `${1400 + i * 200}ms`,
                         }}
-                      />
+                      >
+                        {stat.up ? "+" : ""}{stat.delta}
+                      </span>
                     </div>
-                    <span className="text-muted-foreground w-12 text-right">
-                      {inView ? mmr : "—"}
-                    </span>
                   </div>
-                );
-              })}
-            </div>
-
-            <div className="absolute -bottom-12 -right-12 w-48 h-48 rounded-full bg-accent/5 blur-3xl pointer-events-none" />
-          </div>
-
-          {/* ----------------------------------------------------------- */}
-          {/* Card 2 — AI Stat Tracking                                    */}
-          {/* ----------------------------------------------------------- */}
-          <div className="glass-panel rounded-xl p-6 border border-border relative overflow-hidden">
-            <div className="flex items-center gap-2 mb-4">
-              <Target className="w-5 h-5 text-primary" />
-              <span className="text-xs font-mono text-primary uppercase tracking-widest">
-                Shot Tracking
-              </span>
-            </div>
-
-            <h3 className="text-2xl font-black tracking-tight text-foreground">
-              Track Every Shot
-            </h3>
-            <p className="text-muted-foreground mt-2 text-sm">
-              See your shooting progression after every session — no sensors, just your phone camera.
-            </p>
-
-            {/* Animated stat readouts */}
-            <div className="mt-5 space-y-3">
-              {statLines.map((stat, i) => (
-                <div key={stat.label} className="flex items-center justify-between font-mono text-sm">
-                  <span className="text-muted-foreground">{stat.label}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-foreground font-bold">
-                      <AnimatedNumber
-                        value={stat.value}
-                        inView={inView}
-                        delay={i * 200}
-                      />
-                      %
-                    </span>
-                    <span
-                      className={`text-xs transition-opacity duration-500 ${stat.up ? "text-accent" : "text-destructive"}`}
-                      style={{
-                        opacity: inView ? 1 : 0,
-                        transitionDelay: `${1400 + i * 200}ms`,
-                      }}
-                    >
-                      {stat.up ? "+" : ""}
-                      {stat.delta}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Sparkline — bars grow from bottom */}
-            <div className="mt-4 flex items-end gap-[3px] h-8">
-              {sparklineHeights.map((h, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-sm"
-                  style={{
-                    height: inView ? `${h}%` : "0%",
-                    background:
-                      i >= 12
-                        ? "hsl(var(--primary))"
-                        : "hsl(var(--primary) / 0.25)",
-                    transition: `height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)`,
-                    transitionDelay: `${300 + i * 60}ms`,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* ----------------------------------------------------------- */}
-          {/* Card 3 — Game Modes                                          */}
-          {/* ----------------------------------------------------------- */}
-          <div className="glass-panel rounded-xl p-6 border border-border">
-            <div className="flex items-center gap-2 mb-4">
-              <Users className="w-5 h-5 text-primary" />
-              <span className="text-xs font-mono text-primary uppercase tracking-widest">
-                Game Modes
-              </span>
-            </div>
-
-            <h3 className="text-2xl font-black tracking-tight text-foreground">
-              Solo. 1v1. 5v5.
-            </h3>
-            <p className="text-muted-foreground mt-2 text-sm">
-              From solo drills to full-court runs, Clutch tracks it all.
-            </p>
-
-            <div className="mt-5 flex gap-3">
-              {[
-                { label: "Solo Drills", icon: "1" },
-                { label: "1v1 Battle", icon: "2" },
-                { label: "5v5 Court", icon: "5" },
-              ].map((mode, i) => (
-                <div
-                  key={mode.label}
-                  className="flex-1 glass-panel rounded-lg p-3 text-center border border-border hover:border-primary/40 transition-all"
-                  style={{
-                    opacity: inView ? 1 : 0,
-                    transform: inView ? "translateY(0)" : "translateY(16px)",
-                    transition: "opacity 0.5s ease-out, transform 0.5s ease-out",
-                    transitionDelay: `${600 + i * 150}ms`,
-                  }}
-                >
-                  <span className="font-mono text-xl font-bold text-foreground block">
-                    {mode.icon}
-                  </span>
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider mt-1 block">
-                    {mode.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ----------------------------------------------------------- */}
-          {/* Card 4 — Match History                                       */}
-          {/* ----------------------------------------------------------- */}
-          <div className="md:col-span-2 glass-panel rounded-xl p-6 border border-border">
-            <div className="flex items-center gap-2 mb-4">
-              <Calendar className="w-5 h-5 text-accent" />
-              <span className="text-xs font-mono text-accent uppercase tracking-widest">
-                Match History
-              </span>
-            </div>
-
-            <h3 className="text-2xl font-black tracking-tight text-foreground">
-              Every Session, Logged
-            </h3>
-            <p className="text-muted-foreground mt-2 text-sm">
-              Calendar view of your sessions with drill-down stats.
-            </p>
-
-            {/* Activity grid — dots pop in with stagger */}
-            <div className="mt-5 flex gap-6 items-start">
-              <div className="flex flex-col gap-1">
-                {["Mon", "Wed", "Fri", "Sun"].map((d) => (
-                  <span key={d} className="text-[9px] font-mono text-muted-foreground h-4 flex items-center">
-                    {d}
-                  </span>
                 ))}
               </div>
-              <div className="flex gap-1 overflow-hidden">
-                {sessionDots.map((week, wi) =>
-                  week.map((active, di) => {
-                    const flatIdx = wi * 7 + di;
-                    return (
-                      <div
-                        key={`${wi}-${di}`}
-                        className="w-4 h-4 rounded-[3px]"
-                        style={{
-                          background: active
-                            ? `hsl(var(--primary) / ${dotOpacity(wi, di)})`
-                            : "hsl(var(--secondary))",
-                          opacity: inView ? 1 : 0,
-                          transform: inView ? "scale(1)" : "scale(0)",
-                          transition: "opacity 0.3s ease-out, transform 0.3s ease-out",
-                          transitionDelay: `${400 + flatIdx * 30}ms`,
-                        }}
-                      />
-                    );
-                  })
-                )}
+
+              {/* Sparkline */}
+              <div className="mt-5 flex items-end gap-[3px] h-12 border-t border-border pt-4">
+                {sparklineHeights.map((h, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 rounded-sm"
+                    style={{
+                      height: inView ? `${h}%` : "0%",
+                      background:
+                        i >= 12
+                          ? "hsl(var(--primary))"
+                          : "hsl(var(--primary) / 0.25)",
+                      transition: "height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                      transitionDelay: `${300 + i * 60}ms`,
+                    }}
+                  />
+                ))}
               </div>
-              <div className="hidden sm:flex flex-col gap-1 ml-auto font-mono text-xs">
-                <div className="flex justify-between gap-4 text-muted-foreground">
-                  <span>This week</span>
-                  <span className="text-foreground font-bold">
-                    <AnimatedNumber value={4} decimals={0} inView={inView} delay={800} duration={600} /> sessions
-                  </span>
+              <div className="flex justify-between mt-2 text-[10px] font-mono text-muted-foreground">
+                <span>2 weeks ago</span>
+                <span>Today</span>
+              </div>
+            </div>
+          </div>
+
+          {/* --- Card 2: Player Ratings / MMR (large) --- */}
+          <div className="glass-panel rounded-xl border border-border overflow-hidden group">
+            <div className="p-6 md:p-8">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-2 h-2 rounded-full bg-accent" />
+                <span className="text-xs font-mono text-accent uppercase tracking-widest">
+                  Player Ratings
+                </span>
+              </div>
+              <h3 className="text-2xl md:text-3xl font-black tracking-tight text-foreground leading-tight">
+                Data-driven MMR rankings
+              </h3>
+              <p className="text-muted-foreground mt-3 text-sm max-w-md">
+                Your on-court performance converts into a competitive rating. See where you stand and climb the leaderboard.
+              </p>
+            </div>
+
+            {/* Leaderboard mockup */}
+            <div className="mx-6 md:mx-8 mb-6 md:mb-8 rounded-lg bg-[hsl(0,0%,5%)] border border-border overflow-hidden">
+              {/* Header row */}
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-border text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+                <span>Player</span>
+                <div className="flex items-center gap-6">
+                  <span>Rank</span>
+                  <span className="w-14 text-right">MMR</span>
                 </div>
-                <div className="flex justify-between gap-4 text-muted-foreground">
-                  <span>Streak</span>
-                  <span className="text-primary font-bold">
-                    <AnimatedNumber value={12} decimals={0} inView={inView} delay={1000} duration={800} /> days
-                  </span>
+              </div>
+
+              {leaderboardPlayers.map((player, i) => (
+                <div
+                  key={player.name}
+                  className={`flex items-center justify-between px-4 py-3 font-mono text-sm border-b border-border/50 last:border-0 transition-all duration-500 ${
+                    i === 0 ? "bg-accent/5" : ""
+                  }`}
+                  style={{
+                    opacity: inView ? 1 : 0,
+                    transform: inView ? "translateX(0)" : "translateX(-12px)",
+                    transitionDelay: `${400 + i * 150}ms`,
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-muted-foreground w-4 text-right text-xs">{i + 1}</span>
+                    <span className={i === 0 ? "text-accent font-bold" : "text-foreground"}>
+                      {player.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <span className="text-xs px-2 py-0.5 rounded bg-secondary border border-border text-muted-foreground">
+                      {player.rank}
+                    </span>
+                    <div className="flex items-center gap-2 w-14 justify-end">
+                      <span className="text-foreground font-bold">{player.mmr}</span>
+                    </div>
+                  </div>
                 </div>
+              ))}
+
+              {/* Your position */}
+              <div
+                className="flex items-center justify-between px-4 py-3 bg-primary/5 border-t border-primary/20 transition-all duration-700"
+                style={{
+                  opacity: inView ? 1 : 0,
+                  transitionDelay: "1000ms",
+                }}
+              >
+                <div className="flex items-center gap-3 font-mono text-sm">
+                  <span className="text-primary w-4 text-right text-xs font-bold">—</span>
+                  <span className="text-primary font-bold">You</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary font-bold">
+                    Silver II
+                  </span>
+                  <span className="font-mono text-sm text-primary font-bold">2,150</span>
+                  <span className="text-xs text-accent font-bold">+67</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* --- Card 3: Live Score Tracking (medium) --- */}
+          <div className="glass-panel rounded-xl border border-border overflow-hidden group">
+            <div className="p-6 md:p-8">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-2 h-2 rounded-full bg-primary" />
+                <span className="text-xs font-mono text-primary uppercase tracking-widest">
+                  Live Scores
+                </span>
+              </div>
+              <h3 className="text-2xl font-black tracking-tight text-foreground">
+                Real-time score tracking
+              </h3>
+              <p className="text-muted-foreground mt-2 text-sm">
+                Clutch keeps the score live as you play. No manual input — AI handles it all.
+              </p>
+            </div>
+
+            {/* Scoreboard mockup */}
+            <div className="mx-6 md:mx-8 mb-6 md:mb-8 rounded-lg bg-[hsl(0,0%,5%)] border border-border p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-destructive rounded-full animate-pulse" />
+                  <span className="text-[10px] font-mono text-foreground uppercase tracking-wide">Live</span>
+                </div>
+                <span className="text-[10px] font-mono text-muted-foreground">Q4 · 4:23</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-center flex-1">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 mx-auto flex items-center justify-center mb-2">
+                    <span className="text-primary font-bold text-sm">A</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground font-mono">Team A</span>
+                  <div
+                    className="text-4xl font-black text-foreground mt-1 transition-all duration-700"
+                    style={{
+                      opacity: inView ? 1 : 0,
+                      transform: inView ? "scale(1)" : "scale(0.8)",
+                      transitionDelay: "500ms",
+                    }}
+                  >
+                    <AnimatedNumber value={72} decimals={0} inView={inView} delay={300} duration={1200} />
+                  </div>
+                </div>
+                <div className="text-2xl font-bold text-muted-foreground mx-4">:</div>
+                <div className="text-center flex-1">
+                  <div className="w-10 h-10 rounded-full bg-accent/10 border border-accent/20 mx-auto flex items-center justify-center mb-2">
+                    <span className="text-accent font-bold text-sm">B</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground font-mono">Team B</span>
+                  <div
+                    className="text-4xl font-black text-foreground mt-1 transition-all duration-700"
+                    style={{
+                      opacity: inView ? 1 : 0,
+                      transform: inView ? "scale(1)" : "scale(0.8)",
+                      transitionDelay: "600ms",
+                    }}
+                  >
+                    <AnimatedNumber value={68} decimals={0} inView={inView} delay={400} duration={1200} />
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-border flex justify-between text-[10px] font-mono text-muted-foreground">
+                <span>Last: 3PT by #15</span>
+                <span className="text-primary">+3 pts</span>
+              </div>
+            </div>
+          </div>
+
+          {/* --- Card 4: Skill-Based Court Matching (medium) --- */}
+          <div className="glass-panel rounded-xl border border-border overflow-hidden group">
+            <div className="p-6 md:p-8">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-2 h-2 rounded-full bg-accent" />
+                <span className="text-xs font-mono text-accent uppercase tracking-widest">
+                  Court Matching
+                </span>
+              </div>
+              <h3 className="text-2xl font-black tracking-tight text-foreground">
+                Play against your level
+              </h3>
+              <p className="text-muted-foreground mt-2 text-sm">
+                Courts display active player rating ranges so you can find games with opponents close to your skill level.
+              </p>
+            </div>
+
+            {/* Court rating mockup */}
+            <div className="mx-6 md:mx-8 mb-6 md:mb-8 rounded-lg bg-[hsl(0,0%,5%)] border border-border p-5 space-y-3">
+              {[
+                { name: "Anteater Rec Center", players: "8/10", range: "1800–2200", match: "high" },
+                { name: "Mesa Court Outdoor", players: "4/10", range: "2200–2600", match: "mid" },
+                { name: "ARC Main Gym", players: "6/10", range: "1400–1800", match: "low" },
+              ].map((court, i) => (
+                <div
+                  key={court.name}
+                  className={`flex items-center justify-between p-3 rounded-lg border transition-all duration-500 ${
+                    court.match === "high"
+                      ? "border-accent/30 bg-accent/5"
+                      : "border-border bg-transparent"
+                  }`}
+                  style={{
+                    opacity: inView ? 1 : 0,
+                    transform: inView ? "translateY(0)" : "translateY(8px)",
+                    transitionDelay: `${500 + i * 150}ms`,
+                  }}
+                >
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-sm font-medium text-foreground">{court.name}</span>
+                    <span className="text-[10px] font-mono text-muted-foreground">{court.players} players</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-muted-foreground">{court.range}</span>
+                    {court.match === "high" && (
+                      <span className="text-[10px] font-mono text-accent px-1.5 py-0.5 rounded bg-accent/10 border border-accent/20">
+                        Best Match
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+              <div className="pt-2 border-t border-border flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-accent" />
+                <span className="text-[10px] font-mono text-muted-foreground">
+                  Your MMR: <span className="text-accent font-bold">2,150</span> — showing courts within range
+                </span>
               </div>
             </div>
           </div>

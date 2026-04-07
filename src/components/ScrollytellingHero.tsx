@@ -1,7 +1,9 @@
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import basketballImg from "@/assets/basketball.png";
-import gameImg from "@/assets/basketball-game.jpg";
 import AROverlay from "./AROverlay";
+
+/** Full-court hero frame after the ball crossfade (`public/dababy.png`). */
+const HERO_GAME_IMAGE_SRC = "/dababy.png";
 
 const ScrollytellingHero = () => {
   const { containerRef, progress } = useScrollProgress();
@@ -82,27 +84,29 @@ const ScrollytellingHero = () => {
           }}
         />
 
-        {/* Game image (behind ball) */}
-        <div
-          className="absolute inset-0 flex items-center justify-center"
-          style={{ opacity: gameOpacity }}
-        >
-          <img
-            src={gameImg}
-            alt="Basketball game footage"
-            className="w-full h-full object-cover"
-            style={{
-              transform: `scale(${gameScale})`,
-              filter: "grayscale(30%)",
-            }}
-          />
-          {/* Scanlines over video */}
-          <div className="absolute inset-0 scanlines opacity-30" />
-          {/* Top/bottom gradient vignette */}
+        {/* Game frame: background cover always fills viewport; scale animates zoom */}
+        <div className="absolute inset-0 overflow-hidden" style={{ opacity: gameOpacity }}>
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to bottom, hsl(0 0% 2% / 0.7), transparent 30%, transparent 70%, hsl(0 0% 2% / 0.8))",
+              backgroundImage: `url(${HERO_GAME_IMAGE_SRC})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center center",
+              backgroundRepeat: "no-repeat",
+              transform: `scale(${gameScale})`,
+              transformOrigin: "center center",
+            }}
+            role="img"
+            aria-label="Basketball court with AI tracking overlay"
+          />
+          {/* Scanlines over video */}
+          <div className="absolute inset-0 scanlines opacity-30 pointer-events-none" />
+          {/* Top/bottom gradient vignette */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(to bottom, hsl(0 0% 2% / 0.7), transparent 30%, transparent 70%, hsl(0 0% 2% / 0.8))",
             }}
           />
         </div>

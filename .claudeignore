@@ -1,0 +1,56 @@
+# Dependencies (largest noise; not edited for features)
+node_modules/
+
+# Build & tooling output
+dist/
+build/
+.vite/
+.turbo/
+*.tsbuildinfo
+
+# Test / coverage
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment & secrets (never index for AI)
+.env
+.env.*
+!.env.example
+
+# Vercel / deploy
+.vercel/
+
+# Cache
+.cache/
+.eslintcache
+.parcel-cache/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+*.swo
+
+# Static binaries in public/ (favicons, hero images — not application source)
+public/**/*.png
+public/**/*.jpg
+public/**/*.jpeg
+public/**/*.gif
+public/**/*.webp
+public/**/*.ico
+public/**/*.svg
+public/**/*.woff
+public/**/*.woff2
+
+# Fonts & heavy binaries anywhere (uncomment if needed)
+# *.woff2
+# *.ttf

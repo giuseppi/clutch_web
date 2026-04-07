@@ -5,7 +5,7 @@ interface AROverlayProps {
 const AROverlay = ({ opacity }: AROverlayProps) => {
   return (
     <div
-      className="absolute inset-0 z-20 pointer-events-none p-4 md:p-10 flex flex-col justify-between transition-opacity duration-300"
+      className="absolute inset-0 z-20 pointer-events-none px-4 pb-4 pt-24 md:px-10 md:pb-10 md:pt-24 flex flex-col justify-between transition-opacity duration-300"
       style={{ opacity }}
     >
       {/* Top HUD */}
@@ -27,43 +27,8 @@ const AROverlay = ({ opacity }: AROverlayProps) => {
         </div>
       </div>
 
-      {/* Center AR Elements */}
+      {/* Center HUD (no player bounding boxes — hero image carries CV overlays) */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Defense bounding box */}
-        <div className="absolute top-[38%] left-[25%] w-24 md:w-32 h-48 md:h-64 border-2 border-accent/60 rounded-lg hidden md:block">
-          <div className="absolute -top-7 left-1/2 -translate-x-1/2 glass-panel px-2 py-1 rounded text-[10px] font-mono text-accent whitespace-nowrap">
-            P_DEFENSE #23
-          </div>
-          <div className="absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 border-accent" />
-          <div className="absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 border-accent" />
-          <div className="absolute bottom-1 left-1 right-1 bg-accent/10 p-1">
-            <div className="h-1 w-full bg-accent/20 rounded overflow-hidden">
-              <div className="h-full bg-accent" style={{ width: "85%" }} />
-            </div>
-          </div>
-        </div>
-
-        {/* Shooter bounding box */}
-        <div className="absolute top-[33%] left-[50%] w-24 md:w-32 h-48 md:h-64 border-2 border-primary/80 rounded-lg shadow-primary-glow hidden md:block">
-          <div className="absolute -top-10 left-1/2 -translate-x-1/2 glass-panel px-3 py-2 rounded text-xs font-mono text-foreground whitespace-nowrap border border-primary/50 flex flex-col items-center">
-            <span className="text-primary font-bold">SHOOTER #15</span>
-            <span className="text-[10px] text-muted-foreground">PPG: 24.5</span>
-          </div>
-        </div>
-
-        {/* Shot trajectory arc */}
-        <svg className="absolute inset-0 w-full h-full hidden md:block" style={{ zIndex: -1 }}>
-          <path
-            d="M 55% 35% Q 70% 10% 85% 45%"
-            fill="none"
-            stroke="hsl(24 96% 50%)"
-            strokeWidth="2"
-            strokeDasharray="10 5"
-            className="opacity-70"
-          />
-          <circle cx="85%" cy="45%" r="6" fill="hsl(24 96% 50%)" className="animate-pulse" />
-        </svg>
-
         {/* Shot probability */}
         <div className="absolute top-[35%] right-[5%] md:right-[8%] glass-panel p-3 rounded-lg border border-primary/30">
           <div className="flex items-center gap-2 mb-1">

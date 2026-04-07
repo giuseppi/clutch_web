@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import clutchLogo from "@/assets/clutch_logo.png";
 
 const LoginPage = () => {
@@ -9,10 +10,10 @@ const LoginPage = () => {
 
       {/* Navigation Header */}
       <header className="relative z-10 w-full px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3">
           <img src={clutchLogo} alt="Clutch" className="w-10 h-10 object-contain" />
           <h2 className="text-xl font-bold tracking-tight text-white">CLUTCH</h2>
-        </div>
+        </Link>
         <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1a1a1a] border border-[#262626] text-sm font-medium text-slate-300 hover:text-white hover:border-[#ff6a00]/50 transition-colors duration-200">
           <span className="material-symbols-outlined text-[18px]">support_agent</span>
           <span>Contact Support</span>
