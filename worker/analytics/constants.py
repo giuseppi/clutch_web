@@ -19,6 +19,8 @@ WEIGHTS = {
 }
 
 # Elo/MMR configuration
+# Display tiers (UI / product): Rookie 1–19, Bronze 20–39, Silver 40–59,
+# Gold 60–89, Diamond 90–99 — see web client src/lib/mmrTier.ts
 BASE_MMR = 50.0           # Starting MMR (0-99 scale)
 MMR_MIN = 0.0             # Floor
 MMR_MAX = 99.0            # Ceiling

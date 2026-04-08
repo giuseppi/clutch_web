@@ -4,16 +4,13 @@ import { useMatches } from "@/hooks/api/useMatches";
 import { usePlayers } from "@/hooks/api/usePlayers";
 import AppLayout from "@/components/app/AppLayout";
 import PageTransition from "@/components/app/PageTransition";
+import { getTierBadgeClass, getTierLabel } from "@/lib/mmrTier";
 
 function MmrBadge({ mmr }: { mmr: number }) {
-  const color =
-    mmr >= 80 ? "text-[#ff6a00] bg-[#ff6a00]/10 border-[#ff6a00]/20" :
-    mmr >= 60 ? "text-[#14b8a6] bg-[#14b8a6]/10 border-[#14b8a6]/20" :
-    mmr >= 40 ? "text-yellow-400 bg-yellow-400/10 border-yellow-400/20" :
-    "text-slate-400 bg-slate-400/10 border-slate-400/20";
   return (
-    <span className={`text-xs font-bold px-1.5 py-0.5 rounded border ${color}`}>
-      {Math.round(mmr)}
+    <span className={`text-xs font-bold px-1.5 py-0.5 rounded border inline-flex items-center gap-1 ${getTierBadgeClass(mmr)}`}>
+      <span>{Math.round(mmr)}</span>
+      <span className="opacity-90 font-semibold">{getTierLabel(mmr)}</span>
     </span>
   );
 }
@@ -94,7 +91,7 @@ const DashboardPage = () => {
               value: playersLoading ? "--" : avgMmr.toFixed(1),
               badge: players.length ? `${players.length} players` : "",
               badgeColor: "text-[#14b8a6] bg-[#14b8a6]/10 border-[#14b8a6]/20",
-              sub: "0-99 Scale",
+              sub: "Rookie → Diamond (1–99)",
               icon: "leaderboard",
             },
             {

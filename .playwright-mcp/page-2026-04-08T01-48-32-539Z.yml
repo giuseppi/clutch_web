@@ -1,0 +1,326 @@
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - region "Notifications alt+T"
+  - main [ref=e3]:
+    - navigation [ref=e4]:
+      - link "Clutch logo CLUTCH" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "Clutch logo" [ref=e6]
+        - generic [ref=e7]: CLUTCH
+      - generic [ref=e8]:
+        - link "Features" [ref=e9] [cursor=pointer]:
+          - /url: "#features"
+        - link "How It Works" [ref=e10] [cursor=pointer]:
+          - /url: "#how-it-works"
+        - link "Download" [ref=e11] [cursor=pointer]:
+          - /url: "#download"
+      - generic [ref=e12]:
+        - button "App Store — Coming Soon" [ref=e13] [cursor=pointer]:
+          - img [ref=e14]
+          - generic [ref=e16]: App Store
+        - button "Google Play — Coming Soon" [ref=e17] [cursor=pointer]:
+          - img [ref=e18]
+          - generic [ref=e20]: Google Play
+        - button "Web Version — Coming Soon" [ref=e21] [cursor=pointer]:
+          - img [ref=e22]
+          - generic [ref=e24]: Web Version
+    - generic [ref=e26]:
+      - img "Basketball court with AI tracking overlay" [ref=e29]
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic: Game Clock
+              - generic: 04:23
+            - generic:
+              - generic: Period
+              - generic: Q4
+          - generic:
+            - generic: LIVE ANALYSIS
+        - generic:
+          - generic:
+            - generic:
+              - img
+              - generic: Shot Quality
+            - generic: 88%
+            - generic: +12% vs AVG
+        - generic:
+          - generic:
+            - generic:
+              - heading "Live Telemetry" [level=3]
+            - generic:
+              - generic:
+                - generic: Release Velocity
+                - generic: 14.2 m/s
+              - generic:
+                - generic: Apex Height
+                - generic: 4.8 m
+              - generic:
+                - generic: Entry Angle
+                - generic: 46.5°
+          - generic:
+            - button [ref=e30] [cursor=pointer]:
+              - img [ref=e31]
+            - generic: 1x
+      - generic:
+        - img "Basketball"
+      - generic: "OBJ_ID: BB_v4.2"
+      - generic: "SCALE: 1.0x"
+      - generic:
+        - heading "CLUTCH" [level=1]
+        - paragraph: Scroll to Analyze
+      - generic:
+        - generic:
+          - heading "NO" [level=2]
+          - heading "SENSORS" [level=2]
+      - generic:
+        - generic:
+          - heading "JUST AI" [level=2]
+          - paragraph: Computer vision extracting 120 data points per second from standard video.
+      - generic [ref=e35]: Scroll
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - text: Features
+        - heading "Everything you need to level up." [level=2] [ref=e39]
+        - paragraph [ref=e40]: Professional-grade basketball analytics powered by AI — no sensors, no wearables, just your phone.
+      - generic [ref=e41]:
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - generic [ref=e47]: Platform
+            - heading "AI-powered analytics — on your phone and the web" [level=3] [ref=e48]
+            - paragraph [ref=e49]: Access your stats, box scores, and match breakdowns from any device. Upload game footage and let AI do the rest.
+          - generic [ref=e50]:
+            - generic [ref=e52]:
+              - generic [ref=e59]: clutch.gg/analytics
+              - generic [ref=e60]:
+                - generic [ref=e61]:
+                  - generic [ref=e62]: UCI vs UCLA
+                  - generic [ref=e63]:
+                    - generic [ref=e64]: 72 – 68
+                    - generic [ref=e65]: WIN
+                - generic [ref=e66]:
+                  - generic [ref=e67]:
+                    - generic [ref=e68]: Metric
+                    - generic [ref=e69]: UCI
+                    - generic [ref=e70]: UCLA
+                  - generic [ref=e71]:
+                    - generic [ref=e72]: PPP
+                    - generic [ref=e73]: "1.12"
+                    - generic [ref=e74]: "0.98"
+                  - generic [ref=e75]:
+                    - generic [ref=e76]: eFG%
+                    - generic [ref=e77]: 54.2%
+                    - generic [ref=e78]: 47.8%
+                  - generic [ref=e79]:
+                    - generic [ref=e80]: TO%
+                    - generic [ref=e81]: 11.3%
+                    - generic [ref=e82]: 15.7%
+                  - generic [ref=e83]:
+                    - generic [ref=e84]: ORB%
+                    - generic [ref=e85]: 32.1%
+                    - generic [ref=e86]: 26.4%
+            - generic [ref=e96]:
+              - generic [ref=e100]:
+                - img "Clutch app screen 1" [ref=e101]
+                - img "Clutch app screen 2" [ref=e102]
+                - img "Clutch app screen 3" [ref=e103]
+              - generic [ref=e106]:
+                - button [ref=e107] [cursor=pointer]
+                - button [ref=e108] [cursor=pointer]
+                - button [ref=e109] [cursor=pointer]
+        - generic [ref=e111]:
+          - generic [ref=e112]:
+            - generic [ref=e115]: Stat Tracking
+            - heading "Professional-level box scores" [level=3] [ref=e116]
+            - paragraph [ref=e117]: Track every metric that matters. See exactly where you're improving.
+          - generic [ref=e118]:
+            - generic [ref=e119]:
+              - generic [ref=e120]:
+                - generic [ref=e121]: PTS
+                - generic [ref=e122]:
+                  - generic [ref=e124]: "0.0"
+                  - generic [ref=e125]: "+2.3"
+              - generic [ref=e126]:
+                - generic [ref=e127]: FG%
+                - generic [ref=e128]:
+                  - generic [ref=e130]: "0.0"
+                  - generic [ref=e131]: "+3.1"
+              - generic [ref=e132]:
+                - generic [ref=e133]: 3P%
+                - generic [ref=e134]:
+                  - generic [ref=e136]: "0.0"
+                  - generic [ref=e137]: "+5.4"
+              - generic [ref=e138]:
+                - generic [ref=e139]: FT%
+                - generic [ref=e140]:
+                  - generic [ref=e142]: "0.0"
+                  - generic [ref=e143]: "-0.8"
+              - generic [ref=e144]:
+                - generic [ref=e145]: AST
+                - generic [ref=e146]:
+                  - generic [ref=e148]: "0.0"
+                  - generic [ref=e149]: "+0.6"
+              - generic [ref=e150]:
+                - generic [ref=e151]: REB
+                - generic [ref=e152]:
+                  - generic [ref=e154]: "0.0"
+                  - generic [ref=e155]: "+1.1"
+              - generic [ref=e156]: + 12 more stats...
+            - generic [ref=e157]:
+              - generic [ref=e158]: Session Performance
+              - generic [ref=e159]:
+                - generic [ref=e161]: S1
+                - generic [ref=e163]: S2
+                - generic [ref=e165]: S3
+                - generic [ref=e167]: S4
+                - generic [ref=e169]: S5
+      - generic [ref=e170]:
+        - generic [ref=e171]:
+          - generic [ref=e172]:
+            - generic [ref=e175]: Player Ratings
+            - heading "Data-driven MMR rankings" [level=3] [ref=e176]
+            - paragraph [ref=e177]: Your performance converts into a competitive rating. See where you stand.
+          - generic [ref=e178]:
+            - generic [ref=e179]:
+              - generic [ref=e180]: Player
+              - generic [ref=e181]:
+                - generic [ref=e182]: Tier
+                - generic [ref=e183]: MMR
+            - generic [ref=e184]:
+              - generic [ref=e185]:
+                - generic [ref=e186]: "1"
+                - generic [ref=e187]: A. Chen
+              - generic [ref=e188]:
+                - generic [ref=e189]: Diamond
+                - generic [ref=e190]: "94"
+            - generic [ref=e191]:
+              - generic [ref=e192]:
+                - generic [ref=e193]: "2"
+                - generic [ref=e194]: M. Davis
+              - generic [ref=e195]:
+                - generic [ref=e196]: Gold
+                - generic [ref=e197]: "76"
+            - generic [ref=e198]:
+              - generic [ref=e199]:
+                - generic [ref=e200]: "3"
+                - generic [ref=e201]: R. Patel
+              - generic [ref=e202]:
+                - generic [ref=e203]: Silver
+                - generic [ref=e204]: "52"
+            - generic [ref=e205]:
+              - generic [ref=e206]:
+                - generic [ref=e207]: "4"
+                - generic [ref=e208]: J. Williams
+              - generic [ref=e209]:
+                - generic [ref=e210]: Bronze
+                - generic [ref=e211]: "31"
+            - generic [ref=e212]:
+              - generic [ref=e213]:
+                - generic [ref=e214]: —
+                - generic [ref=e215]: You
+              - generic [ref=e216]:
+                - generic [ref=e217]: Silver
+                - generic [ref=e218]: "52"
+                - generic [ref=e219]: "+0.9"
+        - generic [ref=e220]:
+          - generic [ref=e221]:
+            - generic [ref=e224]: Live Scores
+            - heading "Real-time score tracking" [level=3] [ref=e225]
+            - paragraph [ref=e226]: Clutch keeps the score live as you play. No manual input — AI handles it all.
+          - generic [ref=e227]:
+            - generic [ref=e228]:
+              - generic [ref=e231]: Live
+              - generic [ref=e232]: Q4 · 4:23
+            - generic [ref=e233]:
+              - generic [ref=e234]:
+                - generic [ref=e236]: A
+                - text: Team A
+                - generic [ref=e237]: "0"
+              - generic [ref=e238]: ":"
+              - generic [ref=e239]:
+                - generic [ref=e241]: B
+                - text: Team B
+                - generic [ref=e242]: "0"
+            - generic [ref=e243]:
+              - generic [ref=e244]: "Last: 3PT by #15"
+              - generic [ref=e245]: +3 pts
+        - generic [ref=e246]:
+          - generic [ref=e247]:
+            - generic [ref=e250]: Court Matching
+            - heading "Skill-based matchmaking across courts" [level=3] [ref=e251]
+            - paragraph [ref=e252]: Find games at your level. Courts show active player ratings so you always play competitive matches.
+          - generic [ref=e253]:
+            - img [ref=e254]
+            - generic:
+              - generic:
+                - generic: Madison Sq Garden
+                - generic:
+                  - generic: 8–10 PM
+                  - generic: Gold – Diamond
+                - generic: MMR 70–90
+    - generic [ref=e545]:
+      - generic [ref=e546]:
+        - text: How It Works
+        - heading "Three steps. Zero gear." [level=2] [ref=e547]
+        - paragraph [ref=e548]: No wearables, no sensors, no setup headaches. Just point and play.
+      - generic [ref=e552]:
+        - generic [ref=e553]:
+          - img [ref=e555]
+          - generic [ref=e557]:
+            - generic [ref=e558]: STEP 01
+            - heading "Set Up Your Phone" [level=3] [ref=e559]
+            - paragraph [ref=e560]: Point your phone at the court. Clutch's computer vision engine activates instantly.
+            - generic [ref=e561]: REAL-TIME CV ENGINE | ON-DEVICE
+        - generic [ref=e562]:
+          - img [ref=e564]
+          - generic [ref=e566]:
+            - generic [ref=e567]: STEP 02
+            - heading "Play Your Game" [level=3] [ref=e568]
+            - paragraph [ref=e569]: Shoot, drill, compete. Clutch tracks every shot, make or miss, in real-time.
+            - generic [ref=e570]: AI TRACKING | EVERY SHOT
+        - generic [ref=e571]:
+          - img [ref=e573]
+          - generic [ref=e576]:
+            - generic [ref=e577]: STEP 03
+            - heading "Get Your Stats" [level=3] [ref=e578]
+            - paragraph [ref=e579]: Instant analytics. Shooting %, session trends, and your MMR — all on your phone.
+            - generic [ref=e580]: INSTANT STATS | FG% | 3PT% | MMR
+    - generic [ref=e582]:
+      - text: Download
+      - heading "Track every shot. Climb the ranks." [level=2] [ref=e583]:
+        - text: Track every shot.
+        - text: Climb the ranks.
+      - paragraph [ref=e584]: Clutch is coming soon to iOS, Android, and Web.
+      - generic [ref=e585]:
+        - button "Coming Soon to iOS" [disabled] [ref=e586]:
+          - img [ref=e587]
+          - text: Coming Soon to iOS
+        - button "Coming Soon to Android" [disabled] [ref=e589]:
+          - img [ref=e590]
+          - text: Coming Soon to Android
+        - button "Coming Soon to Web" [disabled] [ref=e592]:
+          - img [ref=e593]
+          - text: Coming Soon to Web
+      - generic [ref=e596]:
+        - heading "Get notified when the beta comes out." [level=3] [ref=e597]
+        - paragraph [ref=e598]: Be the first to try Clutch. No spam.
+        - generic [ref=e599]:
+          - textbox "you@email.com" [ref=e600]
+          - button "Notify Me" [ref=e601] [cursor=pointer]
+    - generic [ref=e604]:
+      - generic [ref=e605]:
+        - generic [ref=e606]:
+          - img "Clutch logo" [ref=e607]
+          - generic [ref=e608]: CLUTCH
+        - generic [ref=e609]: © 2026 Clutch Analytics
+      - generic [ref=e610]:
+        - link "Features" [ref=e611] [cursor=pointer]:
+          - /url: "#features"
+        - link "How It Works" [ref=e612] [cursor=pointer]:
+          - /url: "#how-it-works"
+        - link "Download" [ref=e613] [cursor=pointer]:
+          - /url: "#download"
+        - link "For Investors" [ref=e615] [cursor=pointer]:
+          - /url: mailto:investors@clutchanalytics.com
+      - paragraph [ref=e616]: Built by Giuseppi Pelayo & Johnny Fok

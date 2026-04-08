@@ -3,16 +3,13 @@ import { usePlayer, usePlayerEloHistory, usePlayerStats } from "@/hooks/api/useP
 import { usePlayerHighlights } from "@/hooks/api/useAnalytics";
 import AppLayout from "@/components/app/AppLayout";
 import PageTransition from "@/components/app/PageTransition";
+import { getTierLabel, getTierRingColor, mmrFillPercent } from "@/lib/mmrTier";
 
 function MmrRing({ mmr }: { mmr: number }) {
-  const pct = Math.min(100, (mmr / 99) * 100);
+  const pct = mmrFillPercent(mmr);
   const circumference = 2 * Math.PI * 54;
   const dashoffset = circumference - (pct / 100) * circumference;
-  const color =
-    mmr >= 80 ? "#ff6a00" :
-    mmr >= 60 ? "#14b8a6" :
-    mmr >= 40 ? "#eab308" :
-    "#94a3b8";
+  const color = getTierRingColor(mmr);
 
   return (
     <div className="relative size-36 flex items-center justify-center">
@@ -27,9 +24,10 @@ function MmrRing({ mmr }: { mmr: number }) {
           className="transition-all duration-1000"
         />
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
         <span className="text-3xl font-bold text-white">{Math.round(mmr)}</span>
         <span className="text-[10px] text-[#a3a3a3] uppercase tracking-wider">MMR</span>
+        <span className="text-[10px] font-semibold text-[#9ca3af]">{getTierLabel(mmr)}</span>
       </div>
     </div>
   );

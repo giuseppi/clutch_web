@@ -5,23 +5,22 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import AppLayout from "@/components/app/AppLayout";
 import PageTransition from "@/components/app/PageTransition";
+import { getTierBarGradient, getTierLabel, getTierTextClass, mmrFillPercent } from "@/lib/mmrTier";
 
 function MmrBadge({ mmr }: { mmr: number }) {
-  const color =
-    mmr >= 80 ? "text-[#ff6a00]" :
-    mmr >= 60 ? "text-[#14b8a6]" :
-    mmr >= 40 ? "text-yellow-400" :
-    "text-slate-400";
-  return <span className={`text-2xl font-bold ${color} drop-shadow-[0_0_8px_rgba(255,106,0,0.3)]`}>{Math.round(mmr)}</span>;
+  return (
+    <div className="flex flex-col items-start gap-0.5">
+      <span className={`text-2xl font-bold ${getTierTextClass(mmr)} drop-shadow-[0_0_8px_rgba(255,106,0,0.15)]`}>
+        {Math.round(mmr)}
+      </span>
+      <span className="text-[10px] font-semibold text-[#9ca3af] uppercase tracking-wide">{getTierLabel(mmr)}</span>
+    </div>
+  );
 }
 
 function PerformanceBar({ mmr }: { mmr: number }) {
-  const pct = Math.min(100, (mmr / 99) * 100);
-  const gradientColor =
-    mmr >= 80 ? "from-[#ff6a00] to-[#cc5500]" :
-    mmr >= 60 ? "from-[#14b8a6] to-teal-600" :
-    mmr >= 40 ? "from-yellow-500 to-yellow-600" :
-    "from-red-500 to-red-700";
+  const pct = mmrFillPercent(mmr);
+  const gradientColor = getTierBarGradient(mmr);
   return (
     <div className="w-full bg-[#262626] h-1.5 rounded-full overflow-hidden">
       <div className={`bg-gradient-to-r ${gradientColor} h-full rounded-full`} style={{ width: `${pct}%` }} />

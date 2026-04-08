@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useLeaderboard } from "@/hooks/api/useLeaderboard";
 import AppLayout from "@/components/app/AppLayout";
 import PageTransition from "@/components/app/PageTransition";
+import { getTierLabel, getTierTextClass } from "@/lib/mmrTier";
 
 function StarBadge({ count }: { count: number }) {
   if (count >= 5) return <span className="text-[10px] font-bold text-[#ff6a00] bg-[#ff6a00]/10 border border-[#ff6a00]/20 px-1.5 py-0.5 rounded-full">★★★★★</span>;
@@ -38,8 +39,12 @@ function TrendCell({ value }: { value: number }) {
 }
 
 function MmrBadge({ value }: { value: number }) {
-  const color = value >= 80 ? "text-[#ff6a00]" : value >= 60 ? "text-[#facc15]" : value >= 40 ? "text-slate-100" : "text-slate-400";
-  return <span className={`text-sm font-bold font-mono ${color}`}>{Math.round(value)}</span>;
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className={`text-sm font-bold font-mono ${getTierTextClass(value)}`}>{Math.round(value)}</span>
+      <span className="text-[10px] font-semibold text-[#9ca3af] uppercase tracking-wide">{getTierLabel(value)}</span>
+    </div>
+  );
 }
 
 const LeaderboardPage = () => {
@@ -116,7 +121,7 @@ const LeaderboardPage = () => {
                   <th className="px-4 py-3 text-xs font-semibold text-[#9ca3af] uppercase tracking-wider">Player</th>
                   <th className="px-4 py-3 text-xs font-semibold text-[#9ca3af] uppercase tracking-wider w-16">Pos</th>
                   <th className="px-4 py-3 text-xs font-semibold text-[#9ca3af] uppercase tracking-wider">School</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-[#9ca3af] uppercase tracking-wider w-24">MMR</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-[#9ca3af] uppercase tracking-wider w-28">Rating</th>
                   <th className="px-4 py-3 text-xs font-semibold text-[#9ca3af] uppercase tracking-wider w-36">Trend</th>
                 </tr>
               </thead>
