@@ -2,93 +2,123 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Mode-flip system:
+  Body background defaults to paper (cream). The Lenis-driven ModeSection
+  components animate it between #F0EEE5 (cream) and #0A0A0F (obsidian) as
+  the user scrolls. Section text/foreground inverts via Tailwind classes.
+*/
+
 @layer base {
   :root {
-    --background: 0 0% 2%;
-    --foreground: 0 0% 96%;
+    /* Shadcn token bridge — mapped to paper/ink so existing UI primitives
+       inherit the new palette without rewrites. */
+    --background: 47 24% 92%;       /* #F0EEE5 paper */
+    --foreground: 0 0% 10%;         /* #1A1A1A ink */
 
-    --card: 0 0% 7%;
-    --card-foreground: 0 0% 96%;
+    --card: 47 23% 88%;
+    --card-foreground: 0 0% 10%;
 
-    --popover: 0 0% 7%;
-    --popover-foreground: 0 0% 96%;
+    --popover: 47 23% 88%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 24 96% 50%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 24 100% 50%;         /* #FF6A00 brand orange */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 96%;
+    --secondary: 47 18% 80%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 55%;
+    --muted: 47 18% 84%;
+    --muted-foreground: 30 5% 47%;  /* #7E7972 inkMuted */
 
-    --accent: 168 76% 50%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 24 100% 50%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 75% 45%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 14%;
-    --input: 0 0% 14%;
-    --ring: 24 96% 50%;
+    --border: 30 15% 80%;
+    --input: 30 15% 80%;
+    --ring: 24 100% 50%;
 
     --radius: 0.5rem;
 
+    /* Sidebar tokens preserved for shadcn compat (unused on landing) */
     --sidebar-background: 0 0% 5%;
     --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 24 96% 50%;
+    --sidebar-primary: 24 100% 50%;
     --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 0 0% 12%;
     --sidebar-accent-foreground: 0 0% 90%;
     --sidebar-border: 0 0% 14%;
-    --sidebar-ring: 24 96% 50%;
+    --sidebar-ring: 24 100% 50%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
 
+  html {
+    background-color: #f0eee5;
+  }
+
   body {
-    @apply bg-background text-foreground font-sans antialiased overflow-x-hidden;
-    font-family: 'Inter', sans-serif;
+    @apply text-ink antialiased overflow-x-hidden;
+    font-family: "Inter", sans-serif;
+    background-color: #f0eee5;
   }
 }
 
 @layer utilities {
   .font-mono {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: "JetBrains Mono", monospace;
   }
 
-  .glass-panel {
-    background: hsla(0, 0%, 8%, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid hsla(0, 0%, 100%, 0.08);
+  .font-display {
+    font-family: "Inter Tight", "Inter", sans-serif;
+    letter-spacing: -0.025em;
+    line-height: 0.95;
   }
 
-  .text-glow-primary {
-    text-shadow: 0 0 30px hsl(24 96% 50% / 0.5);
+  /* P1 signature: uppercase mono microcopy with wide tracking */
+  .label-mono {
+    font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.75rem;
+    font-weight: 400;
   }
 
-  .text-glow-accent {
-    text-shadow: 0 0 20px hsl(168 76% 50% / 0.4);
-  }
-
-  .shadow-primary-glow {
-    box-shadow: 0 0 20px hsl(24 96% 50% / 0.3);
-  }
-
-  .shadow-primary-glow-lg {
-    box-shadow: 0 0 40px hsl(24 96% 50% / 0.4);
-  }
-
-  .grid-bg {
-    background-size: 40px 40px;
+  /* Subtle paper grain — only visible against cream */
+  .paper-grain {
     background-image:
-      linear-gradient(to right, hsla(0, 0%, 100%, 0.03) 1px, transparent 1px),
-      linear-gradient(to bottom, hsla(0, 0%, 100%, 0.03) 1px, transparent 1px);
+      radial-gradient(circle at 20% 30%, rgba(126, 121, 114, 0.04) 0, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(126, 121, 114, 0.04) 0, transparent 50%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.4 0 0 0 0 0.36 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: cover, cover, 240px 240px;
+  }
+
+  /* Sharp-cornered button (P1 anti-rounded move). Use for the single brand CTA. */
+  .btn-sharp {
+    border-radius: 0;
+  }
+
+  /* Glass HUD panel on cream — semi-transparent ink-tinted panel */
+  .glass-panel-light {
+    background: rgba(26, 26, 26, 0.06);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(26, 26, 26, 0.12);
+    color: #1a1a1a;
+  }
+
+  /* Glass HUD panel for use over the dark BallZoom scene (legacy — keep for compat) */
+  .glass-panel-dark {
+    background: rgba(18, 18, 22, 0.62);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(240, 238, 229, 0.08);
+    color: #f0eee5;
   }
 
   .scanlines {

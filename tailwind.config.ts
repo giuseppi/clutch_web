@@ -16,7 +16,7 @@ export default {
       fontFamily: {
         sans: ["Inter", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
-        display: ["Lexend", "sans-serif"],
+        display: ['"Inter Tight"', "Inter", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -52,12 +52,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        "background-dark": "#0a0a0a",
-        "surface-dark": "#151515",
-        "surface-highlight": "#1a1a1a",
-        "border-subtle": "#262626",
-        "text-secondary": "#9ca3af",
-        "accent-teal": "#14b8a6",
+        // Mode-flip palette: cream paper (P1 parity) + dark obsidian for product moments
+        paper: "#F0EEE5",
+        paperAlt: "#E9E5D8",
+        ink: "#1A1A1A",
+        inkMuted: "#7E7972",
+        obsidian: "#0A0A0F",
+        obsidianAlt: "#151515",
+        brand: "#FF6A00",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
