@@ -57,6 +57,16 @@ coverage/
 # Optional
 *.pem
 
+# Playwright MCP scratch directory (screenshots, console logs, snapshots)
+.playwright-mcp/
+
+# Local dev screenshots dropped in repo root (reference + revision captures)
+/p1-*.png
+/obsidian-real-*.png
+/studiox-*.png
+/revamp-*.png
+/v[0-9]*-*.png
+
 # Server
 server/node_modules/
 server/dist/
