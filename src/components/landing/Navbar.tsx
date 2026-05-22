@@ -49,14 +49,14 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-1">
           <NavLink href="#features">FEATURES</NavLink>
           <NavLink href="#how-it-works">HOW IT WORKS</NavLink>
-          <NavLink href="#download">DOWNLOAD</NavLink>
+          <NavLink href="#download">COMING SOON</NavLink>
         </div>
 
         <button
           onClick={() => handleComingSoon("App")}
           className="label-mono px-4 md:px-5 py-2 md:py-2.5 btn-sharp border border-ink/30 hover:border-ink text-ink transition-colors"
         >
-          GET THE APP
+          COMING SOON
         </button>
       </div>
     </nav>

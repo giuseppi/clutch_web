@@ -1,6 +1,6 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { Smartphone, Crosshair, TrendingUp } from "lucide-react";
+import { useRef, useState } from "react";
+import { Smartphone, Crosshair, Play, TrendingUp } from "lucide-react";
 import { SplitText } from "./SplitText";
 import { AnimatedNumber } from "./AnimatedNumber";
 
@@ -23,6 +23,14 @@ const steps = [
   },
   {
     num: "03",
+    icon: Play,
+    title: "See it in action.",
+    description:
+      "Watch Clutch track shots in real time — no wearables, no manual input. Just your phone and the court.",
+    spec: "LIVE DEMO / ON-DEVICE AI",
+  },
+  {
+    num: "04",
     icon: TrendingUp,
     title: "Read the analytics.",
     description:
@@ -38,23 +46,22 @@ const HowItWorksRail = () => {
     offset: ["start start", "end end"],
   });
 
-  // Pin each step ~80vh of vertical scroll → 240vh total
-  const translateX = useTransform(scrollYProgress, [0.05, 0.95], ["0%", "-66.6667%"]);
+  const translateX = useTransform(scrollYProgress, [0.05, 0.95], ["0%", `-${((steps.length - 1) / steps.length) * 100}%`]);
 
   return (
-    <div ref={ref} id="how-it-works" className="relative bg-paper text-ink paper-grain" style={{ height: "240vh" }}>
+    <div ref={ref} id="how-it-works" className="relative bg-paper text-ink paper-grain" style={{ height: "320vh" }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col">
         {/* Section header */}
         <div className="px-6 md:px-12 pt-24 md:pt-28 pb-8">
           <div className="flex items-baseline justify-between border-b border-ink/15 pb-5 max-w-[1440px] mx-auto">
             <span className="label-mono text-inkMuted">HOW IT WORKS — 03</span>
-            <span className="label-mono text-inkMuted hidden md:inline">3 STEPS / ZERO GEAR</span>
+            <span className="label-mono text-inkMuted hidden md:inline">4 STEPS / ZERO GEAR</span>
           </div>
 
           <div className="max-w-[1440px] mx-auto mt-8 md:mt-10">
             <SplitText
               as="h2"
-              text="Three steps."
+              text="Four steps."
               className="font-display font-medium text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
             />
             <SplitText
@@ -138,9 +145,35 @@ const StepArticle = ({ step, index }: StepProps) => {
 
 /* ------------------- Per-step animations ------------------- */
 
+const DemoGifAnim = () => {
+  const [gifFailed, setGifFailed] = useState(false);
+
+  return (
+    <div className="relative h-40 bg-paperAlt border border-ink/10 rounded-sm overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2 z-10">
+        <span className="label-mono text-inkMuted text-[10px]">CLUTCH · DEMO</span>
+        <span className="label-mono text-brand text-[10px]">● LIVE</span>
+      </div>
+      {gifFailed ? (
+        <div className="w-full h-full flex items-center justify-center">
+          <span className="label-mono text-inkMuted">DROP clutch.gif IN public/</span>
+        </div>
+      ) : (
+        <img
+          src="/clutch.gif"
+          alt="Clutch product demo"
+          className="w-full h-full object-cover"
+          onError={() => setGifFailed(true)}
+        />
+      )}
+    </div>
+  );
+};
+
 const StepAnimation = ({ index, inView }: { index: number; inView: boolean }) => {
   if (index === 0) return <PhoneSetupAnim inView={inView} />;
   if (index === 1) return <ShotArcAnim inView={inView} />;
+  if (index === 2) return <DemoGifAnim />;
   return <StatGrowthAnim inView={inView} />;
 };
 

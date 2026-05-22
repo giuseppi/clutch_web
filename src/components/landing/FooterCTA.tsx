@@ -2,30 +2,41 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { SplitText } from "./SplitText";
 
-const STORAGE_KEY = "clutch_beta_emails";
-
-const saveBetaEmail = (email: string) => {
-  try {
-    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    if (!existing.includes(email)) {
-      existing.push(email);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
-    }
-  } catch {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([email]));
-  }
-};
+const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSeUaa-wN0BkWVDut3uHLwBpecVIUdt2opIn5pzhvcniZHOH9g/formResponse";
+const GOOGLE_FORM_EMAIL_FIELD = "entry.2010243805";
 
 const FooterCTA = () => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    saveBetaEmail(email);
-    setSubmitted(true);
-    setEmail("");
+    setError("");
+
+    if (!GOOGLE_FORM_ACTION || !GOOGLE_FORM_EMAIL_FIELD) {
+      setSubmitted(true);
+      setEmail("");
+      return;
+    }
+
+    try {
+      const formData = new URLSearchParams();
+      formData.append(GOOGLE_FORM_EMAIL_FIELD, email);
+
+      await fetch(GOOGLE_FORM_ACTION, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData.toString(),
+      });
+
+      setSubmitted(true);
+      setEmail("");
+    } catch {
+      setError("Something went wrong. Try again.");
+    }
   };
 
   return (
@@ -40,7 +51,7 @@ const FooterCTA = () => {
 
       <div className="relative max-w-[1440px] mx-auto">
         <div className="flex items-baseline justify-between border-b border-ink/15 pb-5 mb-12 md:mb-16">
-          <span className="label-mono text-inkMuted">DOWNLOAD — 04</span>
+          <span className="label-mono text-inkMuted">COMING SOON — 04</span>
           <span className="label-mono text-inkMuted hidden md:inline">EARLY ACCESS / BETA</span>
         </div>
 
@@ -88,6 +99,7 @@ const FooterCTA = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-transparent border-b border-ink/30 focus:border-brand focus:outline-none px-0 py-3 font-mono text-sm text-ink placeholder:text-ink/40 transition-colors"
                   />
+                  {error && <span className="text-red-500 text-xs mt-1 block">{error}</span>}
                 </label>
                 <button
                   type="submit"
