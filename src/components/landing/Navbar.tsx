@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import clutchLogo from "@/assets/clutch_logo.png";
@@ -47,9 +47,15 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden md:flex items-center gap-1">
-          <NavLink href="#features">FEATURES</NavLink>
-          <NavLink href="#how-it-works">HOW IT WORKS</NavLink>
-          <NavLink href="#download">COMING SOON</NavLink>
+          <NavLink href="/#features">FEATURES</NavLink>
+          <NavLink href="/#how-it-works">HOW IT WORKS</NavLink>
+          <NavLink href="/#download">COMING SOON</NavLink>
+          <Link
+            to="/contact"
+            className="label-mono px-4 py-2 text-ink/70 hover:text-ink transition-colors"
+          >
+            CONTACT US
+          </Link>
         </div>
 
         <button
