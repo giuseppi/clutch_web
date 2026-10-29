@@ -105,7 +105,14 @@ npm run test     # Vitest
 
 ## Product context (high level)
 
-Clutch is a basketball analytics product. This web app presents the **coach / institutional** experience (enterprise login UI, dashboards, roster, uploads, analytics archive). Copy and visuals should stay consistent with brand (orange accent `#ff6a00`, dark surfaces).
+Clutch is an AI basketball analytics platform with two products: Casual (the mobile app for pickup players) and Professional (institutional). This site markets Casual: a landing page plus a contact page. The coach / institutional portal pages are unrouted (see above). Brand: orange accent `#ff6a00` on the cream paper palette (`bg-paper`, `text-ink` tokens in `tailwind.config.ts`); the dark surfaces belong to the unrouted portal.
+
+## Where knowledge lives
+
+- Company brain (Obsidian vault): `../brain/INDEX.md`. Read only what the task needs.
+- This website in the brain: `../brain/products/web/overview.md` (what the site is for, what each section claims, and which product note backs each claim). Read it before changing copy or adding a section.
+- What Clutch is and its products: `../brain/company/mission.md`, `../brain/products/casual/overview.md`.
+- To-dos: Jira project CLUTCH (`node --no-warnings ../brain/.tools/scripts/jira.ts mine`).
 
 ## MCP / tooling (optional)
 
