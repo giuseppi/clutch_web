@@ -60,6 +60,9 @@ coverage/
 # Playwright MCP scratch directory (screenshots, console logs, snapshots)
 .playwright-mcp/
 
+# Superpowers brainstorm sessions
+.superpowers/
+
 # Local dev screenshots dropped in repo root (reference + revision captures)
 /p1-*.png
 /obsidian-real-*.png

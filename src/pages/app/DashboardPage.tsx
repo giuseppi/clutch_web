@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMatches } from "@/hooks/api/useMatches";
 import { usePlayers } from "@/hooks/api/usePlayers";
+import type { PortalMatch, PortalPlayer } from "@/types/portal";
 import AppLayout from "@/components/app/AppLayout";
 import PageTransition from "@/components/app/PageTransition";
 import { getTierBadgeClass, getTierLabel } from "@/lib/mmrTier";
@@ -27,8 +28,8 @@ const DashboardPage = () => {
   const players = playerData?.data || [];
 
   // Compute stats from matches
-  const processedMatches = matches.filter((m: any) => m.isProcessed);
-  const wins = processedMatches.filter((m: any) => {
+  const processedMatches = matches.filter((m: PortalMatch) => m.isProcessed);
+  const wins = processedMatches.filter((m: PortalMatch) => {
     if (!m.homeScore || !m.awayScore) return false;
     const isHome = m.homeTeamId === teamId;
     return isHome ? m.homeScore > m.awayScore : m.awayScore > m.homeScore;
@@ -36,12 +37,12 @@ const DashboardPage = () => {
 
   // Average team MMR
   const avgMmr = players.length > 0
-    ? (players.reduce((sum: number, p: any) => sum + (p.mmr || 50), 0) / players.length)
+    ? (players.reduce((sum: number, p: PortalPlayer) => sum + (p.mmr || 50), 0) / players.length)
     : 50;
 
   // Average PPG from processed matches
   const avgPpg = processedMatches.length > 0
-    ? (processedMatches.reduce((sum: number, m: any) => {
+    ? (processedMatches.reduce((sum: number, m: PortalMatch) => {
         const isHome = m.homeTeamId === teamId;
         return sum + (isHome ? (m.homeScore || 0) : (m.awayScore || 0));
       }, 0) / processedMatches.length).toFixed(1)
@@ -49,7 +50,7 @@ const DashboardPage = () => {
 
   // Top performers sorted by MMR
   const topPerformers = [...players]
-    .sort((a: any, b: any) => (b.mmr || 50) - (a.mmr || 50))
+    .sort((a: PortalPlayer, b: PortalPlayer) => (b.mmr || 50) - (a.mmr || 50))
     .slice(0, 4);
 
   // Recent matches (last 5)
@@ -141,7 +142,7 @@ const DashboardPage = () => {
                 No processed matches yet. <Link to="/app/upload" className="text-[#ff6a00] hover:underline">Upload game film</Link> to get started.
               </div>
             ) : (
-              recentMatches.map((match: any) => {
+              recentMatches.map((match: PortalMatch) => {
                 const isHome = match.homeTeamId === teamId;
                 const teamScore = isHome ? match.homeScore : match.awayScore;
                 const opponentScore = isHome ? match.awayScore : match.homeScore;
@@ -230,7 +231,7 @@ const DashboardPage = () => {
                 No players on the roster yet. <Link to="/app/roster" className="text-[#ff6a00] hover:underline">Add players</Link> to see key performers.
               </div>
             ) : (
-              topPerformers.map((player: any) => (
+              topPerformers.map((player: PortalPlayer) => (
                 <div key={player.id} className="bg-[#151515]/80 backdrop-blur-md border border-[#262626] p-4 rounded-xl hover:bg-[#1a1a1a] transition-colors cursor-pointer group">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="relative">
