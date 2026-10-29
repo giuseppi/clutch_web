@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLeaderboard } from "@/hooks/api/useLeaderboard";
+import type { PortalPlayer } from "@/types/portal";
 import AppLayout from "@/components/app/AppLayout";
 import PageTransition from "@/components/app/PageTransition";
 import { getTierLabel, getTierTextClass } from "@/lib/mmrTier";
@@ -94,13 +95,13 @@ const LeaderboardPage = () => {
           </div>
           <div className="flex gap-2 flex-wrap">
             {[
-              { label: "State", key: "state", options: ["CA", "TX", "FL", "NY", "OH"] },
-              { label: "Classification", key: "classification", options: ["1A", "2A", "3A", "4A", "5A", "D1", "D2", "D3"] },
-              { label: "Position", key: "position", options: ["PG", "SG", "SF", "PF", "C"] },
+              { label: "State", key: "state" as const, options: ["CA", "TX", "FL", "NY", "OH"] },
+              { label: "Classification", key: "classification" as const, options: ["1A", "2A", "3A", "4A", "5A", "D1", "D2", "D3"] },
+              { label: "Position", key: "position" as const, options: ["PG", "SG", "SF", "PF", "C"] },
             ].map((filter) => (
               <select
                 key={filter.key}
-                value={(filters as any)[filter.key] || ""}
+                value={filters[filter.key] || ""}
                 onChange={(e) => { setFilters(f => ({ ...f, [filter.key]: e.target.value || undefined })); setPage(1); }}
                 className="px-3 py-2.5 rounded-lg bg-[#151515] border border-[#262626] text-sm text-[#9ca3af] hover:border-[#ff6a00]/30 transition-colors appearance-none cursor-pointer font-sans"
               >
@@ -139,7 +140,7 @@ const LeaderboardPage = () => {
                     <td colSpan={6} className="px-4 py-12 text-center text-slate-500">No players found matching your filters.</td>
                   </tr>
                 ) : (
-                  players.map((player: any) => (
+                  players.map((player: PortalPlayer) => (
                     <tr key={player.id} className="hover:bg-white/[0.03] transition-colors cursor-pointer">
                       <td className="px-4 py-3">
                         <span className={`text-sm font-bold ${player.rank <= 3 ? "text-[#ff6a00]" : "text-slate-400"}`}>#{player.rank}</span>

@@ -5,8 +5,17 @@ import { useMatches } from "@/hooks/api/useMatches";
 import { useMatchAnalytics } from "@/hooks/api/useAnalytics";
 import { usePlayTags } from "@/hooks/api/useAnalytics";
 import { useMatchHighlights } from "@/hooks/api/useAnalytics";
+import type { PortalHighlight, PortalMatch, PortalPlayTag } from "@/types/portal";
 import AppLayout from "@/components/app/AppLayout";
 import PageTransition from "@/components/app/PageTransition";
+
+interface TakeawayCard {
+  icon: string;
+  iconColor: string;
+  iconBg: string;
+  title: string;
+  detail: string;
+}
 
 const AnalyticsPage = () => {
   const { user } = useAuth();
@@ -16,7 +25,7 @@ const AnalyticsPage = () => {
   // Match selector
   const { data: matchData, isLoading: matchesLoading } = useMatches({ teamId, limit: 20 });
   const allMatches = matchData?.data || [];
-  const processedMatches = allMatches.filter((m: any) => m.isProcessed);
+  const processedMatches = allMatches.filter((m: PortalMatch) => m.isProcessed);
 
   const selectedMatchId = searchParams.get("matchId") || processedMatches[0]?.id || null;
 
@@ -27,7 +36,7 @@ const AnalyticsPage = () => {
 
   const [shotTeam, setShotTeam] = useState<"home" | "away">("home");
 
-  const selectedMatch = processedMatches.find((m: any) => m.id === selectedMatchId);
+  const selectedMatch = processedMatches.find((m: PortalMatch) => m.id === selectedMatchId);
   const isHome = selectedMatch?.homeTeamId === teamId;
   const teamScore = selectedMatch ? (isHome ? selectedMatch.homeScore : selectedMatch.awayScore) : null;
   const opponentScore = selectedMatch ? (isHome ? selectedMatch.awayScore : selectedMatch.homeScore) : null;
@@ -64,7 +73,7 @@ const AnalyticsPage = () => {
             className="h-10 px-3 rounded-lg bg-[#0a0a0a] border border-[#262626] text-white text-sm focus:ring-1 focus:ring-[#ff6a00] outline-none min-w-[220px]"
           >
             <option value="" disabled>Select a match...</option>
-            {processedMatches.map((m: any) => {
+            {processedMatches.map((m: PortalMatch) => {
               const date = new Date(m.scheduledDate).toLocaleDateString("en-US", { month: "short", day: "numeric" });
               return (
                 <option key={m.id} value={m.id}>
@@ -120,7 +129,7 @@ const AnalyticsPage = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {(highlightsList.length > 0
-                  ? highlightsList.slice(0, 3).map((h: any, i: number) => ({
+                  ? highlightsList.slice(0, 3).map((h: PortalHighlight, i: number) => ({
                       icon: i === 0 ? "trending_up" : i === 1 ? "speed" : "warning",
                       iconColor: i === 0 ? "text-[#14b8a6]" : i === 1 ? "text-[#ff6a00]" : "text-amber-400",
                       iconBg: i === 0 ? "bg-[#14b8a6]/10 border-[#14b8a6]/20" : i === 1 ? "bg-[#ff6a00]/10 border-[#ff6a00]/20" : "bg-amber-400/10 border-amber-400/20",
@@ -132,7 +141,7 @@ const AnalyticsPage = () => {
                       { icon: "speed", iconColor: "text-[#ff6a00]", iconBg: "bg-[#ff6a00]/10 border-[#ff6a00]/20", title: "Individual stats computed", detail: "View per-player box scores and advanced metrics in the roster section." },
                       { icon: "warning", iconColor: "text-amber-400", iconBg: "bg-amber-400/10 border-amber-400/20", title: "Upload more games", detail: "More data improves AI accuracy and MMR stability for your players." },
                     ]
-                ).map((card: any) => (
+                ).map((card: TakeawayCard) => (
                   <div
                     key={card.title}
                     className="bg-[#151515]/80 backdrop-blur-md border border-[#262626] p-5 rounded-xl hover:border-[#ff6a00]/30 transition-all duration-300 group"
@@ -261,7 +270,7 @@ const AnalyticsPage = () => {
                   <h2 className="text-lg font-bold text-slate-100">Play Tags</h2>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {tagsList.map((tag: any) => (
+                  {tagsList.map((tag: PortalPlayTag) => (
                     <button
                       key={tag.id}
                       className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1a1a1a] border border-[#262626] hover:border-[#ff6a00]/50 hover:bg-[#ff6a00]/10 transition-all group"
@@ -287,7 +296,7 @@ const AnalyticsPage = () => {
               </div>
               <div className="flex gap-4 overflow-x-auto pb-2 -mx-2 px-2 snap-x">
                 {highlightsList.length > 0 ? (
-                  highlightsList.map((highlight: any, i: number) => {
+                  highlightsList.map((highlight: PortalHighlight, i: number) => {
                     const colors = [
                       { badge: "bg-[#14b8a6]/10 text-[#14b8a6] border-[#14b8a6]/20", icon: "shield", gradient: "from-[#14b8a6]/20 to-transparent" },
                       { badge: "bg-[#ff6a00]/10 text-[#ff6a00] border-[#ff6a00]/20", icon: "local_fire_department", gradient: "from-[#ff6a00]/20 to-transparent" },

@@ -188,11 +188,11 @@ const CourtDiagram = () => (
         <path d="M 740 110 Q 520 240 740 370" fill="none" stroke="#F0EEE5" strokeOpacity="0.5" strokeWidth="1" />
         <circle cx="80" cy="240" r="5" fill="none" stroke="#FF6A00" strokeWidth="2" />
         <circle cx="720" cy="240" r="5" fill="none" stroke="#FF6A00" strokeWidth="2" />
-        <PlayerMarker x="240" y="200" label="07" />
-        <PlayerMarker x="320" y="280" label="22" />
-        <PlayerMarker x="480" y="220" label="14" />
-        <PlayerMarker x="540" y="290" label="09" />
-        <PlayerMarker x="600" y="195" label="33" />
+        <PlayerMarker x={240} y={200} label="07" />
+        <PlayerMarker x={320} y={280} label="22" />
+        <PlayerMarker x={480} y={220} label="14" />
+        <PlayerMarker x={540} y={290} label="09" />
+        <PlayerMarker x={600} y={195} label="33" />
       </g>
     </svg>
   </div>

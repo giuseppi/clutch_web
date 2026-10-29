@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useScheduledMatches } from "@/hooks/api/useMatches";
 import { useSessions, useCreateSession } from "@/hooks/api/useSessions";
 import { usePresignedUrl, useConfirmUpload, useJobStatus } from "@/hooks/api/useUpload";
+import type { PortalMatch, PortalSession, PortalSessionType } from "@/types/portal";
 import AppLayout from "@/components/app/AppLayout";
 import PageTransition from "@/components/app/PageTransition";
 
@@ -23,7 +24,7 @@ const UploadPage = () => {
 
   // Session state
   const [sessionTitle, setSessionTitle] = useState("");
-  const [sessionType, setSessionType] = useState<"PRACTICE" | "SCRIMMAGE" | "TRAINING">("PRACTICE");
+  const [sessionType, setSessionType] = useState<PortalSessionType>("PRACTICE");
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
 
   // Upload state
@@ -290,7 +291,7 @@ const UploadPage = () => {
                       <p className="text-sm text-slate-500">No scheduled matches awaiting film.</p>
                     </div>
                   ) : (
-                    matches.map((match: any) => {
+                    matches.map((match: PortalMatch) => {
                       const isSelected = selectedMatchId === match.id;
                       const date = new Date(match.scheduledDate);
                       return (
@@ -344,7 +345,7 @@ const UploadPage = () => {
                     />
                     <select
                       value={sessionType}
-                      onChange={(e) => setSessionType(e.target.value as any)}
+                      onChange={(e) => setSessionType(e.target.value as PortalSessionType)}
                       className="h-10 px-3 rounded-lg bg-[#0a0a0a] border border-[#262626] text-white text-sm focus:ring-1 focus:ring-[#14b8a6] focus:border-[#14b8a6] outline-none"
                     >
                       <option value="PRACTICE">Practice</option>
@@ -361,7 +362,7 @@ const UploadPage = () => {
                   </div>
 
                   {/* Existing sessions */}
-                  {sessions.map((session: any) => {
+                  {sessions.map((session: PortalSession) => {
                     const isSelected = selectedSessionId === session.id;
                     return (
                       <div

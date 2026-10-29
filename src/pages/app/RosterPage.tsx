@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePlayers, usePlayer, usePlayerEloHistory, usePlayerStats } from "@/hooks/api/usePlayers";
+import type { PortalEloEntry, PortalPlayer } from "@/types/portal";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import AppLayout from "@/components/app/AppLayout";
@@ -112,7 +113,7 @@ function PlayerDetailPanel({ playerId }: { playerId: string }) {
         <div className="bg-[#151515]/80 border border-[#262626] rounded-xl p-5">
           <h3 className="text-lg font-bold text-slate-100 mb-4">MMR History</h3>
           <div className="flex items-end gap-1 h-24">
-            {history.slice(-20).map((entry: any, i: number) => {
+            {history.slice(-20).map((entry: PortalEloEntry, i: number) => {
               const height = ((entry.newMmr || 50) / 99) * 100;
               return (
                 <div
@@ -233,7 +234,7 @@ const RosterPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {players.map((player: any) => {
+              {players.map((player: PortalPlayer) => {
                 const mmr = player.mmr || 50;
                 return (
                   <div

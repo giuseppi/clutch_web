@@ -1,6 +1,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { usePlayer, usePlayerEloHistory, usePlayerStats } from "@/hooks/api/usePlayers";
 import { usePlayerHighlights } from "@/hooks/api/useAnalytics";
+import type { PortalEloEntry, PortalHighlight, PortalMatchStat } from "@/types/portal";
 import AppLayout from "@/components/app/AppLayout";
 import PageTransition from "@/components/app/PageTransition";
 import { getTierLabel, getTierRingColor, mmrFillPercent } from "@/lib/mmrTier";
@@ -145,7 +146,7 @@ const MyProfilePage = () => {
               <h2 className="text-lg font-bold text-white">MMR History</h2>
             </div>
             <div className="flex items-end gap-1 h-32">
-              {history.slice(-30).map((entry: any, i: number) => {
+              {history.slice(-30).map((entry: PortalEloEntry, i: number) => {
                 const height = ((entry.newMmr || 50) / 99) * 100;
                 const delta = entry.delta || 0;
                 return (
@@ -188,7 +189,7 @@ const MyProfilePage = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#262626]">
-                  {recentStats.slice(0, 10).map((stat: any, i: number) => (
+                  {recentStats.slice(0, 10).map((stat: PortalMatchStat, i: number) => (
                     <tr key={i} className="hover:bg-white/5 transition-colors">
                       <td className="px-4 py-3 text-slate-300 font-medium">
                         {stat.match?.scheduledDate ? new Date(stat.match.scheduledDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "--"}
@@ -217,7 +218,7 @@ const MyProfilePage = () => {
               <h2 className="text-lg font-bold text-white">My Highlights</h2>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2 snap-x">
-              {highlightsList.map((highlight: any) => (
+              {highlightsList.map((highlight: PortalHighlight) => (
                 <div
                   key={highlight.id}
                   className="min-w-[260px] max-w-[300px] bg-[#151515] border border-[#262626] rounded-xl p-5 flex flex-col gap-3 snap-start hover:border-[#ff6a00]/30 transition-all cursor-pointer group shrink-0"
