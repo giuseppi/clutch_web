@@ -1,8 +1,9 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
 import { SplitText } from "./SplitText";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { RotatingGlobe } from "./RotatingGlobe";
+import { RISE, riseVariants } from "@/lib/motion";
 
 const statLines = [
   { label: "PTS", value: 18.4, target: 78, decimals: 1 },
@@ -44,13 +45,13 @@ const FeaturesPolaroidGrid = () => {
             as="h2"
             text="serious player needs."
             className="md:col-span-12 font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[16vw]"
-            stagger={0.03}
           />
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            variants={riseVariants}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ delay: 0.5 }}
             className="md:col-start-7 md:col-span-5 text-base md:text-lg text-ink/70 leading-relaxed mt-2"
           >
             Four systems running in concert behind a single phone camera.
@@ -62,10 +63,10 @@ const FeaturesPolaroidGrid = () => {
           {polaroids.map((p, i) => (
             <motion.article
               key={p.index}
-              initial={{ opacity: 0, y: 60, rotate: p.rotate * 1.6 }}
+              initial={{ opacity: 0, y: p.translateY + RISE.y, rotate: p.rotate }}
               whileInView={{ opacity: 1, y: p.translateY, rotate: p.rotate }}
               viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: RISE.duration, ease: RISE.ease }}
               whileHover={{ rotate: 0, y: p.translateY - 6, transition: { duration: 0.4 } }}
               className="bg-paperAlt border border-ink/10 shadow-[0_24px_60px_-24px_rgba(26,26,26,0.18)] p-6 md:p-7 origin-center"
             >
@@ -81,7 +82,7 @@ const FeaturesPolaroidGrid = () => {
                   {i === 0 && <StatTrackingContent inView={inView} />}
                   {i === 1 && <PlayerRatingsContent inView={inView} />}
                   {i === 2 && <LiveScoresContent inView={inView} />}
-                  {i === 3 && <CourtMatchingContent inView={inView} />}
+                  {i === 3 && <CourtMatchingContent />}
                 </div>
               </div>
 
@@ -222,17 +223,23 @@ const LiveScoresContent = ({ inView }: { inView: boolean }) => (
   </div>
 );
 
-const CourtMatchingContent = ({ inView }: { inView: boolean }) => (
-  <div className="flex-1 flex flex-col">
-    <div className="flex-1 flex items-center justify-center -mx-2">
-      <RotatingGlobe inView={inView} />
+const CourtMatchingContent = () => {
+  const globeRef = useRef<HTMLDivElement>(null);
+  const onScreen = useInView(globeRef, { amount: 0.2 });
+  const reduced = useReducedMotion();
+
+  return (
+    <div className="flex-1 flex flex-col">
+      <div ref={globeRef} data-testid="court-globe" className="flex-1 flex items-center justify-center -mx-2">
+        <RotatingGlobe inView={onScreen && !reduced} />
+      </div>
+      <div className="mt-auto pt-3 border-t border-ink/10 flex justify-between font-mono text-[11px]">
+        <span className="text-ink/60">12 ACTIVE COURTS</span>
+        <span className="text-brand">→ NEAR YOU</span>
+      </div>
     </div>
-    <div className="mt-auto pt-3 border-t border-ink/10 flex justify-between font-mono text-[11px]">
-      <span className="text-ink/60">12 ACTIVE COURTS</span>
-      <span className="text-brand">→ NEAR YOU</span>
-    </div>
-  </div>
-);
+  );
+};
 
 /* ---------------- Captions ---------------- */
 

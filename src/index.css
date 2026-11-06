@@ -11,7 +11,7 @@
 
 @layer base {
   :root {
-    /* Shadcn token bridge — mapped to paper/ink so existing UI primitives
+    /* Shadcn token bridge - mapped to paper/ink so existing UI primitives
        inherit the new palette without rewrites. */
     --background: 47 24% 92%;       /* #F0EEE5 paper */
     --foreground: 0 0% 10%;         /* #1A1A1A ink */
@@ -100,7 +100,7 @@
     font-weight: 400;
   }
 
-  /* Subtle paper grain — only visible against cream */
+  /* Subtle paper grain - only visible against cream */
   .paper-grain {
     background-image:
       radial-gradient(circle at 20% 30%, rgba(126, 121, 114, 0.04) 0, transparent 50%),
@@ -114,7 +114,7 @@
     border-radius: 0;
   }
 
-  /* Glass HUD panel on cream — semi-transparent ink-tinted panel */
+  /* Glass HUD panel on cream - semi-transparent ink-tinted panel */
   .glass-panel-light {
     background: rgba(26, 26, 26, 0.06);
     backdrop-filter: blur(14px);
@@ -123,7 +123,7 @@
     color: #1a1a1a;
   }
 
-  /* Glass HUD panel for use over the dark BallZoom scene (legacy — keep for compat) */
+  /* Glass HUD panel for use over the dark BallZoom scene (legacy - keep for compat) */
   .glass-panel-dark {
     background: rgba(18, 18, 22, 0.62);
     backdrop-filter: blur(14px);
@@ -156,4 +156,10 @@
 
 .animate-page-enter {
   animation: page-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-page-enter {
+    animation: none;
+  }
 }

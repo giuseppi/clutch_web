@@ -1,8 +1,9 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Smartphone, Crosshair, Play, TrendingUp } from "lucide-react";
 import { SplitText } from "./SplitText";
 import { AnimatedNumber } from "./AnimatedNumber";
+import { DemoVideo } from "./DemoVideo";
 
 const steps = [
   {
@@ -68,7 +69,6 @@ const HowItWorksRail = () => {
               as="h2"
               text="Zero gear."
               className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[18vw]"
-              stagger={0.04}
             />
           </div>
         </div>
@@ -145,35 +145,10 @@ const StepArticle = ({ step, index }: StepProps) => {
 
 /* ------------------- Per-step animations ------------------- */
 
-const DemoGifAnim = () => {
-  const [gifFailed, setGifFailed] = useState(false);
-
-  return (
-    <div className="relative h-40 bg-paperAlt border border-ink/10 rounded-sm overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2 z-10">
-        <span className="label text-inkMuted text-[10px]">CLUTCH · DEMO</span>
-        <span className="label text-brand text-[10px]">● LIVE</span>
-      </div>
-      {gifFailed ? (
-        <div className="w-full h-full flex items-center justify-center">
-          <span className="label text-inkMuted">DROP clutch.gif IN public/</span>
-        </div>
-      ) : (
-        <img
-          src="/clutch.gif"
-          alt="Clutch product demo"
-          className="w-full h-full object-cover"
-          onError={() => setGifFailed(true)}
-        />
-      )}
-    </div>
-  );
-};
-
 const StepAnimation = ({ index, inView }: { index: number; inView: boolean }) => {
   if (index === 0) return <PhoneSetupAnim inView={inView} />;
   if (index === 1) return <ShotArcAnim inView={inView} />;
-  if (index === 2) return <DemoGifAnim />;
+  if (index === 2) return <DemoVideo />;
   return <StatGrowthAnim inView={inView} />;
 };
 

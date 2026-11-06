@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { FADE, riseVariants } from "@/lib/motion";
 
 const PullQuote = () => {
   return (
@@ -8,17 +9,17 @@ const PullQuote = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.8 }}
+          transition={FADE}
           className="label text-inkMuted block mb-8 md:mb-10"
         >
           A NOTE ON PURPOSE
         </motion.span>
 
         <motion.blockquote
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          variants={riseVariants}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           className="font-display text-[clamp(1.75rem,4.5vw,3.5rem)] text-ink leading-[1.15] tracking-[-0.01em] max-w-[20ch]"
         >
           Talent is everywhere. The cameras aren't. Clutch closes that gap, built
@@ -29,7 +30,7 @@ const PullQuote = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.6 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
+          transition={{ ...FADE, delay: 0.3 }}
           className="mt-8 md:mt-10 flex items-center gap-4 text-inkMuted"
         >
           <span className="w-12 h-px bg-inkMuted/40" />

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { SplitText } from "./SplitText";
+import { riseVariants } from "@/lib/motion";
 
 const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSeUaa-wN0BkWVDut3uHLwBpecVIUdt2opIn5pzhvcniZHOH9g/formResponse";
 const GOOGLE_FORM_EMAIL_FIELD = "entry.2010243805";
@@ -64,14 +65,14 @@ const FooterCTA = () => {
           as="h2"
           text="Climb the ranks."
           className="font-display text-[clamp(2.5rem,9vw,8rem)] text-brand pl-[6vw] md:pl-[18vw]"
-          stagger={0.04}
         />
 
         <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          variants={riseVariants}
+          initial="hidden"
+          whileInView="visible"
           viewport={{ once: true, amount: 0.5 }}
-          transition={{ delay: 0.4, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ delay: 0.4 }}
           className="grid md:grid-cols-12 gap-y-8 md:gap-x-12 mt-12 md:mt-16 items-end"
         >
           <p className="md:col-span-5 text-base md:text-lg text-ink/70 leading-relaxed max-w-md">

@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom/vitest";
+import { installIntersectionObserver, resetIntersections } from "./intersection";
 
 Object.defineProperty(window, "matchMedia", {
   writable: true,
@@ -12,4 +13,10 @@ Object.defineProperty(window, "matchMedia", {
     removeEventListener: () => {},
     dispatchEvent: () => {},
   }),
+});
+
+installIntersectionObserver();
+
+afterEach(() => {
+  resetIntersections();
 });

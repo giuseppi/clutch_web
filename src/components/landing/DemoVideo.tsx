@@ -1,0 +1,39 @@
+import { useEffect, useRef } from "react";
+import { useInView, useReducedMotion } from "framer-motion";
+
+/** Product demo loop. Plays only while on screen, and stays on its poster under reduced motion. */
+export const DemoVideo = () => {
+  const ref = useRef<HTMLVideoElement>(null);
+  const onScreen = useInView(ref, { amount: 0.3 });
+  const reduced = useReducedMotion();
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video || reduced) return;
+    if (onScreen) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+  }, [onScreen, reduced]);
+
+  return (
+    <div className="relative h-40 bg-paperAlt border border-ink/10 rounded-sm overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2 z-10">
+        <span className="label text-inkMuted text-[10px]">CLUTCH · DEMO</span>
+        <span className="label text-brand text-[10px]">● LIVE</span>
+      </div>
+      <video
+        ref={ref}
+        src="/clutch-demo.mp4"
+        poster="/clutch-demo-poster.jpg"
+        aria-label="Clutch product demo"
+        className="w-full h-full object-cover"
+        muted
+        loop
+        playsInline
+        preload="metadata"
+      />
+    </div>
+  );
+};
