@@ -94,3 +94,6 @@ worker/models/
 htmlcov/
 .coverage
 *.cover
+
+# Lavish review artifacts (agent-generated, local only)
+.lavish/
