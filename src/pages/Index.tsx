@@ -2,7 +2,6 @@ import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
-import BallZoom from "@/components/landing/BallZoom";
 import FeaturesPolaroidGrid from "@/components/landing/FeaturesPolaroidGrid";
 import HowItWorksRail from "@/components/landing/HowItWorksRail";
 import PullQuote from "@/components/landing/PullQuote";
@@ -20,7 +19,6 @@ const Index = () => {
       </AnimatePresence>
       <Navbar />
       <Hero />
-      <BallZoom />
       <FeaturesPolaroidGrid />
       <HowItWorksRail />
       <PullQuote />

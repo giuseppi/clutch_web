@@ -9,8 +9,6 @@ interface SplitTextProps {
   whileInView?: boolean;
   /** Rise on mount when whileInView is false. Default true. */
   play?: boolean;
-  /** Seconds between words. Default STAGGER. */
-  stagger?: number;
   className?: string;
   as?: keyof Pick<HTMLElementTagNameMap, "h1" | "h2" | "h3" | "p" | "span">;
 }
@@ -24,7 +22,6 @@ export const SplitText = ({
   delay = 0,
   whileInView = true,
   play = true,
-  stagger = STAGGER,
   className = "",
   as: Tag = "h2",
 }: SplitTextProps) => {
@@ -38,7 +35,7 @@ export const SplitText = ({
       whileInView={whileInView ? "visible" : undefined}
       animate={whileInView ? undefined : play ? "visible" : "hidden"}
       viewport={{ once: true, amount: 0.4 }}
-      transition={{ delayChildren: delay, staggerChildren: stagger }}
+      transition={{ delayChildren: delay, staggerChildren: STAGGER }}
     >
       {words.map((word, i) => (
         <span key={`${word}-${i}`}>

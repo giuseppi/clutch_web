@@ -123,15 +123,6 @@
     color: #1a1a1a;
   }
 
-  /* Glass HUD panel for use over the dark BallZoom scene (legacy - keep for compat) */
-  .glass-panel-dark {
-    background: rgba(18, 18, 22, 0.62);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(240, 238, 229, 0.08);
-    color: #f0eee5;
-  }
-
   .scanlines {
     background-image: repeating-linear-gradient(
       0deg,
@@ -160,6 +151,96 @@
 
 @media (prefers-reduced-motion: reduce) {
   .animate-page-enter {
+    animation: none;
+  }
+}
+
+/*
+  Flip-card score (FlipNumber): the old top half folds away, then the new bottom half
+  folds into place, hinged on the number's midline. Every half has the card's white
+  background so the halves cover each other.
+*/
+.flip-num {
+  position: relative;
+  display: inline-block;
+  height: 1em;
+  line-height: 1;
+  perspective: 240px;
+}
+
+.flip-size {
+  color: transparent;
+}
+
+.flip-half {
+  position: absolute;
+  top: 0;
+  left: -50%;
+  right: -50%;
+  height: 1em;
+  text-align: center;
+  background: #fff;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-origin: 50% 50%;
+}
+
+.flip-top {
+  clip-path: inset(0 0 50% 0);
+}
+
+.flip-bottom {
+  clip-path: inset(50% 0 0 0);
+}
+
+.flip-out {
+  animation: flip-fold-out 0.18s cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+.flip-in {
+  animation: flip-fold-in 0.26s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+}
+
+.flip-num.quick .flip-out {
+  animation-duration: 0.07s;
+}
+
+.flip-num.quick .flip-in {
+  animation-duration: 0.1s;
+  animation-delay: 0.07s;
+}
+
+@keyframes flip-fold-out {
+  from {
+    transform: rotateX(0);
+  }
+  to {
+    transform: rotateX(90deg);
+  }
+}
+
+@keyframes flip-fold-in {
+  from {
+    transform: rotateX(-90deg);
+  }
+  to {
+    transform: rotateX(0);
+  }
+}
+
+/* The live card's pill dot */
+@keyframes live-pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-out {
+    display: none;
+  }
+
+  .flip-in {
     animation: none;
   }
 }

@@ -1,4 +1,4 @@
-const REPLACED_LATER = ["Hero.tsx", "BallZoom.tsx", "AROverlay.tsx", "Loader.tsx"];
+const REPLACED_LATER = ["Loader.tsx"];
 
 const sources = import.meta.glob(
   ["/src/components/landing/**/*.tsx", "/src/pages/*.tsx", "/index.html", "!**/*.test.tsx"],
