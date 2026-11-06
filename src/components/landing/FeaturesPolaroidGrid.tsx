@@ -27,10 +27,10 @@ const FeaturesPolaroidGrid = () => {
   return (
     <div id="features" className="paper-grain pt-20 md:pt-28 pb-24 md:pb-32 px-6 md:px-12">
       <div className="max-w-[1440px] mx-auto">
-        {/* Section header — TOC chrome */}
+        {/* Section header - TOC chrome */}
         <div className="flex items-baseline justify-between mb-10 md:mb-14 border-b border-ink/15 pb-5">
-          <span className="label-mono text-inkMuted">FEATURES — 02</span>
-          <span className="label-mono text-inkMuted hidden md:inline">04 / SYSTEMS</span>
+          <span className="label text-inkMuted">FEATURES · 02</span>
+          <span className="label text-inkMuted hidden md:inline">04 / SYSTEMS</span>
         </div>
 
         {/* Headline */}
@@ -38,12 +38,12 @@ const FeaturesPolaroidGrid = () => {
           <SplitText
             as="h2"
             text="Everything a"
-            className="md:col-span-12 font-display font-medium text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
+            className="md:col-span-12 font-display text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
           />
           <SplitText
             as="h2"
             text="serious player needs."
-            className="md:col-span-12 font-display font-medium italic text-[clamp(2.5rem,7vw,5.5rem)] text-ink pl-[6vw] md:pl-[16vw]"
+            className="md:col-span-12 font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[16vw]"
             stagger={0.03}
           />
           <motion.p
@@ -69,12 +69,12 @@ const FeaturesPolaroidGrid = () => {
               whileHover={{ rotate: 0, y: p.translateY - 6, transition: { duration: 0.4 } }}
               className="bg-paperAlt border border-ink/10 shadow-[0_24px_60px_-24px_rgba(26,26,26,0.18)] p-6 md:p-7 origin-center"
             >
-              {/* Polaroid "image area" — cream inner panel with animated content */}
+              {/* Polaroid "image area" - cream inner panel with animated content */}
               <div className="bg-paper text-ink aspect-[4/3] mb-5 relative overflow-hidden border border-ink/8">
                 <div className="absolute inset-0 p-5 md:p-6 flex flex-col">
                   <div className="flex items-start justify-between mb-3">
-                    <span className="label-mono text-ink/60">{p.kicker}</span>
-                    <span className="font-display font-light italic text-3xl md:text-4xl text-ink/25">
+                    <span className="label text-ink/60">{p.kicker}</span>
+                    <span className="font-display font-normal text-3xl md:text-4xl text-ink/25">
                       {p.index}
                     </span>
                   </div>
@@ -85,7 +85,7 @@ const FeaturesPolaroidGrid = () => {
                 </div>
               </div>
 
-              {/* Polaroid caption — title + body */}
+              {/* Polaroid caption - title + body */}
               <Caption index={i} />
             </motion.article>
           ))}
@@ -101,10 +101,10 @@ const StatTrackingContent = ({ inView }: { inView: boolean }) => (
   <div className="flex-1 flex flex-col">
     {/* Big focal stat */}
     <div className="mb-3">
-      <div className="font-display font-medium text-5xl md:text-6xl text-ink tabular-nums leading-none">
+      <div className="font-display text-5xl md:text-6xl text-ink tabular-nums leading-none">
         <AnimatedNumber value={18.4} inView={inView} duration={1600} delay={200} />
       </div>
-      <div className="label-mono text-ink/55 mt-1">PPG · LAST 5 GAMES</div>
+      <div className="label text-ink/55 mt-1">PPG · LAST 5 GAMES</div>
     </div>
 
     {/* Stat bars */}
@@ -151,12 +151,12 @@ const StatTrackingContent = ({ inView }: { inView: boolean }) => (
 const PlayerRatingsContent = ({ inView }: { inView: boolean }) => (
   <div className="flex-1 flex flex-col">
     <div className="flex items-end gap-3 mb-2">
-      <div className="font-display font-medium text-5xl md:text-6xl text-ink tabular-nums leading-none">
+      <div className="font-display text-5xl md:text-6xl text-ink tabular-nums leading-none">
         <AnimatedNumber value={1247} inView={inView} duration={1800} delay={200} decimals={0} />
       </div>
-      <span className="label-mono text-brand bg-brand/10 border border-brand/30 px-2 py-1">GOLD</span>
+      <span className="label text-brand bg-brand/10 border border-brand/30 px-2 py-1">GOLD</span>
     </div>
-    <div className="label-mono text-ink/55 mb-4">MMR · GLICKO-2</div>
+    <div className="label text-ink/55 mb-4">MMR · GLICKO-2</div>
 
     {/* Sparkline */}
     <div className="flex-1 relative">
@@ -195,21 +195,21 @@ const LiveScoresContent = ({ inView }: { inView: boolean }) => (
     <div className="flex items-center justify-between mb-3">
       <div className="flex items-center gap-2">
         <span className="w-2 h-2 bg-brand rounded-full animate-pulse" />
-        <span className="label-mono text-ink/80">LIVE</span>
+        <span className="label text-ink/80">LIVE</span>
       </div>
       <span className="font-mono text-[11px] text-ink/60">Q4 · 4:23</span>
     </div>
 
     <div className="flex-1 grid grid-cols-2 gap-3 items-center">
       <div className="text-center">
-        <div className="label-mono text-ink/55 mb-1">TEAM A</div>
-        <div className="font-display font-medium text-5xl md:text-6xl text-ink tabular-nums leading-none">
+        <div className="label text-ink/55 mb-1">TEAM A</div>
+        <div className="font-display text-5xl md:text-6xl text-ink tabular-nums leading-none">
           <AnimatedNumber value={72} inView={inView} duration={1300} delay={300} decimals={0} />
         </div>
       </div>
       <div className="text-center border-l border-ink/10">
-        <div className="label-mono text-ink/55 mb-1">TEAM B</div>
-        <div className="font-display font-medium text-5xl md:text-6xl text-ink/70 tabular-nums leading-none">
+        <div className="label text-ink/55 mb-1">TEAM B</div>
+        <div className="font-display text-5xl md:text-6xl text-ink/70 tabular-nums leading-none">
           <AnimatedNumber value={68} inView={inView} duration={1300} delay={400} decimals={0} />
         </div>
       </div>
@@ -239,15 +239,15 @@ const CourtMatchingContent = ({ inView }: { inView: boolean }) => (
 const captions = [
   {
     title: "Pro-grade box scores, automatic.",
-    body: "Every shot, assist, board, and turnover — extracted from the video. No clipboard, no scorer's table.",
+    body: "Every shot, assist, board, and turnover, extracted from the video. No clipboard, no scorer's table.",
   },
   {
     title: "MMR for the rest of us.",
-    body: "Performance converts into a competitive rating. Glicko-2 with custom modifiers — borrowed from chess, tuned for hoops.",
+    body: "Performance converts into a competitive rating. Glicko-2 with custom modifiers, borrowed from chess and tuned for hoops.",
   },
   {
     title: "The score keeps itself.",
-    body: "Real-time score and game clock, derived from the play. No manual input — the AI handles it as the game happens.",
+    body: "Real-time score and game clock, derived from the play. No manual input. The AI handles it as the game happens.",
   },
   {
     title: "Find a game at your level.",

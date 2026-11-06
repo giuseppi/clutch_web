@@ -28,13 +28,13 @@ const Footer = () => {
             <p className="mt-6 max-w-xs text-sm text-ink/60 leading-relaxed">
               AI basketball analytics, built for the leagues that aren't on TV.
             </p>
-            <span className="label-mono text-inkMuted block mt-8">IRVINE, CA</span>
+            <span className="label text-inkMuted block mt-8">IRVINE, CA</span>
           </div>
 
           {/* Link columns */}
           {columns.map((col) => (
             <div key={col.head} className="md:col-span-2">
-              <span className="label-mono text-inkMuted block mb-5">{col.head}</span>
+              <span className="label text-inkMuted block mb-5">{col.head}</span>
               <ul className="space-y-3">
                 {col.items.map((item) => (
                   <li key={item.label}>
@@ -52,7 +52,7 @@ const Footer = () => {
 
           {/* Connect */}
           <div className="col-span-2 md:col-span-3">
-            <span className="label-mono text-inkMuted block mb-5">CONNECT WITH US</span>
+            <span className="label text-inkMuted block mb-5">CONNECT WITH US</span>
             <Link
               to="/contact"
               className="inline-flex items-center gap-2 text-sm text-ink/80 hover:text-brand transition-colors"
@@ -64,10 +64,10 @@ const Footer = () => {
 
         {/* Bottom rule */}
         <div className="mt-20 pt-8 border-t border-ink/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <span className="label-mono text-inkMuted">
+          <span className="label text-inkMuted">
             © {year} CLUTCH ANALYTICS · ALL RIGHTS RESERVED
           </span>
-          <div className="flex items-center gap-6 label-mono text-inkMuted">
+          <div className="flex items-center gap-6 label text-inkMuted">
             <a href="#" className="hover:text-ink transition-colors">PRIVACY</a>
             <a href="#" className="hover:text-ink transition-colors">TERMS</a>
           </div>

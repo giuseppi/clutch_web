@@ -148,7 +148,7 @@ export const RotatingGlobe = ({ inView }: RotatingGlobeProps) => {
           }}
         >
           <div className="bg-paper text-ink px-3 py-2 shadow-[0_8px_24px_-8px_rgba(26,26,26,0.25)] min-w-[150px] border border-ink/15">
-            <div className="label-mono text-brand">{displayCourt.name}</div>
+            <div className="label text-brand">{displayCourt.name}</div>
             <div className="flex items-center justify-between gap-3 mt-1">
               <span className="font-mono text-[10px] text-ink/60">{displayCourt.time}</span>
               <span className="font-mono text-[10px] text-ink/80">{displayCourt.tier}</span>

@@ -1,11 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import clutchLogo from "@/assets/clutch_logo.png";
-
-const handleComingSoon = (platform: string) => {
-  toast(`${platform} version is coming soon.`);
-};
 
 /**
  * Sticky cream-mode navbar. Becomes a frosted backdrop after the user
@@ -41,7 +36,7 @@ const Navbar = () => {
           <span className="font-display text-xl md:text-2xl tracking-tight leading-none text-ink">
             CLUTCH
           </span>
-          <span className="hidden md:inline label-mono text-inkMuted mt-0.5 ml-1">
+          <span className="hidden md:inline label text-inkMuted mt-0.5 ml-1">
             EST. 2026
           </span>
         </Link>
@@ -49,21 +44,20 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-1">
           <NavLink href="/#features">FEATURES</NavLink>
           <NavLink href="/#how-it-works">HOW IT WORKS</NavLink>
-          <NavLink href="/#download">COMING SOON</NavLink>
           <Link
             to="/contact"
-            className="label-mono px-4 py-2 text-ink/70 hover:text-ink transition-colors"
+            className="label px-4 py-2 text-ink/70 hover:text-ink transition-colors"
           >
             CONTACT US
           </Link>
         </div>
 
-        <button
-          onClick={() => handleComingSoon("App")}
-          className="label-mono px-4 md:px-5 py-2 md:py-2.5 btn-sharp border border-ink/30 hover:border-ink text-ink transition-colors"
+        <a
+          href="/#download"
+          className="label px-4 md:px-5 py-2 md:py-2.5 btn-sharp border border-ink/30 hover:border-ink text-ink transition-colors"
         >
           COMING SOON
-        </button>
+        </a>
       </div>
     </nav>
   );
@@ -72,7 +66,7 @@ const Navbar = () => {
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
   <a
     href={href}
-    className="label-mono px-4 py-2 text-ink/70 hover:text-ink transition-colors"
+    className="label px-4 py-2 text-ink/70 hover:text-ink transition-colors"
   >
     {children}
   </a>

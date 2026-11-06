@@ -47,13 +47,13 @@ const ContactPage = () => (
     <main className="pt-28 md:pt-36 pb-24 px-6 md:px-12">
       <div className="max-w-[1440px] mx-auto">
         <div className="flex items-baseline justify-between border-b border-ink/15 pb-5 mb-12 md:mb-16">
-          <span className="label-mono text-inkMuted">THE TEAM</span>
-          <span className="label-mono text-inkMuted hidden md:inline">
+          <span className="label text-inkMuted">THE TEAM</span>
+          <span className="label text-inkMuted hidden md:inline">
             CONNECT WITH US
           </span>
         </div>
 
-        <h1 className="font-display font-medium text-[clamp(2.5rem,7vw,6rem)] leading-[0.95] tracking-tight text-ink mb-16 md:mb-24">
+        <h1 className="font-display text-[clamp(2.5rem,7vw,6rem)] leading-[0.95] tracking-tight text-ink mb-16 md:mb-24">
           Meet the team<span className="text-brand">.</span>
         </h1>
 
@@ -96,7 +96,7 @@ const ContactPage = () => (
         <div className="mt-16 md:mt-24 pt-8 border-t border-ink/10">
           <Link
             to="/"
-            className="label-mono text-inkMuted hover:text-ink transition-colors"
+            className="label text-inkMuted hover:text-ink transition-colors"
           >
             ← BACK TO HOME
           </Link>

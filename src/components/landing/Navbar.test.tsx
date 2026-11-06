@@ -20,6 +20,13 @@ describe("Navbar", () => {
     renderNavbar();
     expect(screen.getByRole("link", { name: "FEATURES" })).toHaveAttribute("href", "/#features");
     expect(screen.getByRole("link", { name: "HOW IT WORKS" })).toHaveAttribute("href", "/#how-it-works");
-    expect(screen.getByRole("link", { name: "COMING SOON" })).toHaveAttribute("href", "/#download");
+  });
+
+  it("has one Coming soon control, a link to the beta form", () => {
+    renderNavbar();
+    const links = screen.getAllByRole("link", { name: /coming soon/i });
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveAttribute("href", "/#download");
+    expect(screen.queryByRole("button", { name: /coming soon/i })).toBeNull();
   });
 });

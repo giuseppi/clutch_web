@@ -10,7 +10,7 @@ const steps = [
     icon: Smartphone,
     title: "Set up the phone.",
     description:
-      "Prop it on the bleachers, a backpack, a tripod — anywhere with a view of the court. Open the app and confirm.",
+      "Prop it on the bleachers, a backpack, a tripod, or anywhere with a view of the court. Open the app and confirm.",
     spec: "REAL-TIME CV ENGINE / ON-DEVICE",
   },
   {
@@ -18,7 +18,7 @@ const steps = [
     icon: Crosshair,
     title: "Play the game.",
     description:
-      "Shoot, drill, scrimmage. Every shot, board, and assist is recorded the moment it happens — no clipboard, no scorer.",
+      "Shoot, drill, scrimmage. Every shot, board, and assist is recorded the moment it happens. No clipboard, no scorer.",
     spec: "AI TRACKING / EVERY SHOT",
   },
   {
@@ -26,7 +26,7 @@ const steps = [
     icon: Play,
     title: "See it in action.",
     description:
-      "Watch Clutch track shots in real time — no wearables, no manual input. Just your phone and the court.",
+      "Watch Clutch track shots in real time, with no wearables and no manual input. Just your phone and the court.",
     spec: "LIVE DEMO / ON-DEVICE AI",
   },
   {
@@ -34,7 +34,7 @@ const steps = [
     icon: TrendingUp,
     title: "Read the analytics.",
     description:
-      "Box scores, shot charts, MMR tier, and trends across sessions — on your phone before you've finished cooling down.",
+      "Box scores, shot charts, MMR tier, and trends across sessions, on your phone before you've finished cooling down.",
     spec: "INSTANT STATS / FG% · 3PT% · MMR",
   },
 ];
@@ -54,20 +54,20 @@ const HowItWorksRail = () => {
         {/* Section header */}
         <div className="px-6 md:px-12 pt-24 md:pt-28 pb-8">
           <div className="flex items-baseline justify-between border-b border-ink/15 pb-5 max-w-[1440px] mx-auto">
-            <span className="label-mono text-inkMuted">HOW IT WORKS — 03</span>
-            <span className="label-mono text-inkMuted hidden md:inline">4 STEPS / ZERO GEAR</span>
+            <span className="label text-inkMuted">HOW IT WORKS · 03</span>
+            <span className="label text-inkMuted hidden md:inline">4 STEPS / ZERO GEAR</span>
           </div>
 
           <div className="max-w-[1440px] mx-auto mt-8 md:mt-10">
             <SplitText
               as="h2"
               text="Four steps."
-              className="font-display font-medium text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
+              className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
             />
             <SplitText
               as="h2"
               text="Zero gear."
-              className="font-display font-medium italic text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[18vw]"
+              className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[18vw]"
               stagger={0.04}
             />
           </div>
@@ -110,14 +110,14 @@ const StepArticle = ({ step, index }: StepProps) => {
             </div>
             <span className="label-mono text-inkMuted">STEP {step.num}</span>
           </div>
-          <div className="font-display font-light italic text-[clamp(8rem,22vw,18rem)] leading-[0.85] text-ink/[0.10] mt-4">
+          <div className="font-display font-normal text-[clamp(8rem,22vw,18rem)] leading-[0.85] text-ink/[0.10] mt-4">
             {step.num}
           </div>
         </div>
 
         {/* Right: copy + step animation panel */}
         <div className="md:col-span-7 md:pl-8 md:border-l border-ink/15">
-          <h3 className="font-display font-medium text-3xl md:text-5xl leading-tight text-ink">
+          <h3 className="font-display text-3xl md:text-5xl leading-tight text-ink">
             {step.title}
           </h3>
           <p className="mt-5 max-w-md text-base md:text-lg text-ink/70 leading-relaxed">
@@ -128,7 +128,7 @@ const StepArticle = ({ step, index }: StepProps) => {
             <StepAnimation index={index} inView={inView} />
           </div>
 
-          <span className="inline-block mt-6 label-mono text-inkMuted border border-ink/15 px-3 py-2">
+          <span className="inline-block mt-6 label text-inkMuted border border-ink/15 px-3 py-2">
             {step.spec}
           </span>
         </div>
@@ -151,12 +151,12 @@ const DemoGifAnim = () => {
   return (
     <div className="relative h-40 bg-paperAlt border border-ink/10 rounded-sm overflow-hidden">
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2 z-10">
-        <span className="label-mono text-inkMuted text-[10px]">CLUTCH · DEMO</span>
-        <span className="label-mono text-brand text-[10px]">● LIVE</span>
+        <span className="label text-inkMuted text-[10px]">CLUTCH · DEMO</span>
+        <span className="label text-brand text-[10px]">● LIVE</span>
       </div>
       {gifFailed ? (
         <div className="w-full h-full flex items-center justify-center">
-          <span className="label-mono text-inkMuted">DROP clutch.gif IN public/</span>
+          <span className="label text-inkMuted">DROP clutch.gif IN public/</span>
         </div>
       ) : (
         <img
@@ -177,7 +177,7 @@ const StepAnimation = ({ index, inView }: { index: number; inView: boolean }) =>
   return <StatGrowthAnim inView={inView} />;
 };
 
-/** Step 01 — phone outline + sight line + reticle, on a faded perspective court */
+/** Step 01 - phone outline + sight line + reticle, on a faded perspective court */
 const PhoneSetupAnim = ({ inView }: { inView: boolean }) => (
   <div className="relative h-40 bg-paperAlt border border-ink/10 overflow-hidden">
     <svg viewBox="0 0 400 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
@@ -258,7 +258,7 @@ const PhoneSetupAnim = ({ inView }: { inView: boolean }) => (
 );
 
 /**
- * Step 02 — basketball arcs into a side-profile hoop. The hoop is drawn
+ * Step 02 - basketball arcs into a side-profile hoop. The hoop is drawn
  * from the shooter's side: pole on the far right, backboard shown as its
  * side-edge sliver, rim extending forward (left) as a flat ellipse, full
  * conical net with strand fans, horizontal weave rings, and faded back
@@ -300,7 +300,7 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
     (SHOOTER_X + ARC_END_X) / 2
   } 6 ${ARC_END_X} ${ARC_END_Y}`;
 
-  // Strand geometry — each strand starts at a point on the rim ellipse and
+  // Strand geometry - each strand starts at a point on the rim ellipse and
   // converges into a smaller ellipse at the bottom of the cone.
   const strands = Array.from({ length: STRAND_COUNT }, (_, i) => {
     const t = i / (STRAND_COUNT - 1); // 0..1 across rim diameter
@@ -308,7 +308,7 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
     const x2 = RIM_CX + NET_HALF_BOTTOM * (t * 2 - 1);
     return { x1, x2 };
   });
-  // Faded back-strands — same x positions, but slightly higher y (suggests
+  // Faded back-strands - same x positions, but slightly higher y (suggests
   // they're behind the rim plane). 5 strands.
   const backStrands = Array.from({ length: 5 }, (_, i) => {
     const t = (i + 1) / 6;
@@ -347,13 +347,13 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
           transition={{ duration: 1.6, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
         />
 
-        {/* Hoop assembly — side profile */}
+        {/* Hoop assembly - side profile */}
         <motion.g
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          {/* Pole — vertical, far right */}
+          {/* Pole - vertical, far right */}
           <line
             x1={POLE_X} y1={FLOOR_Y}
             x2={POLE_X} y2={BACKBOARD_TOP - 4}
@@ -366,7 +366,7 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
             stroke="#1A1A1A" strokeOpacity="0.55" strokeWidth="2"
           />
 
-          {/* Backboard — drawn as the visible side edge (thin sliver) +
+          {/* Backboard - drawn as the visible side edge (thin sliver) +
               a hinted front face shaded slightly differently */}
           {/* Side edge (filled, faces the pole) */}
           <rect
@@ -393,14 +393,14 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
             stroke="#1A1A1A" strokeWidth="1.6"
           />
 
-          {/* Rim — flat ellipse (side-angle perspective) */}
+          {/* Rim - flat ellipse (side-angle perspective) */}
           <ellipse
             cx={RIM_CX} cy={RIM_Y}
             rx={RIM_RX} ry={3}
             fill="none" stroke="#FF6A00" strokeWidth="2.4"
           />
 
-          {/* Net — full cone with front strands, back strands, weave rings */}
+          {/* Net - full cone with front strands, back strands, weave rings */}
           <g stroke="#1A1A1A" strokeLinecap="round" fill="none">
             {/* Back strands (lower opacity, suggest depth behind the rim plane) */}
             <g strokeOpacity="0.22" strokeWidth="0.7">
@@ -416,7 +416,7 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
               ))}
             </g>
 
-            {/* Horizontal weave rings — three at increasing depth */}
+            {/* Horizontal weave rings - three at increasing depth */}
             <g strokeOpacity="0.5" strokeWidth="0.7">
               <ellipse cx={RIM_CX} cy={NET_TOP_Y + 8} rx={RIM_RX - 2.5} ry={2.4} />
               <ellipse cx={RIM_CX} cy={NET_TOP_Y + 15} rx={RIM_RX - 6} ry={1.8} />
@@ -457,14 +457,14 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
   );
 };
 
-/** Step 03 — bar chart growing + animated counter ticking up to FG% */
+/** Step 03 - bar chart growing + animated counter ticking up to FG% */
 const StatGrowthAnim = ({ inView }: { inView: boolean }) => {
   const bars = [38, 45, 52, 49, 58, 64, 71];
   return (
     <div className="relative h-40 bg-paperAlt border border-ink/10 p-4 overflow-hidden">
       <div className="flex items-baseline justify-between mb-2">
-        <span className="label-mono text-ink/60">FG% · 7 SESSIONS</span>
-        <span className="font-display font-medium text-2xl text-ink tabular-nums leading-none">
+        <span className="label text-ink/60">FG% · 7 SESSIONS</span>
+        <span className="font-display text-2xl text-ink tabular-nums leading-none">
           <AnimatedNumber value={71} inView={inView} duration={1500} delay={300} decimals={0} suffix="%" />
         </span>
       </div>

@@ -51,19 +51,19 @@ const FooterCTA = () => {
 
       <div className="relative max-w-[1440px] mx-auto">
         <div className="flex items-baseline justify-between border-b border-ink/15 pb-5 mb-12 md:mb-16">
-          <span className="label-mono text-inkMuted">COMING SOON — 04</span>
-          <span className="label-mono text-inkMuted hidden md:inline">EARLY ACCESS / BETA</span>
+          <span className="label text-inkMuted">COMING SOON · 04</span>
+          <span className="label text-inkMuted hidden md:inline">EARLY ACCESS / BETA</span>
         </div>
 
         <SplitText
           as="h2"
           text="Track every shot."
-          className="font-display font-medium text-[clamp(2.5rem,9vw,8rem)] text-ink"
+          className="font-display text-[clamp(2.5rem,9vw,8rem)] text-ink"
         />
         <SplitText
           as="h2"
           text="Climb the ranks."
-          className="font-display font-medium italic text-[clamp(2.5rem,9vw,8rem)] text-brand pl-[6vw] md:pl-[18vw]"
+          className="font-display text-[clamp(2.5rem,9vw,8rem)] text-brand pl-[6vw] md:pl-[18vw]"
           stagger={0.04}
         />
 
@@ -75,7 +75,7 @@ const FooterCTA = () => {
           className="grid md:grid-cols-12 gap-y-8 md:gap-x-12 mt-12 md:mt-16 items-end"
         >
           <p className="md:col-span-5 text-base md:text-lg text-ink/70 leading-relaxed max-w-md">
-            iOS, Android, and web — all coming soon. Be on the list when the
+            iOS, Android, and web are all coming soon. Be on the list when the
             beta opens.
           </p>
 
@@ -84,7 +84,7 @@ const FooterCTA = () => {
             className="md:col-span-7 md:col-start-6 flex flex-col sm:flex-row gap-3 md:items-end md:justify-end"
           >
             {submitted ? (
-              <div className="label-mono text-brand bg-brand/10 border border-brand/30 px-6 py-4">
+              <div className="label text-brand bg-brand/10 border border-brand/30 px-6 py-4">
                 ✓ YOU'RE ON THE LIST.
               </div>
             ) : (
@@ -103,7 +103,7 @@ const FooterCTA = () => {
                 </label>
                 <button
                   type="submit"
-                  className="btn-sharp bg-brand text-white label-mono px-8 py-4 hover:bg-brand/90 transition-colors whitespace-nowrap"
+                  className="btn-sharp bg-brand text-white label px-8 py-4 hover:bg-brand/90 transition-colors whitespace-nowrap"
                 >
                   GET IN TOUCH
                 </button>
