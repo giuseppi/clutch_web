@@ -4,6 +4,10 @@ import { Smartphone, Crosshair, Play, TrendingUp } from "lucide-react";
 import { SplitText } from "./SplitText";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { DemoVideo } from "./DemoVideo";
+import { DRAW, FADE, RISE } from "@/lib/motion";
+
+/** Standard rise timing for an element arriving after `delay` seconds. */
+const arrive = (delay: number) => ({ duration: RISE.duration, ease: RISE.ease, delay });
 
 const steps = [
   {
@@ -179,14 +183,14 @@ const PhoneSetupAnim = ({ inView }: { inView: boolean }) => (
         stroke="#1A1A1A" strokeWidth="1.5"
         initial={{ pathLength: 0, opacity: 0 }}
         animate={inView ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        transition={DRAW}
       />
       <motion.line
         x1="55" y1="52" x2="67" y2="52"
         stroke="#1A1A1A" strokeWidth="1.2" strokeLinecap="round"
         initial={{ pathLength: 0 }}
         animate={inView ? { pathLength: 1 } : { pathLength: 0 }}
-        transition={{ duration: 0.4, delay: 0.9 }}
+        transition={{ ...DRAW, delay: 0.9 }}
       />
 
       {/* Sight line phone → reticle */}
@@ -195,14 +199,14 @@ const PhoneSetupAnim = ({ inView }: { inView: boolean }) => (
         stroke="#FF6A00" strokeWidth="1.2" strokeDasharray="3 4"
         initial={{ pathLength: 0 }}
         animate={inView ? { pathLength: 1 } : { pathLength: 0 }}
-        transition={{ duration: 0.8, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ ...DRAW, delay: 1.0 }}
       />
 
       {/* Tracking reticle */}
       <motion.g
         initial={{ scale: 0, opacity: 0 }}
         animate={inView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-        transition={{ duration: 0.5, delay: 1.6, ease: [0.16, 1, 0.3, 1] }}
+        transition={arrive(1.6)}
         style={{ transformOrigin: "300px 80px" }}
       >
         <circle cx="300" cy="80" r="22" fill="none" stroke="#FF6A00" strokeWidth="1.5" />
@@ -216,7 +220,7 @@ const PhoneSetupAnim = ({ inView }: { inView: boolean }) => (
         x="345" y="78" className="font-mono" fontSize="9" fill="#1A1A1A"
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ delay: 2.0 }}
+        transition={{ ...FADE, delay: 2.0 }}
       >
         LOCKED
       </motion.text>
@@ -224,7 +228,7 @@ const PhoneSetupAnim = ({ inView }: { inView: boolean }) => (
         x="345" y="90" className="font-mono" fontSize="8" fill="#FF6A00"
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ delay: 2.2 }}
+        transition={{ ...FADE, delay: 2.2 }}
       >
         ON COURT
       </motion.text>
@@ -303,14 +307,14 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
           cx={SHOOTER_X} cy={SHOOTER_HEAD_Y} r="6" fill="#1A1A1A"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.4 }}
+          transition={FADE}
         />
         <motion.line
           x1={SHOOTER_X} y1={SHOOTER_HEAD_Y + 6} x2={SHOOTER_X} y2={FLOOR_Y}
           stroke="#1A1A1A" strokeWidth="2"
           initial={{ pathLength: 0 }}
           animate={inView ? { pathLength: 1 } : { pathLength: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ ...DRAW, delay: 0.2 }}
         />
 
         {/* Shot arc */}
@@ -319,14 +323,14 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
           fill="none" stroke="#FF6A00" strokeWidth="1.4" strokeDasharray="4 4"
           initial={{ pathLength: 0 }}
           animate={inView ? { pathLength: 1 } : { pathLength: 0 }}
-          transition={{ duration: 1.6, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ ...DRAW, delay: 0.7 }}
         />
 
         {/* Hoop assembly - side profile */}
         <motion.g
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
+          transition={{ ...FADE, delay: 0.5 }}
         >
           {/* Pole - vertical, far right */}
           <line
@@ -405,7 +409,7 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
         {/* Ball traveling along the arc */}
         <motion.circle r="5" fill="#FF6A00">
           {inView && (
-            <animateMotion dur="1.6s" begin="0.7s" fill="freeze" path={ARC_PATH} />
+            <animateMotion dur={`${DRAW.duration}s`} begin="0.7s" fill="freeze" path={ARC_PATH} />
           )}
         </motion.circle>
 
@@ -414,7 +418,7 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
           x="208" y="44" className="font-mono" fontSize="11" fontWeight="600" fill="#FF6A00"
           initial={{ opacity: 0, scale: 0 }}
           animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
-          transition={{ duration: 0.3, delay: 2.3, ease: [0.16, 1, 0.3, 1] }}
+          transition={arrive(2.3)}
           style={{ transformOrigin: "208px 44px" }}
         >
           SWISH
@@ -423,7 +427,7 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
           x="208" y="58" className="font-mono" fontSize="8" fill="#1A1A1A"
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ delay: 2.5 }}
+          transition={{ ...FADE, delay: 2.5 }}
         >
           +3 PTS
         </motion.text>

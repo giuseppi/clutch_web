@@ -42,7 +42,18 @@ describe("DemoVideo", () => {
     const video = getVideo(container);
     act(() => setIntersection(video, 0.5));
     expect(play).toHaveBeenCalled();
+    pause.mockClear();
     act(() => setIntersection(video, 0));
+    expect(pause).toHaveBeenCalledTimes(1);
+  });
+
+  it("pauses when reduced motion turns on while playing", () => {
+    const { container, rerender } = render(<DemoVideo />);
+    act(() => setIntersection(getVideo(container), 0.5));
+    expect(play).toHaveBeenCalled();
+    pause.mockClear();
+    vi.mocked(useReducedMotion).mockReturnValue(true);
+    rerender(<DemoVideo />);
     expect(pause).toHaveBeenCalled();
   });
 

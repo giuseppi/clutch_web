@@ -25,7 +25,7 @@ export const ENTRANCE = {
 
 export const riseVariants: Variants = {
   hidden: { opacity: 0, y: RISE.y },
-  visible: { opacity: 1, y: 0, transition: { duration: RISE.duration, ease: RISE.ease } },
+  visible: { opacity: 1, y: 0, transition: { inherit: true, duration: RISE.duration, ease: RISE.ease } },
 };
 
 export function clamp01(x: number): number {

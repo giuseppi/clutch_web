@@ -9,19 +9,19 @@ export const DemoVideo = () => {
 
   useEffect(() => {
     const video = ref.current;
-    if (!video || reduced) return;
-    if (onScreen) {
-      video.play().catch(() => {});
-    } else {
+    if (!video) return;
+    if (reduced || !onScreen) {
       video.pause();
+    } else {
+      video.play().catch(() => {});
     }
   }, [onScreen, reduced]);
 
   return (
     <div className="relative h-40 bg-paperAlt border border-ink/10 rounded-sm overflow-hidden">
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2 z-10">
-        <span className="label text-inkMuted text-[10px]">CLUTCH · DEMO</span>
-        <span className="label text-brand text-[10px]">● LIVE</span>
+        <span className="label text-ink text-[10px] bg-paper/90 px-2 py-0.5">CLUTCH · DEMO</span>
+        <span className="label text-brand text-[10px] bg-paper/90 px-2 py-0.5">● LIVE</span>
       </div>
       <video
         ref={ref}

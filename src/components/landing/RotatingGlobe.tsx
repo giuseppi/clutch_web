@@ -96,8 +96,8 @@ export const RotatingGlobe = ({ inView }: RotatingGlobeProps) => {
   const showPopup = hoveredIdx !== null ? true : autoVisible;
 
   return (
-    <div className="relative flex items-center justify-center w-full h-full">
-      <svg viewBox="0 0 200 200" className="w-full max-w-[260px]">
+    <div className="relative h-full max-h-[260px] max-w-full aspect-square">
+      <svg viewBox="0 0 200 200" className="w-full h-full">
         {/* Globe sphere outline */}
         <circle cx={cx} cy={cy} r={R} fill="none" stroke="#1A1A1A" strokeOpacity="0.55" strokeWidth="0.8" />
         {/* Equator + meridian rings for depth */}
@@ -142,13 +142,14 @@ export const RotatingGlobe = ({ inView }: RotatingGlobeProps) => {
           className="absolute z-10 transition-opacity duration-300 pointer-events-none"
           style={{
             opacity: showPopup ? 1 : 0,
-            left: `${(displayCourt.x / 200) * 100}%`,
+            left: `clamp(75px, ${(displayCourt.x / 200) * 100}%, calc(100% - 75px))`,
             top: `${(displayCourt.y / 200) * 100}%`,
-            transform: "translate(-50%, -120%)",
+            // Northern dots get the card below them so it never covers the panel header.
+            transform: displayCourt.y < cy ? "translate(-50%, 30%)" : "translate(-50%, -120%)",
           }}
         >
           <div className="bg-paper text-ink px-3 py-2 shadow-[0_8px_24px_-8px_rgba(26,26,26,0.25)] min-w-[150px] border border-ink/15">
-            <div className="label text-brand">{displayCourt.name}</div>
+            <div className="label text-brand whitespace-nowrap">{displayCourt.name}</div>
             <div className="flex items-center justify-between gap-3 mt-1">
               <span className="font-mono text-[10px] text-ink/60">{displayCourt.time}</span>
               <span className="font-mono text-[10px] text-ink/80">{displayCourt.tier}</span>

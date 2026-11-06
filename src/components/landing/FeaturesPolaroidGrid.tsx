@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { SplitText } from "./SplitText";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { RotatingGlobe } from "./RotatingGlobe";
-import { RISE, riseVariants } from "@/lib/motion";
+import { RISE, VALUE_CHANGE, riseVariants } from "@/lib/motion";
 
 const statLines = [
   { label: "PTS", value: 18.4, target: 78, decimals: 1 },
@@ -67,11 +67,15 @@ const FeaturesPolaroidGrid = () => {
               whileInView={{ opacity: 1, y: p.translateY, rotate: p.rotate }}
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: RISE.duration, ease: RISE.ease }}
-              whileHover={{ rotate: 0, y: p.translateY - 6, transition: { duration: 0.4 } }}
+              whileHover={{ rotate: 0, y: p.translateY - 6, transition: { duration: VALUE_CHANGE } }}
               className="bg-paperAlt border border-ink/10 shadow-[0_24px_60px_-24px_rgba(26,26,26,0.18)] p-6 md:p-7 origin-center"
             >
               {/* Polaroid "image area" - cream inner panel with animated content */}
-              <div className="bg-paper text-ink aspect-[4/3] mb-5 relative overflow-hidden border border-ink/8">
+              <div
+                className={`bg-paper text-ink mb-5 relative overflow-hidden border border-ink/8 ${
+                  i === 3 ? "h-[17rem] md:h-auto md:aspect-[4/3]" : "aspect-[4/3]"
+                }`}
+              >
                 <div className="absolute inset-0 p-5 md:p-6 flex flex-col">
                   <div className="flex items-start justify-between mb-3">
                     <span className="label text-ink/60">{p.kicker}</span>
@@ -229,8 +233,8 @@ const CourtMatchingContent = () => {
   const reduced = useReducedMotion();
 
   return (
-    <div className="flex-1 flex flex-col">
-      <div ref={globeRef} data-testid="court-globe" className="flex-1 flex items-center justify-center -mx-2">
+    <div className="flex-1 min-h-0 flex flex-col">
+      <div ref={globeRef} data-testid="court-globe" className="flex-1 min-h-0 flex items-center justify-center -mx-2">
         <RotatingGlobe inView={onScreen && !reduced} />
       </div>
       <div className="mt-auto pt-3 border-t border-ink/10 flex justify-between font-mono text-[11px]">
