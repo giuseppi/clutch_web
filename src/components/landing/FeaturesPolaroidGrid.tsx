@@ -179,7 +179,7 @@ const PlayerRatingsContent = ({ inView }: { inView: boolean }) => (
             transition: "stroke-dashoffset 1.6s cubic-bezier(0.16, 1, 0.3, 1) 700ms",
           }}
         />
-        <circle cx="100" cy="6" r="1.5" fill="#FF6A00" opacity={inView ? 1 : 0} className="transition-opacity duration-300 delay-[2200ms]" />
+        <circle cx="100" cy="6" r="1.5" fill="#FF6A00" opacity={inView ? 1 : 0} className="transition-opacity duration-300 [transition-delay:2200ms]" />
       </svg>
     </div>
 

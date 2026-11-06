@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { landTime } from "./game";
+import { HOOP, landTime } from "./game";
 import { HalfCourt } from "./HalfCourt";
 import { GAME, START } from "./timeline";
 
@@ -50,10 +50,43 @@ describe("HalfCourt", () => {
     expect(container.querySelector("image")).toBeNull();
   });
 
-  it("gives every court line pathLength 1 so it can draw in", () => {
+  it("draws every court line as a path with pathLength 1 so it can draw in", () => {
     const { container } = render(<HalfCourt t={GAME} />);
     const lines = container.querySelectorAll("[data-court-line]");
     expect(lines).toHaveLength(5);
-    for (const line of lines) expect(line).toHaveAttribute("pathLength", "1");
+    for (const line of lines) {
+      expect(line.tagName).toBe("path");
+      expect(line).toHaveAttribute("pathLength", "1");
+    }
+  });
+
+  it("joins the corner threes to the 23.75 ft arc at (-22, 14.2) and (22, 14.2)", () => {
+    const { container } = render(<HalfCourt t={GAME} />);
+    const d = container.querySelector('[data-court-line="three"]')?.getAttribute("d") ?? "";
+    const n = d.match(/-?\d+(\.\d+)?/g)?.map(Number) ?? [];
+    // M x0 y0 L x1 y1 A rx ry rot large sweep x2 y2 L x3 y3
+    expect(n).toEqual([-22, 0, -22, 14.2, 23.75, 23.75, 0, 0, 0, 22, 14.2, 22, 0]);
+    expect(Math.hypot(22 - HOOP.x, 14.2 - HOOP.y)).toBeCloseTo(23.75, 2);
+  });
+
+  it("puts the backboard at y = 4 and the rim at the hoop, joined by a connector", () => {
+    const { container } = render(<HalfCourt t={GAME} />);
+    const board = container.querySelector("[data-backboard]");
+    expect([board?.getAttribute("x1"), board?.getAttribute("x2"), board?.getAttribute("y1"), board?.getAttribute("y2")]).toEqual([
+      "-3",
+      "3",
+      "4",
+      "4",
+    ]);
+    const rim = container.querySelector("[data-rim]");
+    expect([rim?.getAttribute("cx"), rim?.getAttribute("cy"), rim?.getAttribute("r")]).toEqual(["0", "5.25", "0.75"]);
+    expect(rim).toHaveAttribute("stroke-width", "0.16");
+    const connector = container.querySelector("[data-connector]");
+    expect([connector?.getAttribute("y1"), connector?.getAttribute("y2")]).toEqual(["4", "4.5"]);
+  });
+
+  it("keeps misses heavier than the rim", () => {
+    const { container } = render(<HalfCourt t={GAME} />);
+    expect(container.querySelector('[data-mark="miss"]')).toHaveAttribute("stroke-width", "0.28");
   });
 });

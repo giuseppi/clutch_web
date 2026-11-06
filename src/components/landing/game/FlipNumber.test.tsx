@@ -51,9 +51,35 @@ describe("FlipNumber", () => {
     rerender(<FlipNumber value="2" quick />);
     expect(layers(container)).toHaveLength(4);
     expect(root(container)).toHaveClass("quick");
-    wait(170);
+    wait(169);
+    expect(layers(container)).toHaveLength(4);
+    wait(1);
     expect(root(container).textContent).toBe("2");
     expect(layers(container)).toHaveLength(0);
+  });
+
+  it("keeps a quick flip quick when quick turns off mid-flip", () => {
+    const { container, rerender } = render(<FlipNumber value="0" quick />);
+    rerender(<FlipNumber value="2" quick />);
+    wait(100);
+    rerender(<FlipNumber value="2" quick={false} />);
+    expect(root(container)).toHaveClass("quick");
+    expect(layers(container)).toHaveLength(4);
+    wait(69);
+    expect(layers(container)).toHaveLength(4);
+    wait(1);
+    expect(root(container).textContent).toBe("2");
+    expect(layers(container)).toHaveLength(0);
+  });
+
+  it("puts every half directly under the perspective element, hidden from assistive tech", () => {
+    const { container, rerender } = render(<FlipNumber value="0" />);
+    rerender(<FlipNumber value="2" />);
+    for (const half of layers(container)) {
+      expect(half.parentElement).toBe(root(container));
+      expect(half).toHaveAttribute("aria-hidden", "true");
+    }
+    expect(container.querySelector(".flip-size")?.textContent).toBe("2");
   });
 
   it("restarts from the last value when a change lands mid-flip", () => {

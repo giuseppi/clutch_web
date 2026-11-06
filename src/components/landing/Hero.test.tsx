@@ -1,17 +1,30 @@
 import { createRef } from "react";
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import Hero from "./Hero";
+
+const BODY =
+  "Clutch turns a phone in a courtside corner into a professional-grade analytics rig, built for the leagues that aren't on TV.";
+
+const { innerWidth, innerHeight } = window;
+
+function setWindow(width: number, height: number) {
+  window.innerWidth = width;
+  window.innerHeight = height;
+}
+
+afterEach(() => setWindow(innerWidth, innerHeight));
 
 describe("Hero", () => {
   it("keeps the headline and body copy word for word", () => {
     render(<Hero />);
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Talent doesn't wait for a camera crew.");
-    expect(
-      screen.getByText(
-        "Clutch turns a phone in a courtside corner into a professional-grade analytics rig, built for the leagues that aren't on TV.",
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/^Clutch turns a phone/).textContent).toBe(BODY);
+  });
+
+  it("keeps professional-grade on one line", () => {
+    render(<Hero />);
+    expect(screen.getByText("professional-grade")).toHaveClass("whitespace-nowrap");
   });
 
   it("summarizes the hidden court for screen readers", () => {
@@ -34,9 +47,14 @@ describe("Hero", () => {
     expect(mmrRef.current?.textContent).toBe("+14");
   });
 
-  it("sets the layout on the section root", () => {
+  it.each([
+    [1440, 900, "split"],
+    [820, 1180, "medium"],
+    [390, 844, "stack"],
+  ])("sets data-layout on the section root at %i x %i to %s", (width, height, layout) => {
+    setWindow(width, height);
     const { container } = render(<Hero />);
-    expect(container.firstElementChild).toHaveAttribute("data-layout");
+    expect(container.firstElementChild).toHaveAttribute("data-layout", layout);
   });
 
   it("drops the eyebrow lines", () => {

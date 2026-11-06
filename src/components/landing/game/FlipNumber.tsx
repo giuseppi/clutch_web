@@ -1,5 +1,5 @@
 import { useReducedMotion } from "framer-motion";
-import { useEffect, useState, type CSSProperties } from "react";
+import { Fragment, useEffect, useState, type CSSProperties } from "react";
 
 interface FlipNumberProps {
   value: string;
@@ -12,8 +12,9 @@ interface FlipNumberProps {
 interface Flip {
   from: string;
   to: string;
-  ms: number;
-  /** Remounts the moving halves so their CSS animations restart. */
+  /** Fixed when the flip starts, so the CSS timings and the settle timer always agree. */
+  quick: boolean;
+  /** Remounts the halves so their CSS animations restart. */
   id: number;
 }
 
@@ -33,16 +34,16 @@ export function FlipNumber({ value, quick = false, className, style }: FlipNumbe
 
   if (value !== shown) {
     setShown(value);
-    setFlip(reduced ? null : { from: shown, to: value, ms: quick ? QUICK_MS : FLIP_MS, id: (flip?.id ?? 0) + 1 });
+    setFlip(reduced ? null : { from: shown, to: value, quick, id: (flip?.id ?? 0) + 1 });
   }
 
   useEffect(() => {
     if (!flip) return;
-    const timer = window.setTimeout(() => setFlip(null), flip.ms);
+    const timer = window.setTimeout(() => setFlip(null), flip.quick ? QUICK_MS : FLIP_MS);
     return () => window.clearTimeout(timer);
   }, [flip]);
 
-  const classes = ["flip-num", quick && "quick", className].filter(Boolean).join(" ");
+  const classes = ["flip-num", flip?.quick && "quick", className].filter(Boolean).join(" ");
   if (!flip) {
     return (
       <span className={classes} style={style}>
@@ -50,15 +51,24 @@ export function FlipNumber({ value, quick = false, className, style }: FlipNumbe
       </span>
     );
   }
+  // The halves are direct children of .flip-num: WebKit applies perspective through the DOM parent only.
   return (
     <span className={classes} style={style}>
       <span className="flip-size">{flip.to}</span>
-      <span key={flip.id} aria-hidden="true">
-        <span className="flip-half flip-top">{flip.to}</span>
-        <span className="flip-half flip-bottom">{flip.from}</span>
-        <span className="flip-half flip-top flip-out">{flip.from}</span>
-        <span className="flip-half flip-bottom flip-in">{flip.to}</span>
-      </span>
+      <Fragment key={flip.id}>
+        <span aria-hidden="true" className="flip-half flip-top">
+          {flip.to}
+        </span>
+        <span aria-hidden="true" className="flip-half flip-bottom">
+          {flip.from}
+        </span>
+        <span aria-hidden="true" className="flip-half flip-top flip-out">
+          {flip.from}
+        </span>
+        <span aria-hidden="true" className="flip-half flip-bottom flip-in">
+          {flip.to}
+        </span>
+      </Fragment>
     </span>
   );
 }
