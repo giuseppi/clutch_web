@@ -18,17 +18,30 @@ const CONTENT = "mx-auto max-w-[1440px] px-6 md:px-12 [container-type:inline-siz
 
 /*
   Three layouts (see layoutFor). Split: copy and card left of the court (44/56), at least
-  one screen tall. Medium: copy on top, court (52) and card (48) side by side. Stack: copy,
-  court, key, then card. Sizes are in container units of the content box.
+  one screen tall, and fitted to short screens through --u and --court-w (.hero in index.css).
+  Medium: copy on top, court (52) and card (48) side by side. Stack: copy, court, key, then
+  card. Medium and stack sizes are in container units of the content box.
 */
-const LAYOUT: Record<Layout, { grid: string; copy: string; h1: string; body: string; card: string; court: string; key: string }> = {
+interface LayoutClasses {
+  grid: string;
+  copy: string;
+  h1: string;
+  body: string;
+  card: string;
+  court: string;
+  courtBox: string;
+  key: string;
+}
+
+const LAYOUT: Record<Layout, LayoutClasses> = {
   split: {
-    grid: "grid-cols-[minmax(0,44fr)_minmax(0,56fr)] content-center gap-[3.8cqw] py-[2.2cqw] min-h-[calc(100svh-var(--nav-h))]",
-    copy: "flex flex-col gap-[1.63cqw]",
-    h1: "text-[max(20px,4.67cqw)]",
-    body: "max-w-[38ch] text-[max(13px,1.41cqw)]",
-    card: "mt-[.43cqw]",
-    court: "h-full gap-[1.09cqw]",
+    grid: "grid-cols-[minmax(0,44fr)_minmax(0,56fr)] content-center gap-x-[3.8cqw] py-[var(--pad)] min-h-[calc(100svh-var(--nav-h))]",
+    copy: "flex flex-col gap-[calc(1.63*var(--u))]",
+    h1: "text-[max(20px,calc(4.67*var(--u)))]",
+    body: "max-w-[38ch] text-[max(13px,calc(1.41*var(--u)))]",
+    card: "mt-[calc(.43*var(--u))]",
+    court: "h-full items-end",
+    courtBox: "w-[var(--court-w)] gap-[1.09cqw]",
     key: "text-[max(10px,1.14cqw)]",
   },
   medium: {
@@ -37,7 +50,8 @@ const LAYOUT: Record<Layout, { grid: string; copy: string; h1: string; body: str
     h1: "col-span-2 text-[7.5cqw]",
     body: "col-span-2 max-w-[46ch] text-[max(14px,2.61cqw)]",
     card: "col-start-2 row-start-3 mt-[3.41cqw] self-center",
-    court: "col-start-1 row-start-3 mt-[3.41cqw] gap-[1.09cqw]",
+    court: "col-start-1 row-start-3 mt-[3.41cqw]",
+    courtBox: "w-full gap-[1.09cqw]",
     key: "text-[max(10px,1.82cqw)]",
   },
   stack: {
@@ -46,7 +60,8 @@ const LAYOUT: Record<Layout, { grid: string; copy: string; h1: string; body: str
     h1: "text-[9.33cqw]",
     body: "max-w-[38ch] text-[max(13px,4cqw)]",
     card: "order-2",
-    court: "order-1 mt-[3.33cqw] gap-[1.09cqw]",
+    court: "order-1 mt-[3.33cqw]",
+    courtBox: "w-full gap-[1.09cqw]",
     key: "text-[max(10px,3.11cqw)]",
   },
 };
@@ -57,7 +72,7 @@ const Hero = ({ mmrRef }: { mmrRef?: Ref<HTMLSpanElement> }) => {
   const l = LAYOUT[layout];
 
   return (
-    <section data-layout={layout} className={`group paper-grain text-ink ${NAV_CLEARANCE}`}>
+    <section data-layout={layout} className={`hero group paper-grain text-ink ${NAV_CLEARANCE}`}>
       <div className={CONTENT}>
         <div className={`grid items-center ${l.grid}`}>
           <div className={l.copy}>
@@ -73,12 +88,14 @@ const Hero = ({ mmrRef }: { mmrRef?: Ref<HTMLSpanElement> }) => {
               <LiveCard state={FINAL} selected={selected} onSelect={setSelected} mmrRef={mmrRef} />
             </div>
           </div>
-          <div className={`flex flex-col items-center justify-center ${l.court}`}>
-            <HalfCourt t={GAME} />
-            <p className="sr-only">Example 1v1 game at the UCI Anteater Recreation Center: Giuseppi wins 11 to 7.</p>
-            <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-inkMuted ${l.key}`}>
-              <KeyItem color={BRAND} name="Giuseppi" />
-              <KeyItem color={INK} name="Johnny" />
+          <div className={`flex flex-col justify-center ${l.court}`}>
+            <div className={`flex flex-col items-center ${l.courtBox}`}>
+              <HalfCourt t={GAME} />
+              <p className="sr-only">Example 1v1 game at the UCI Anteater Recreation Center: Giuseppi wins 11 to 7.</p>
+              <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-inkMuted ${l.key}`}>
+                <KeyItem color={BRAND} name="Giuseppi" />
+                <KeyItem color={INK} name="Johnny" />
+              </div>
             </div>
           </div>
         </div>

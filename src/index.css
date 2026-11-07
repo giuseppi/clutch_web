@@ -244,3 +244,22 @@
     animation: none;
   }
 }
+
+/*
+  Hero units (Hero.tsx, LiveCard.tsx). In the split layout, --u sizes the copy and the card:
+  1cqw when there is room, less on a short screen, so the whole hero fits under the navbar
+  from about 600 px of viewport height up (below that it may run taller). 51 is the copy
+  column's height in --u (two headline lines, three body lines and the card, measured at
+  about 49.4) with headroom for the 10 px label floors. --court-w caps the court by the height left
+  once the key (1.09cqw gap, 1.5 line height) is taken off.
+*/
+.hero {
+  --u: 1cqw;
+}
+
+.hero[data-layout="split"] {
+  --pad: 2.2cqw;
+  --avail: calc(max(100svh, 600px) - var(--nav-h) - 2 * var(--pad));
+  --u: min(1cqw, var(--avail) / 51);
+  --court-w: min(100%, (var(--avail) - 1.09cqw - max(15px, 1.71cqw)) * 50.24 / 50);
+}

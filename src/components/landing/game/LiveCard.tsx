@@ -23,30 +23,31 @@ const MUTED = "#8B8F98";
 const GREEN = "#00A57C";
 
 /*
-  Sizes follow the hero's layout (data-layout on the hero root), in container units of the
-  hero's content box. Each entry gives the split size, then medium, then stack. Labels and
-  tags never go below 10 px, so landscape phones stay legible.
+  Sizes follow the hero's layout (data-layout on the hero root). Each entry gives the split
+  size, then medium, then stack. Split sizes are in --u (see .hero in index.css: 1cqw, or less
+  so the split hero fits a short screen); medium and stack are in container units of the
+  hero's content box. Labels and tags never go below 10 px, so landscape phones stay legible.
 */
 const LABEL = "whitespace-nowrap font-medium uppercase leading-[1.3] tracking-[0.08em]";
 const SIZE = {
-  label: "text-[max(10px,1.09cqw)] group-data-[layout=medium]:text-[max(10px,1.59cqw)] group-data-[layout=stack]:text-[max(10px,2.89cqw)]",
-  tag: "text-[max(10px,.92cqw)] group-data-[layout=medium]:text-[max(10px,1.36cqw)] group-data-[layout=stack]:text-[max(10px,2.56cqw)]",
-  chipLabel: "text-[max(10px,.98cqw)] group-data-[layout=medium]:text-[max(10px,1.42cqw)] group-data-[layout=stack]:text-[max(10px,2.67cqw)]",
-  chipValue: "text-[max(12px,1.9cqw)] group-data-[layout=medium]:text-[2.84cqw] group-data-[layout=stack]:text-[5.11cqw]",
-  score: "text-[max(24px,3.91cqw)] group-data-[layout=medium]:text-[5.91cqw] group-data-[layout=stack]:text-[10.56cqw]",
-  banner: "h-[10.87cqw] group-data-[layout=medium]:h-[17cqw] group-data-[layout=stack]:h-[30cqw]",
-  pillAt: "left-[1.2cqw] top-[.98cqw] group-data-[layout=medium]:left-[1.93cqw] group-data-[layout=medium]:top-[1.7cqw]",
+  label: "text-[max(10px,calc(1.09*var(--u)))] group-data-[layout=medium]:text-[max(10px,1.59cqw)] group-data-[layout=stack]:text-[max(10px,2.89cqw)]",
+  tag: "text-[max(10px,calc(.92*var(--u)))] group-data-[layout=medium]:text-[max(10px,1.36cqw)] group-data-[layout=stack]:text-[max(10px,2.56cqw)]",
+  chipLabel: "text-[max(10px,calc(.98*var(--u)))] group-data-[layout=medium]:text-[max(10px,1.42cqw)] group-data-[layout=stack]:text-[max(10px,2.67cqw)]",
+  chipValue: "text-[max(12px,calc(1.9*var(--u)))] group-data-[layout=medium]:text-[2.84cqw] group-data-[layout=stack]:text-[5.11cqw]",
+  score: "text-[max(24px,calc(3.91*var(--u)))] group-data-[layout=medium]:text-[5.91cqw] group-data-[layout=stack]:text-[10.56cqw]",
+  banner: "h-[calc(10.87*var(--u))] group-data-[layout=medium]:h-[17cqw] group-data-[layout=stack]:h-[30cqw]",
+  pillAt: "left-[calc(1.2*var(--u))] top-[calc(.98*var(--u))] group-data-[layout=medium]:left-[1.93cqw] group-data-[layout=medium]:top-[1.7cqw]",
   pillAtStack: "group-data-[layout=stack]:left-[3.33cqw] group-data-[layout=stack]:top-[2.89cqw]",
-  titleAt: "inset-x-[1.63cqw] bottom-[.76cqw] group-data-[layout=medium]:inset-x-[2.5cqw] group-data-[layout=medium]:bottom-[1.36cqw]",
+  titleAt: "inset-x-[calc(1.63*var(--u))] bottom-[calc(.76*var(--u))] group-data-[layout=medium]:inset-x-[2.5cqw] group-data-[layout=medium]:bottom-[1.36cqw]",
   titleAtStack: "group-data-[layout=stack]:left-[4.44cqw] group-data-[layout=stack]:right-[1.67cqw] group-data-[layout=stack]:bottom-[2.22cqw]",
-  title: "text-[max(13px,1.9cqw)] group-data-[layout=medium]:text-[2.84cqw] group-data-[layout=stack]:text-[5.33cqw]",
-  body: "px-[1.63cqw] pb-[1.3cqw] pt-[.98cqw] group-data-[layout=medium]:px-[2.5cqw] group-data-[layout=medium]:pb-[2.27cqw]",
+  title: "text-[max(13px,calc(1.9*var(--u)))] group-data-[layout=medium]:text-[2.84cqw] group-data-[layout=stack]:text-[5.33cqw]",
+  body: "px-[calc(1.63*var(--u))] pb-[calc(1.3*var(--u))] pt-[calc(.98*var(--u))] group-data-[layout=medium]:px-[2.5cqw] group-data-[layout=medium]:pb-[2.27cqw]",
   bodyMore: "group-data-[layout=medium]:pt-[1.7cqw] group-data-[layout=stack]:px-[4.44cqw] group-data-[layout=stack]:pb-[4cqw] group-data-[layout=stack]:pt-[2.67cqw]",
-  chips: "mt-[.76cqw] gap-[.76cqw] group-data-[layout=medium]:mt-[1.36cqw] group-data-[layout=medium]:gap-[1.14cqw]",
+  chips: "mt-[calc(.76*var(--u))] gap-[calc(.76*var(--u))] group-data-[layout=medium]:mt-[1.36cqw] group-data-[layout=medium]:gap-[1.14cqw]",
   chipsStack: "group-data-[layout=stack]:mt-[2.22cqw] group-data-[layout=stack]:gap-[2.22cqw]",
-  chip: "px-[.33cqw] py-[.76cqw] group-data-[layout=medium]:px-[.57cqw] group-data-[layout=medium]:py-[1.25cqw]",
+  chip: "px-[calc(.33*var(--u))] py-[calc(.76*var(--u))] group-data-[layout=medium]:px-[.57cqw] group-data-[layout=medium]:py-[1.25cqw]",
   chipStack: "group-data-[layout=stack]:px-[1.11cqw] group-data-[layout=stack]:py-[2.22cqw]",
-  caption: "mt-[.87cqw] text-[max(11px,1.25cqw)] group-data-[layout=medium]:mt-[1.48cqw] group-data-[layout=medium]:text-[max(11px,1.93cqw)]",
+  caption: "mt-[calc(.87*var(--u))] text-[max(11px,calc(1.25*var(--u)))] group-data-[layout=medium]:mt-[1.48cqw] group-data-[layout=medium]:text-[max(11px,1.93cqw)]",
   captionStack: "group-data-[layout=stack]:mt-[2.67cqw] group-data-[layout=stack]:text-[max(11px,3.56cqw)]",
 };
 
