@@ -2,12 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
-  Mode-flip system:
-  Body background defaults to paper (cream). The Lenis-driven ModeSection
-  components animate it between #F0EEE5 (cream) and #0A0A0F (obsidian) as
-  the user scrolls. Section text/foreground inverts via Tailwind classes.
-*/
+/* Paper palette: ink on cream paper (#F0EEE5); the color tokens live in tailwind.config.ts. */
 
 @layer base {
   :root {

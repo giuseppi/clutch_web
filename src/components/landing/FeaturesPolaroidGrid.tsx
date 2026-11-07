@@ -199,7 +199,7 @@ const LiveScoresContent = ({ inView }: { inView: boolean }) => (
   <div className="flex-1 flex flex-col">
     <div className="flex items-center justify-between mb-3">
       <div className="flex items-center gap-2">
-        <span className="w-2 h-2 bg-brand rounded-full animate-pulse" />
+        <span className="w-2 h-2 bg-brand rounded-full motion-safe:animate-pulse" />
         <span className="label text-ink/80">LIVE</span>
       </div>
       <span className="font-mono text-[11px] text-ink/60">Q4 · 4:23</span>

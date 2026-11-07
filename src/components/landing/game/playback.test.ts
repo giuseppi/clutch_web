@@ -44,6 +44,11 @@ describe("advance", () => {
     const c = advance({ t: 5, lt: null }, { ...base, dt: 5 });
     expect(c.t).toBeCloseTo(5 + MAX_DT * RATE, 9);
   });
+
+  it("ignores a negative dt (a first frame stamped before the loop started)", () => {
+    expect(advance({ t: 5, lt: null }, { ...base, dt: -0.1 })).toEqual({ t: 5, lt: null });
+    expect(advance({ t: GAME, lt: 1 }, { ...base, dt: -0.1, ladderVisible: 1 })).toEqual({ t: GAME, lt: 1 });
+  });
 });
 
 describe("fast-forward", () => {
@@ -105,6 +110,7 @@ describe("monotonic clock", () => {
       return seed / 4294967296;
     };
     let c: Clock = { t: 0, lt: null };
+    let reachedLt = false;
     for (let i = 0; i < 2000; i++) {
       const next = advance(c, {
         dt: rand() * 0.2,
@@ -116,8 +122,10 @@ describe("monotonic clock", () => {
       expect(next.t).toBeGreaterThanOrEqual(c.t);
       if (c.lt !== null) expect(next.lt).not.toBeNull();
       expect(next.lt ?? 0).toBeGreaterThanOrEqual(c.lt ?? 0);
+      if (next.lt !== null) reachedLt = true;
       c = next;
     }
+    expect(reachedLt).toBe(true);
   });
 });
 

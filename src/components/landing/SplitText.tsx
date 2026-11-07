@@ -1,14 +1,17 @@
 import { motion } from "framer-motion";
+import { useEntranceStart } from "@/lib/entrance";
 import { riseVariants, STAGGER } from "@/lib/motion";
 
 interface SplitTextProps {
   text: string;
   /** Seconds to wait before the first word rises. Default 0. */
   delay?: number;
-  /** Rise when entering the viewport, once. Default true. */
+  /** Rise when entering the viewport, once, and not before the entrance starts. Default true. */
   whileInView?: boolean;
   /** Rise on mount when whileInView is false. Default true. */
   play?: boolean;
+  /** Show the risen words at once, with no animation (reduced motion). Default false. */
+  instant?: boolean;
   className?: string;
   as?: keyof Pick<HTMLElementTagNameMap, "h1" | "h2" | "h3" | "p" | "span">;
 }
@@ -22,18 +25,21 @@ export const SplitText = ({
   delay = 0,
   whileInView = true,
   play = true,
+  instant = false,
   className = "",
   as: Tag = "h2",
 }: SplitTextProps) => {
   const words = text.split(" ");
   const MotionTag = motion[Tag];
+  // A heading already on screen below a short hero would otherwise rise first, before the fonts are ready.
+  const entered = useEntranceStart();
 
   return (
     <MotionTag
       className={className}
-      initial="hidden"
-      whileInView={whileInView ? "visible" : undefined}
-      animate={whileInView ? undefined : play ? "visible" : "hidden"}
+      initial={instant ? false : "hidden"}
+      whileInView={whileInView && entered ? "visible" : undefined}
+      animate={whileInView ? undefined : play || instant ? "visible" : "hidden"}
       viewport={{ once: true, amount: 0.4 }}
       transition={{ delayChildren: delay, staggerChildren: STAGGER }}
     >

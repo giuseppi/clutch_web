@@ -21,7 +21,8 @@ export function isFastForward(clock: Clock, input: FrameInput): boolean {
 
 export function advance(clock: Clock, input: FrameInput): Clock {
   if (input.reduced) return { t: GAME, lt: L_END };
-  const dt = Math.min(input.dt, MAX_DT);
+  // A first frame can be stamped before the loop's start time (dt < 0); a stalled one is capped.
+  const dt = Math.min(Math.max(input.dt, 0), MAX_DT);
   let { t, lt } = clock;
   if (input.started && t < GAME) {
     const rate = (t < START ? 1 : RATE) * (isFastForward(clock, input) ? FF : 1);

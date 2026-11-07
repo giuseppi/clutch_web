@@ -4,7 +4,7 @@ import { Smartphone, Crosshair, Play, TrendingUp } from "lucide-react";
 import { SplitText } from "./SplitText";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { DemoVideo } from "./DemoVideo";
-import { DRAW, FADE, RISE } from "@/lib/motion";
+import { DRAW, DRAWN, FADE, RISE } from "@/lib/motion";
 
 /** Standard rise timing for an element arriving after `delay` seconds. */
 const arrive = (delay: number) => ({ duration: RISE.duration, ease: RISE.ease, delay });
@@ -182,7 +182,7 @@ const PhoneSetupAnim = ({ inView }: { inView: boolean }) => (
         fill="#F0EEE5"
         stroke="#1A1A1A" strokeWidth="1.5"
         initial={{ pathLength: 0, opacity: 0 }}
-        animate={inView ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+        animate={inView ? { pathLength: DRAWN, opacity: 1 } : { pathLength: 0, opacity: 0 }}
         transition={DRAW}
       />
       <motion.line
@@ -322,7 +322,7 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
           d={ARC_PATH}
           fill="none" stroke="#FF6A00" strokeWidth="1.4" strokeDasharray="4 4"
           initial={{ pathLength: 0 }}
-          animate={inView ? { pathLength: 1 } : { pathLength: 0 }}
+          animate={inView ? { pathLength: DRAWN } : { pathLength: 0 }}
           transition={{ ...DRAW, delay: 0.7 }}
         />
 

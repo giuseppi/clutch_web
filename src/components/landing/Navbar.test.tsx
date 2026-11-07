@@ -1,11 +1,19 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { afterEach, vi } from "vitest";
+import { useEntranceStart } from "@/lib/entrance";
 import Navbar from "./Navbar";
 
-const renderNavbar = () =>
+vi.mock("@/lib/entrance", () => ({ useEntranceStart: vi.fn(() => false) }));
+
+afterEach(() => {
+  vi.mocked(useEntranceStart).mockClear();
+});
+
+const renderNavbar = (animateIn?: boolean) =>
   render(
     <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Navbar />
+      <Navbar animateIn={animateIn} />
     </MemoryRouter>,
   );
 
@@ -28,5 +36,17 @@ describe("Navbar", () => {
     expect(links).toHaveLength(1);
     expect(links[0]).toHaveAttribute("href", "/#download");
     expect(screen.queryByRole("button", { name: /coming soon/i })).toBeNull();
+  });
+
+  it("stays hidden until the entrance starts when it animates in", () => {
+    renderNavbar(true);
+    expect(useEntranceStart).toHaveBeenCalled();
+    expect(screen.getByRole("navigation")).toHaveStyle({ opacity: "0" });
+  });
+
+  it("shows at once and never waits for the entrance by default", () => {
+    renderNavbar();
+    expect(useEntranceStart).not.toHaveBeenCalled();
+    expect(screen.getByRole("navigation").getAttribute("style")).toBeNull();
   });
 });

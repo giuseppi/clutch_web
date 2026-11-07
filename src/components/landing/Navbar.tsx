@@ -1,13 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { useEffect, useState, type ReactNode } from "react";
 import clutchLogo from "@/assets/clutch_logo.png";
+import { useEntranceStart } from "@/lib/entrance";
+import { DROP } from "@/lib/motion";
 
 /**
  * Sticky cream-mode navbar. Becomes a frosted backdrop after the user
  * has scrolled past the first viewport so it reads cleanly over content
- * without occluding text underneath.
+ * without occluding text underneath. With `animateIn` (the landing page only),
+ * it waits for the entrance, then fades and drops into place.
  */
-const Navbar = () => {
+const Navbar = ({ animateIn = false }: { animateIn?: boolean }) => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -21,8 +25,10 @@ const Navbar = () => {
     ? "bg-paper/70 backdrop-blur-md border-b border-ink/8"
     : "";
 
+  const Nav = animateIn ? EnteringNav : "nav";
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${backdrop}`}>
+    <Nav className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${backdrop}`}>
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-4 md:py-5 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2.5 group">
           <span className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-paperAlt border border-ink/15 p-1 flex items-center justify-center overflow-hidden transition-colors group-hover:border-ink/40">
@@ -59,7 +65,28 @@ const Navbar = () => {
           COMING SOON
         </a>
       </div>
-    </nav>
+    </Nav>
+  );
+};
+
+const dropIn: Variants = {
+  hidden: { opacity: 0, y: DROP.y },
+  visible: { opacity: 1, y: 0, transition: { duration: DROP.duration, ease: DROP.ease } },
+};
+
+/** Hidden until the entrance starts; under reduced motion it shows at once. */
+const EnteringNav = ({ className, children }: { className: string; children: ReactNode }) => {
+  const started = useEntranceStart();
+  const reduced = useReducedMotion();
+  return (
+    <motion.nav
+      className={className}
+      variants={dropIn}
+      initial={reduced ? false : "hidden"}
+      animate={started || reduced ? "visible" : "hidden"}
+    >
+      {children}
+    </motion.nav>
   );
 };
 

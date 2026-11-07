@@ -53,13 +53,11 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Mode-flip palette: cream paper (P1 parity) + dark obsidian for product moments
+        // Paper palette: cream paper, ink text, brand orange
         paper: "#F0EEE5",
         paperAlt: "#E9E5D8",
         ink: "#1A1A1A",
         inkMuted: "#7E7972",
-        obsidian: "#0A0A0F",
-        obsidianAlt: "#151515",
         brand: "#FF6A00",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

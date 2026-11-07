@@ -1,11 +1,14 @@
+import { motion } from "framer-motion";
 import { useState, type Ref } from "react";
+import { ENTRANCE, fadeVariants, riseVariants } from "@/lib/motion";
 import { BRAND, INK, stateAt, type PlayerId } from "./game/game";
 import { HalfCourt } from "./game/HalfCourt";
 import { useLayout, type Layout } from "./game/layout";
 import { LiveCard } from "./game/LiveCard";
-import { GAME } from "./game/timeline";
+import { usePlayback } from "./game/playbackContext";
+import { SplitText } from "./SplitText";
 
-const FINAL = stateAt(GAME);
+const HEADLINE = "Talent doesn't wait for a camera crew.";
 
 /*
   The fixed Navbar's height, the one place the hero knows it: py-4 around a 36 px row,
@@ -66,43 +69,81 @@ const LAYOUT: Record<Layout, LayoutClasses> = {
   },
 };
 
+/*
+  The game plays from the shared clock (PlaybackProvider). The entrance runs from `started`
+  at the ENTRANCE times: the section goes from "hidden" to "visible" and every child with
+  variants (body, card, key, and the court's lines, floor and hoop) follows with its own
+  delay. The headline runs its own word stagger. Under reduced motion all of it starts final.
+*/
 const Hero = ({ mmrRef }: { mmrRef?: Ref<HTMLSpanElement> }) => {
   const layout = useLayout();
+  const { t, ff, reduced, started, watchCard } = usePlayback();
   const [selected, setSelected] = useState<PlayerId>("G");
   const l = LAYOUT[layout];
 
   return (
-    <section data-layout={layout} className={`hero group paper-grain text-ink ${NAV_CLEARANCE}`}>
+    <motion.section
+      data-layout={layout}
+      className={`hero group paper-grain text-ink ${NAV_CLEARANCE}`}
+      initial={reduced ? false : "hidden"}
+      animate={started || reduced ? "visible" : "hidden"}
+    >
       <div className={CONTENT}>
         <div className={`grid items-center ${l.grid}`}>
           <div className={l.copy}>
-            <h1 className={`text-balance font-semibold leading-[0.98] tracking-[-0.045em] ${l.h1}`}>
-              Talent doesn't wait for a camera crew.
-            </h1>
-            <p className={`text-balance leading-normal text-ink/[0.68] ${l.body}`}>
+            <SplitText
+              as="h1"
+              text={HEADLINE}
+              whileInView={false}
+              play={started}
+              instant={reduced}
+              delay={ENTRANCE.headline}
+              className={`text-balance font-semibold leading-[0.98] tracking-[-0.045em] ${l.h1}`}
+            />
+            <motion.p
+              variants={riseVariants}
+              transition={{ delay: ENTRANCE.body }}
+              className={`text-balance leading-normal text-ink/[0.68] ${l.body}`}
+            >
               Clutch turns a phone in a courtside corner into a{" "}
               <span className="whitespace-nowrap">professional-grade</span> analytics rig, built for the leagues that
               aren't on TV.
-            </p>
-            <div className={l.card}>
-              <LiveCard state={FINAL} selected={selected} onSelect={setSelected} mmrRef={mmrRef} />
-            </div>
+            </motion.p>
+            <motion.div variants={riseVariants} transition={{ delay: ENTRANCE.card }} className={l.card}>
+              <LiveCard
+                state={stateAt(t)}
+                selected={selected}
+                onSelect={setSelected}
+                quick={ff}
+                rootRef={watchCard}
+                mmrRef={mmrRef}
+              />
+            </motion.div>
           </div>
-          <div className={`flex flex-col justify-center ${l.court}`}>
-            <div className={`flex flex-col items-center ${l.courtBox}`}>
-              <HalfCourt t={GAME} />
-              <p className="sr-only">Example 1v1 game at the UCI Anteater Recreation Center: Giuseppi wins 11 to 7.</p>
-              <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-inkMuted ${l.key}`}>
-                <KeyItem color={BRAND} name="Giuseppi" />
-                <KeyItem color={INK} name="Johnny" />
-              </div>
-            </div>
-          </div>
+          <CourtColumn t={t} l={l} />
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 };
+
+/** The court, its summary for screen readers, and the player key. */
+const CourtColumn = ({ t, l }: { t: number; l: LayoutClasses }) => (
+  <div className={`flex flex-col justify-center ${l.court}`}>
+    <div className={`flex flex-col items-center ${l.courtBox}`}>
+      <HalfCourt t={t} />
+      <p className="sr-only">Example 1v1 game at the UCI Anteater Recreation Center: Giuseppi wins 11 to 7.</p>
+      <motion.div
+        variants={fadeVariants}
+        transition={{ delay: ENTRANCE.key }}
+        className={`flex flex-wrap items-center gap-x-3 gap-y-1 text-inkMuted ${l.key}`}
+      >
+        <KeyItem color={BRAND} name="Giuseppi" />
+        <KeyItem color={INK} name="Johnny" />
+      </motion.div>
+    </div>
+  </div>
+);
 
 const KeyItem = ({ color, name }: { color: string; name: string }) => (
   <span>

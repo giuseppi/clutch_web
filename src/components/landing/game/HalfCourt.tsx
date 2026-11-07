@@ -1,6 +1,7 @@
+import { motion } from "framer-motion";
 import { useId } from "react";
 import ballUrl from "@/assets/game/ball.webp";
-import { clamp01 } from "@/lib/motion";
+import { clamp01, drawVariants, ENTRANCE, fadeVariants } from "@/lib/motion";
 import { BRAND, HOOP, INK, PLAYERS, SHOTS, beatAt, landTime, stateAt, type BeatFrame, type Shot } from "./game";
 
 const LINE = "rgba(26,26,26,.38)";
@@ -31,6 +32,9 @@ const COURT_LINES = {
  * The half court at game time `t`, in feet: baseline at the top, hoop centre at (0, 5.25).
  * Makes leave a filled mark and a heat glow, misses leave a ring, and the shot in progress
  * shows its shooter, ball, "+2" or "+3" pop and rim pulse.
+ *
+ * Entrance: under a motion parent that goes from "hidden" to "visible" (the hero), the lines
+ * draw in and the floor and hoop fade in at their ENTRANCE times. On its own it renders settled.
  */
 export function HalfCourt({ t }: { t: number }) {
   // useId gives ":r1:"; colons are dropped so the ids are safe inside url(#...).
@@ -90,8 +94,10 @@ function Floor({ id }: { id: string }) {
           <rect x={-25} y={0} width={50} height={47} />
         </clipPath>
       </defs>
-      <rect x={-25} y={0} width={50} height={47} rx={0.4} className="fill-paperAlt" />
-      <rect x={-8} y={0} width={16} height={19} fill="rgba(26,26,26,.045)" />
+      <motion.g variants={fadeVariants} transition={{ delay: ENTRANCE.courtFill }}>
+        <rect x={-25} y={0} width={50} height={47} rx={0.4} className="fill-paperAlt" />
+        <rect x={-8} y={0} width={16} height={19} fill="rgba(26,26,26,.045)" />
+      </motion.g>
     </>
   );
 }
@@ -100,12 +106,14 @@ function Lines() {
   return (
     <g fill="none" stroke={LINE} strokeWidth={LINE_WIDTH}>
       {Object.entries(COURT_LINES).map(([name, d]) => (
-        <path
+        <motion.path
           key={name}
           data-court-line={name}
           pathLength={1}
           d={d}
           strokeWidth={name === "boundary" ? OUTLINE_WIDTH : undefined}
+          variants={drawVariants}
+          transition={{ delay: ENTRANCE.courtLines }}
         />
       ))}
     </g>
@@ -116,12 +124,12 @@ function Lines() {
 function Hoop({ rim }: { rim: BeatFrame["rim"] }) {
   const rimTop = HOOP.y - 0.75;
   return (
-    <>
+    <motion.g variants={fadeVariants} transition={{ delay: ENTRANCE.courtFill }}>
       <line data-backboard="" x1={-3} y1={4} x2={3} y2={4} stroke={INK} strokeWidth={0.3} />
       <line data-connector="" x1={HOOP.x} y1={4} x2={HOOP.x} y2={rimTop} stroke={INK} strokeWidth={LINE_WIDTH} />
       <circle data-rim="" cx={HOOP.x} cy={HOOP.y} r={0.75} fill="none" stroke={BRAND} strokeWidth={LINE_WIDTH} />
       {rim && <circle cx={HOOP.x} cy={HOOP.y} r={rim.r} fill="none" stroke={BRAND} strokeWidth={0.2} opacity={rim.opacity} />}
-    </>
+    </motion.g>
   );
 }
 
