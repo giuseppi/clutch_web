@@ -57,15 +57,16 @@ const FooterCTA = () => {
           <span className="label text-inkMuted hidden md:inline">EARLY ACCESS / BETA</span>
         </div>
 
+        {/* Under 381 px wide the type shrinks with the screen (10.5vw), so each line stays whole. */}
         <SplitText
           as="h2"
           text="Track every shot."
-          className="font-display text-[clamp(2.5rem,9vw,8rem)] text-ink"
+          className="font-display text-[clamp(min(2.5rem,10.5vw),9vw,8rem)] text-ink"
         />
         <SplitText
           as="h2"
           text="Climb the ranks."
-          className="font-display text-[clamp(2.5rem,9vw,8rem)] text-brand pl-[6vw] md:pl-[min(18vw,259px)]"
+          className="font-display text-[clamp(min(2.5rem,10.5vw),9vw,8rem)] text-brand pl-[6vw] md:pl-[min(18vw,259px)]"
         />
 
         <motion.div
