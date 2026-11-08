@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { SplitText } from "./SplitText";
 import { riseVariants } from "@/lib/motion";
+import { GRID } from "./game/layout";
 
 const GOOGLE_FORM_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSeUaa-wN0BkWVDut3uHLwBpecVIUdt2opIn5pzhvcniZHOH9g/formResponse";
 const GOOGLE_FORM_EMAIL_FIELD = "entry.2010243805";
@@ -41,7 +42,7 @@ const FooterCTA = () => {
   };
 
   return (
-    <div id="download" className="relative bg-paper text-ink paper-grain px-6 md:px-12 py-24 md:py-36 overflow-hidden">
+    <div id="download" className="relative bg-paper text-ink paper-grain py-24 md:py-36 overflow-hidden">
       <div
         aria-hidden
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full pointer-events-none"
@@ -50,7 +51,7 @@ const FooterCTA = () => {
         }}
       />
 
-      <div className="relative max-w-[1440px] mx-auto">
+      <div className={`relative ${GRID}`}>
         <div className="flex items-baseline justify-between border-b border-ink/15 pb-5 mb-12 md:mb-16">
           <span className="label text-inkMuted">COMING SOON · 04</span>
           <span className="label text-inkMuted hidden md:inline">EARLY ACCESS / BETA</span>
@@ -64,7 +65,7 @@ const FooterCTA = () => {
         <SplitText
           as="h2"
           text="Climb the ranks."
-          className="font-display text-[clamp(2.5rem,9vw,8rem)] text-brand pl-[6vw] md:pl-[18vw]"
+          className="font-display text-[clamp(2.5rem,9vw,8rem)] text-brand pl-[6vw] md:pl-[min(18vw,259px)]"
         />
 
         <motion.div

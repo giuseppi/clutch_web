@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import clutchLogo from "@/assets/clutch_logo.png";
+import { GRID } from "./game/layout";
 
 const columns = [
   {
@@ -16,8 +17,8 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-paper text-ink px-6 md:px-12 pt-20 md:pt-24 pb-10 border-t border-ink/10">
-      <div className="max-w-[1440px] mx-auto">
+    <footer className="bg-paper text-ink pt-20 md:pt-24 pb-10 border-t border-ink/10">
+      <div className={GRID}>
         <div className="grid grid-cols-2 md:grid-cols-12 gap-y-12 md:gap-x-12">
           {/* Brand block */}
           <div className="col-span-2 md:col-span-5">

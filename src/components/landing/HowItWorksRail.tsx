@@ -6,6 +6,7 @@ import { AnimatedNumber } from "./AnimatedNumber";
 import { DashedDraw } from "./DashedDraw";
 import { DemoVideo } from "./DemoVideo";
 import { DRAW, FADE, RISE, drawHidden, drawShown } from "@/lib/motion";
+import { GRID } from "./game/layout";
 
 /** Standard rise timing for an element arriving after `delay` seconds. */
 const arrive = (delay: number) => ({ duration: RISE.duration, ease: RISE.ease, delay });
@@ -58,13 +59,13 @@ const HowItWorksRail = () => {
     <div ref={ref} id="how-it-works" className="relative bg-paper text-ink paper-grain" style={{ height: "320vh" }}>
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col">
         {/* Section header */}
-        <div className="px-6 md:px-12 pt-24 md:pt-28 pb-8">
-          <div className="flex items-baseline justify-between border-b border-ink/15 pb-5 max-w-[1440px] mx-auto">
+        <div className={`${GRID} w-full pt-24 md:pt-28 pb-8`}>
+          <div className="flex items-baseline justify-between border-b border-ink/15 pb-5">
             <span className="label text-inkMuted">HOW IT WORKS · 03</span>
             <span className="label text-inkMuted hidden md:inline">4 STEPS / ZERO GEAR</span>
           </div>
 
-          <div className="max-w-[1440px] mx-auto mt-8 md:mt-10">
+          <div className="mt-8 md:mt-10">
             <SplitText
               as="h2"
               text="Four steps."
@@ -73,7 +74,7 @@ const HowItWorksRail = () => {
             <SplitText
               as="h2"
               text="Zero gear."
-              className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[18vw]"
+              className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[min(18vw,259px)]"
             />
           </div>
         </div>
@@ -105,8 +106,8 @@ const StepArticle = ({ step, index }: StepProps) => {
   const Icon = step.icon;
 
   return (
-    <article ref={ref} className="shrink-0 w-screen h-full flex items-center px-6 md:px-12">
-      <div className="max-w-[1440px] mx-auto w-full grid md:grid-cols-12 gap-y-8 md:gap-x-12 items-center">
+    <article ref={ref} className="shrink-0 w-screen h-full flex items-center">
+      <div className={`${GRID} w-full grid md:grid-cols-12 gap-y-8 md:gap-x-12 items-center`}>
         {/* Left: oversized number + per-step animation */}
         <div className="md:col-span-5">
           <div className="flex items-center gap-6">

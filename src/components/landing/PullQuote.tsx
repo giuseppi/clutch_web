@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 import { FADE, riseVariants } from "@/lib/motion";
+import { GRID } from "./game/layout";
 
 const PullQuote = () => {
   return (
-    <div className="bg-paper text-ink paper-grain py-24 md:py-32 px-6 md:px-12">
-      <div className="max-w-[1100px] mx-auto">
+    <div className="bg-paper text-ink paper-grain py-24 md:py-32">
+      <div className={GRID}>
         <motion.span
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

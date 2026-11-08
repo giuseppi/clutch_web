@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import { GRID } from "@/components/landing/game/layout";
 
 const team = [
   {
@@ -44,8 +45,8 @@ const ContactPage = () => (
   <div className="min-h-screen bg-paper text-ink">
     <Navbar />
 
-    <main className="pt-28 md:pt-36 pb-24 px-6 md:px-12">
-      <div className="max-w-[1440px] mx-auto">
+    <main className="pt-28 md:pt-36 pb-24">
+      <div className={GRID}>
         <div className="flex items-baseline justify-between border-b border-ink/15 pb-5 mb-12 md:mb-16">
           <span className="label text-inkMuted">THE TEAM</span>
           <span className="label text-inkMuted hidden md:inline">

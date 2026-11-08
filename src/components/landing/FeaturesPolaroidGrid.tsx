@@ -5,6 +5,7 @@ import { AnimatedNumber } from "./AnimatedNumber";
 import { RotatingGlobe } from "./RotatingGlobe";
 import { useEntranceSettled } from "@/lib/entrance";
 import { RISE, VALUE_CHANGE, riseVariants } from "@/lib/motion";
+import { GRID } from "./game/layout";
 
 const statLines = [
   { label: "PTS", value: 18.4, target: 78, decimals: 1 },
@@ -29,8 +30,8 @@ const FeaturesPolaroidGrid = () => {
   const inView = useInView(gridRef, { once: true, amount: 0.2 }) && settled;
 
   return (
-    <div id="features" className="paper-grain pt-20 md:pt-28 pb-24 md:pb-32 px-6 md:px-12">
-      <div className="max-w-[1440px] mx-auto">
+    <div id="features" className="paper-grain pt-20 md:pt-28 pb-24 md:pb-32">
+      <div className={GRID}>
         {/* Section header - TOC chrome */}
         <div className="flex items-baseline justify-between mb-10 md:mb-14 border-b border-ink/15 pb-5">
           <span className="label text-inkMuted">FEATURES · 02</span>
@@ -47,7 +48,7 @@ const FeaturesPolaroidGrid = () => {
           <SplitText
             as="h2"
             text="serious player needs."
-            className="md:col-span-12 font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[16vw]"
+            className="md:col-span-12 font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[min(16vw,230px)]"
           />
           <motion.p
             variants={riseVariants}

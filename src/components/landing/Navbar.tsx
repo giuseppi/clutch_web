@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import clutchLogo from "@/assets/clutch_logo.png";
 import { useEntranceStart } from "@/lib/entrance";
 import { DROP } from "@/lib/motion";
+import { GRID } from "./game/layout";
 
 /**
  * Sticky cream-mode navbar. Becomes a frosted backdrop after the user
@@ -29,7 +30,7 @@ const Navbar = ({ animateIn = false }: { animateIn?: boolean }) => {
 
   return (
     <Nav className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${backdrop}`}>
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 py-4 md:py-5 flex items-center justify-between">
+      <div className={`${GRID} py-4 md:py-5 flex items-center justify-between`}>
         <Link to="/" className="flex items-center gap-2.5 group">
           <span className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-paperAlt border border-ink/15 p-1 flex items-center justify-center overflow-hidden transition-colors group-hover:border-ink/40">
             <img
