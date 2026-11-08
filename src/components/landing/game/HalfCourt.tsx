@@ -4,7 +4,8 @@ import ballUrl from "@/assets/game/ball.webp";
 import { clamp01, drawVariants, ENTRANCE, fadeVariants } from "@/lib/motion";
 import { BRAND, HOOP, INK, PLAYERS, SHOTS, beatAt, landTime, stateAt, type BeatFrame, type Shot } from "./game";
 
-const LINE = "rgba(26,26,26,.38)";
+/** Court lines are one layer of ink at this opacity, so where lines meet or cross they do not darken. */
+const LINE_OPACITY = 0.38;
 const LINE_WIDTH = 0.16;
 const OUTLINE_WIDTH = 0.24;
 /** Seconds a make's heat takes to fade in. */
@@ -22,7 +23,8 @@ const FIT = {
 /** Court lines as paths (Safari only honours pathLength on <path>), so each can draw in. */
 const COURT_LINES = {
   boundary: "M -25 0 H 25 V 47 H -25 Z",
-  lane: "M -8 0 H 8 V 19 H -8 Z",
+  // Open at the top: the baseline is the lane's top edge.
+  lane: "M -8 0 V 19 H 8 V 0",
   freeThrow: "M 0 13 A 6 6 0 0 1 0 25 A 6 6 0 0 1 0 13 Z",
   three: "M -22 0 L -22 14.2 A 23.75 23.75 0 0 0 22 14.2 L 22 0",
   halfCourt: "M -6 47 A 6 6 0 0 1 6 47",
@@ -104,7 +106,7 @@ function Floor({ id }: { id: string }) {
 
 function Lines() {
   return (
-    <g fill="none" stroke={LINE} strokeWidth={LINE_WIDTH}>
+    <g fill="none" stroke={INK} strokeWidth={LINE_WIDTH} opacity={LINE_OPACITY}>
       {Object.entries(COURT_LINES).map(([name, d]) => (
         <motion.path
           key={name}

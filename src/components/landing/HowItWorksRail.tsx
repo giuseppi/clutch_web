@@ -3,8 +3,9 @@ import { useRef } from "react";
 import { Smartphone, Crosshair, Play, TrendingUp } from "lucide-react";
 import { SplitText } from "./SplitText";
 import { AnimatedNumber } from "./AnimatedNumber";
+import { DashedDraw } from "./DashedDraw";
 import { DemoVideo } from "./DemoVideo";
-import { DRAW, DRAWN, FADE, RISE } from "@/lib/motion";
+import { DRAW, FADE, RISE, drawHidden, drawShown } from "@/lib/motion";
 
 /** Standard rise timing for an element arriving after `delay` seconds. */
 const arrive = (delay: number) => ({ duration: RISE.duration, ease: RISE.ease, delay });
@@ -176,13 +177,14 @@ const PhoneSetupAnim = ({ inView }: { inView: boolean }) => (
         </g>
       </g>
 
-      {/* Phone */}
-      <motion.rect
-        x="40" y="42" width="42" height="76" rx="4"
+      {/* Phone: a 42 x 76 rect with 4 px corners at (40, 42), as a path (Safari only honours pathLength on <path>) */}
+      <motion.path
+        d="M 44 42 H 78 A 4 4 0 0 1 82 46 V 114 A 4 4 0 0 1 78 118 H 44 A 4 4 0 0 1 40 114 V 46 A 4 4 0 0 1 44 42 Z"
+        pathLength={1}
         fill="#F0EEE5"
         stroke="#1A1A1A" strokeWidth="1.5"
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={inView ? { pathLength: DRAWN, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+        initial={{ ...drawHidden, opacity: 0 }}
+        animate={inView ? { ...drawShown, opacity: 1 } : { ...drawHidden, opacity: 0 }}
         transition={DRAW}
       />
       <motion.line
@@ -194,13 +196,7 @@ const PhoneSetupAnim = ({ inView }: { inView: boolean }) => (
       />
 
       {/* Sight line phone → reticle */}
-      <motion.line
-        x1="84" y1="80" x2="290" y2="80"
-        stroke="#FF6A00" strokeWidth="1.2" strokeDasharray="3 4"
-        initial={{ pathLength: 0 }}
-        animate={inView ? { pathLength: 1 } : { pathLength: 0 }}
-        transition={{ ...DRAW, delay: 1.0 }}
-      />
+      <DashedDraw d="M 84 80 H 290" dash="3 4" stroke="#FF6A00" strokeWidth={1.2} show={inView} delay={1.0} />
 
       {/* Tracking reticle */}
       <motion.g
@@ -318,13 +314,7 @@ const ShotArcAnim = ({ inView }: { inView: boolean }) => {
         />
 
         {/* Shot arc */}
-        <motion.path
-          d={ARC_PATH}
-          fill="none" stroke="#FF6A00" strokeWidth="1.4" strokeDasharray="4 4"
-          initial={{ pathLength: 0 }}
-          animate={inView ? { pathLength: DRAWN } : { pathLength: 0 }}
-          transition={{ ...DRAW, delay: 0.7 }}
-        />
+        <DashedDraw d={ARC_PATH} dash="4 4" stroke="#FF6A00" strokeWidth={1.4} show={inView} delay={0.7} />
 
         {/* Hoop assembly - side profile */}
         <motion.g

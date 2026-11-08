@@ -19,6 +19,11 @@ export function isFastForward(clock: Clock, input: FrameInput): boolean {
   return input.started && clock.t < GAME && input.ladderVisible >= 0.6 && input.cardVisible < 0.6;
 }
 
+/** No frame can change the clock until an input does: the game is over and the beat is done or still waiting for the ladder. */
+export function isIdle(clock: Clock, ladderVisible: number): boolean {
+  return clock.t >= GAME && (clock.lt === L_END || (clock.lt === null && ladderVisible < 0.6));
+}
+
 export function advance(clock: Clock, input: FrameInput): Clock {
   if (input.reduced) return { t: GAME, lt: L_END };
   // A first frame can be stamped before the loop's start time (dt < 0); a stalled one is capped.

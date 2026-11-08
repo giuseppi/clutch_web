@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { advance, isFastForward, type Clock, type FrameInput } from "./playback";
+import { advance, isFastForward, isIdle, type Clock, type FrameInput } from "./playback";
 import { FF, GAME, L_END, MAX_DT, RATE, START } from "./timeline";
 
 const base: FrameInput = { dt: 1 / 60, started: true, reduced: false, ladderVisible: 0, cardVisible: 1 };
@@ -126,6 +126,25 @@ describe("monotonic clock", () => {
       c = next;
     }
     expect(reachedLt).toBe(true);
+  });
+});
+
+describe("idle", () => {
+  it("is idle only when no frame can change the clock", () => {
+    expect(isIdle({ t: GAME - 0.01, lt: null }, 0)).toBe(false);
+    expect(isIdle({ t: GAME, lt: null }, 0.59)).toBe(true);
+    expect(isIdle({ t: GAME, lt: null }, 0.6)).toBe(false);
+    expect(isIdle({ t: GAME, lt: 1 }, 0)).toBe(false);
+    expect(isIdle({ t: GAME, lt: L_END }, 1)).toBe(true);
+  });
+
+  it("agrees with advance: an idle clock does not change on the next frame", () => {
+    for (const [clock, ladderVisible] of [
+      [{ t: GAME, lt: null }, 0.59],
+      [{ t: GAME, lt: L_END }, 1],
+    ] as const) {
+      expect(advance(clock, { ...base, ladderVisible })).toEqual(clock);
+    }
   });
 });
 

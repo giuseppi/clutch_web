@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
-import { useEntranceStart } from "@/lib/entrance";
+import { memo } from "react";
+import { useEntranceSettled } from "@/lib/entrance";
 import { riseVariants, STAGGER } from "@/lib/motion";
 
 interface SplitTextProps {
   text: string;
   /** Seconds to wait before the first word rises. Default 0. */
   delay?: number;
-  /** Rise when entering the viewport, once, and not before the entrance starts. Default true. */
+  /** Rise when entering the viewport, once, and not before the entrance settles. Default true. */
   whileInView?: boolean;
   /** Rise on mount when whileInView is false. Default true. */
   play?: boolean;
@@ -18,9 +19,10 @@ interface SplitTextProps {
 
 /**
  * Splits text by word. Each word rises with the shared RISE motion, STAGGER
- * apart. Words stay whole inline-block units so they wrap naturally.
+ * apart. Words stay whole inline-block units so they wrap naturally. Memoized:
+ * the hero headline sits in a parent that renders on every game frame.
  */
-export const SplitText = ({
+export const SplitText = memo(function SplitText({
   text,
   delay = 0,
   whileInView = true,
@@ -28,17 +30,17 @@ export const SplitText = ({
   instant = false,
   className = "",
   as: Tag = "h2",
-}: SplitTextProps) => {
+}: SplitTextProps) {
   const words = text.split(" ");
   const MotionTag = motion[Tag];
-  // A heading already on screen below a short hero would otherwise rise first, before the fonts are ready.
-  const entered = useEntranceStart();
+  // A heading already on screen below a short hero would otherwise rise during the hero's entrance.
+  const settled = useEntranceSettled();
 
   return (
     <MotionTag
       className={className}
       initial={instant ? false : "hidden"}
-      whileInView={whileInView && entered ? "visible" : undefined}
+      whileInView={whileInView && settled ? "visible" : undefined}
       animate={whileInView ? undefined : play || instant ? "visible" : "hidden"}
       viewport={{ once: true, amount: 0.4 }}
       transition={{ delayChildren: delay, staggerChildren: STAGGER }}
@@ -53,4 +55,4 @@ export const SplitText = ({
       ))}
     </MotionTag>
   );
-};
+});

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, vi } from "vitest";
 import { useEntranceStart } from "@/lib/entrance";
@@ -8,14 +8,16 @@ vi.mock("@/lib/entrance", () => ({ useEntranceStart: vi.fn(() => false) }));
 
 afterEach(() => {
   vi.mocked(useEntranceStart).mockClear();
+  vi.mocked(useEntranceStart).mockReturnValue(false);
 });
 
-const renderNavbar = (animateIn?: boolean) =>
-  render(
-    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Navbar animateIn={animateIn} />
-    </MemoryRouter>,
-  );
+const nav = (animateIn?: boolean) => (
+  <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+    <Navbar animateIn={animateIn} />
+  </MemoryRouter>
+);
+
+const renderNavbar = (animateIn?: boolean) => render(nav(animateIn));
 
 describe("Navbar", () => {
   it("routes the brand mark home and the contact link to /contact", () => {
@@ -42,6 +44,20 @@ describe("Navbar", () => {
     renderNavbar(true);
     expect(useEntranceStart).toHaveBeenCalled();
     expect(screen.getByRole("navigation")).toHaveStyle({ opacity: "0" });
+  });
+
+  it("fades in once the entrance starts", async () => {
+    const { rerender } = renderNavbar(true);
+    expect(screen.getByRole("navigation")).toHaveStyle({ opacity: "0" });
+    vi.mocked(useEntranceStart).mockReturnValue(true);
+    rerender(nav(true));
+    await waitFor(() => expect(screen.getByRole("navigation")).toHaveStyle({ opacity: "1" }), { timeout: 1500 });
+  });
+
+  it("starts final when it mounts after the entrance, as on a return to the page", () => {
+    vi.mocked(useEntranceStart).mockReturnValue(true);
+    renderNavbar(true);
+    expect(screen.getByRole("navigation")).toHaveStyle({ opacity: "1" });
   });
 
   it("shows at once and never waits for the entrance by default", () => {

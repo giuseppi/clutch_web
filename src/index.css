@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Paper palette: ink on cream paper (#F0EEE5); the color tokens live in tailwind.config.ts. */
+/* Paper palette: ink on cream paper (#F0EEE5). The named colors (paper, ink, brand) live in
+   tailwind.config.ts; the shadcn HSL tokens below map onto them. */
 
 @layer base {
   :root {

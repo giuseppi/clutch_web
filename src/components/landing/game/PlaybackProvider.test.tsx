@@ -1,7 +1,8 @@
 import { act, render, screen } from "@testing-library/react";
 import { useReducedMotion } from "framer-motion";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { usePlayback } from "./playbackContext";
+import { setIntersection } from "@/test/intersection";
+import { pageClock, usePlayback } from "./playbackContext";
 import { PlaybackProvider } from "./PlaybackProvider";
 import { GAME, L_END } from "./timeline";
 
@@ -14,6 +15,8 @@ vi.mock("framer-motion", async (orig) => ({
 
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "requestAnimationFrame", "cancelAnimationFrame", "performance"] });
+  // A fresh page load.
+  pageClock.current = { t: 0, lt: null, ff: false };
 });
 
 afterEach(() => {
@@ -24,9 +27,14 @@ afterEach(() => {
 const renders: { t: number; lt: number | null }[] = [];
 
 function Clock() {
-  const { t, lt } = usePlayback();
+  const { t, lt, watchLadder } = usePlayback();
   renders.push({ t, lt });
-  return <p data-testid="clock">{`${t} ${lt}`}</p>;
+  return (
+    <>
+      <p data-testid="clock">{`${t} ${lt}`}</p>
+      <div data-testid="ladder" ref={watchLadder} />
+    </>
+  );
 }
 
 function renderClock() {
@@ -42,6 +50,8 @@ const wait = (ms: number) =>
   act(() => {
     vi.advanceTimersByTime(ms);
   });
+
+const last = () => renders[renders.length - 1];
 
 describe("PlaybackProvider", () => {
   it("plays the game to the end and holds it, with no leaderboard beat", () => {
@@ -66,6 +76,41 @@ describe("PlaybackProvider", () => {
     const count = renders.length;
     wait(1000);
     expect(renders.length).toBe(count);
+  });
+
+  it("resumes from the page-load clock on a remount instead of replaying", () => {
+    const first = renderClock();
+    wait(6000);
+    const paused = last().t;
+    expect(paused).toBeGreaterThan(1);
+    first.unmount();
+    wait(2000);
+
+    renderClock();
+    expect(renders[0].t).toBe(paused);
+    wait(1000);
+    expect(last().t).toBeGreaterThan(paused);
+  });
+
+  it("shows the final clock at once on a remount after the game", () => {
+    const first = renderClock();
+    wait(18_000);
+    first.unmount();
+    renderClock();
+    expect(renders[0].t).toBe(GAME);
+  });
+
+  it("stops its frame loop once nothing can change, and restarts when the ladder comes into view", () => {
+    renderClock();
+    wait(18_000);
+    expect(last().t).toBe(GAME);
+    expect(vi.getTimerCount()).toBe(0);
+
+    act(() => setIntersection(screen.getByTestId("ladder"), 0.6));
+    expect(vi.getTimerCount()).toBe(1);
+    wait(3000);
+    expect(last().lt).toBe(L_END);
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it("throws when used outside the provider", () => {

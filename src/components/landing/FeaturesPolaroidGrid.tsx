@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { SplitText } from "./SplitText";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { RotatingGlobe } from "./RotatingGlobe";
+import { useEntranceSettled } from "@/lib/entrance";
 import { RISE, VALUE_CHANGE, riseVariants } from "@/lib/motion";
 
 const statLines = [
@@ -23,7 +24,9 @@ const polaroids = [
 
 const FeaturesPolaroidGrid = () => {
   const gridRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(gridRef, { once: true, amount: 0.2 });
+  // Reveals already on screen at load (tall screens) wait for the hero's entrance to settle.
+  const settled = useEntranceSettled();
+  const inView = useInView(gridRef, { once: true, amount: 0.2 }) && settled;
 
   return (
     <div id="features" className="paper-grain pt-20 md:pt-28 pb-24 md:pb-32 px-6 md:px-12">
@@ -49,7 +52,7 @@ const FeaturesPolaroidGrid = () => {
           <motion.p
             variants={riseVariants}
             initial="hidden"
-            whileInView="visible"
+            whileInView={settled ? "visible" : undefined}
             viewport={{ once: true, amount: 0.5 }}
             transition={{ delay: 0.5 }}
             className="md:col-start-7 md:col-span-5 text-base md:text-lg text-ink/70 leading-relaxed mt-2"
@@ -61,44 +64,48 @@ const FeaturesPolaroidGrid = () => {
 
         <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-y-14 md:gap-y-20 md:gap-x-16 max-w-[1180px] mx-auto">
           {polaroids.map((p, i) => (
-            <motion.article
-              key={p.index}
-              initial={{ opacity: 0, y: p.translateY + RISE.y, rotate: p.rotate }}
-              whileInView={{ opacity: 1, y: p.translateY, rotate: p.rotate }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: RISE.duration, ease: RISE.ease }}
-              whileHover={{ rotate: 0, y: p.translateY - 6, transition: { duration: VALUE_CHANGE } }}
-              className="bg-paperAlt border border-ink/10 shadow-[0_24px_60px_-24px_rgba(26,26,26,0.18)] p-6 md:p-7 origin-center"
-            >
-              {/* Polaroid "image area" - cream inner panel with animated content */}
-              <div
-                className={`bg-paper text-ink mb-5 relative overflow-hidden border border-ink/8 ${
-                  i === 3 ? "h-[17rem] md:h-auto md:aspect-[4/3]" : "aspect-[4/3]"
-                }`}
-              >
-                <div className="absolute inset-0 p-5 md:p-6 flex flex-col">
-                  <div className="flex items-start justify-between mb-3">
-                    <span className="label text-ink/60">{p.kicker}</span>
-                    <span className="font-display font-normal text-3xl md:text-4xl text-ink/25">
-                      {p.index}
-                    </span>
-                  </div>
-                  {i === 0 && <StatTrackingContent inView={inView} />}
-                  {i === 1 && <PlayerRatingsContent inView={inView} />}
-                  {i === 2 && <LiveScoresContent inView={inView} />}
-                  {i === 3 && <CourtMatchingContent />}
-                </div>
-              </div>
-
-              {/* Polaroid caption - title + body */}
-              <Caption index={i} />
-            </motion.article>
+            <Polaroid key={p.index} p={p} i={i} inView={inView} settled={settled} />
           ))}
         </div>
       </div>
     </div>
   );
 };
+
+/** One feature card: it rises into its tilt once in view, after the entrance settles. */
+const Polaroid = ({ p, i, inView, settled }: { p: (typeof polaroids)[number]; i: number; inView: boolean; settled: boolean }) => (
+  <motion.article
+    initial={{ opacity: 0, y: p.translateY + RISE.y, rotate: p.rotate }}
+    whileInView={settled ? { opacity: 1, y: p.translateY, rotate: p.rotate } : undefined}
+    viewport={{ once: true, amount: 0.2 }}
+    transition={{ duration: RISE.duration, ease: RISE.ease }}
+    whileHover={{ rotate: 0, y: p.translateY - 6, transition: { duration: VALUE_CHANGE } }}
+    className="bg-paperAlt border border-ink/10 shadow-[0_24px_60px_-24px_rgba(26,26,26,0.18)] p-6 md:p-7 origin-center"
+  >
+    {/* Polaroid "image area" - cream inner panel with animated content */}
+    <div
+      className={`bg-paper text-ink mb-5 relative overflow-hidden border border-ink/8 ${
+        i === 3 ? "h-[17rem] md:h-auto md:aspect-[4/3]" : "aspect-[4/3]"
+      }`}
+    >
+      <div className="absolute inset-0 p-5 md:p-6 flex flex-col">
+        <div className="flex items-start justify-between mb-3">
+          <span className="label text-ink/60">{p.kicker}</span>
+          <span className="font-display font-normal text-3xl md:text-4xl text-ink/25">
+            {p.index}
+          </span>
+        </div>
+        {i === 0 && <StatTrackingContent inView={inView} />}
+        {i === 1 && <PlayerRatingsContent inView={inView} />}
+        {i === 2 && <LiveScoresContent inView={inView} />}
+        {i === 3 && <CourtMatchingContent />}
+      </div>
+    </div>
+
+    {/* Polaroid caption - title + body */}
+    <Caption index={i} />
+  </motion.article>
+);
 
 /* ---------------- Per-card animated content ---------------- */
 

@@ -47,16 +47,7 @@ const Navbar = ({ animateIn = false }: { animateIn?: boolean }) => {
           </span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-1">
-          <NavLink href="/#features">FEATURES</NavLink>
-          <NavLink href="/#how-it-works">HOW IT WORKS</NavLink>
-          <Link
-            to="/contact"
-            className="label px-4 py-2 text-ink/70 hover:text-ink transition-colors"
-          >
-            CONTACT US
-          </Link>
-        </div>
+        <NavLinks />
 
         <a
           href="/#download"
@@ -74,21 +65,39 @@ const dropIn: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: DROP.duration, ease: DROP.ease } },
 };
 
-/** Hidden until the entrance starts; under reduced motion it shows at once. */
+/**
+ * Hidden until the entrance starts. It shows at once under reduced motion, and when it mounts
+ * after the entrance has started (a return to the page), so the entrance plays once per page load.
+ */
 const EnteringNav = ({ className, children }: { className: string; children: ReactNode }) => {
   const started = useEntranceStart();
+  const [resumed] = useState(started);
   const reduced = useReducedMotion();
   return (
     <motion.nav
       className={className}
       variants={dropIn}
-      initial={reduced ? false : "hidden"}
+      initial={reduced || resumed ? false : "hidden"}
       animate={started || reduced ? "visible" : "hidden"}
     >
       {children}
     </motion.nav>
   );
 };
+
+/** The section and contact links, from md up. */
+const NavLinks = () => (
+  <div className="hidden md:flex items-center gap-1">
+    <NavLink href="/#features">FEATURES</NavLink>
+    <NavLink href="/#how-it-works">HOW IT WORKS</NavLink>
+    <Link
+      to="/contact"
+      className="label px-4 py-2 text-ink/70 hover:text-ink transition-colors"
+    >
+      CONTACT US
+    </Link>
+  </div>
+);
 
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
   <a

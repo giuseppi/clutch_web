@@ -1,4 +1,4 @@
-import type { Ref } from "react";
+import { useState, type Ref } from "react";
 import arcUrl from "@/assets/game/uci-arc.webp";
 import { VALUE_CHANGE } from "@/lib/motion";
 import { FlipNumber } from "./FlipNumber";
@@ -71,10 +71,12 @@ const cx = (...classes: (string | false | undefined)[]) => classes.filter(Boolea
  * block. Every row has a fixed height and the Win tags only toggle visibility, so the
  * card never changes size whatever the score or the selected player.
  */
-export function LiveCard({ state, selected, onSelect, quick, date = new Date(), rootRef, mmrRef }: LiveCardProps) {
+export function LiveCard({ state, selected, onSelect, quick, date, rootRef, mmrRef }: LiveCardProps) {
+  // Read once per mount: the card renders on every game frame.
+  const [today] = useState(() => new Date());
   return (
     <div ref={rootRef} data-testid="live-card" className={CARD} style={{ color: TEXT }}>
-      <Banner final={state.final} date={date} />
+      <Banner final={state.final} date={date ?? today} />
       <div className={cx(SIZE.body, SIZE.bodyMore)}>
         <div className="grid grid-cols-[minmax(0,1fr)_5.4em_minmax(0,1fr)] items-center">
           <Side player="G" state={state} selected={selected} onSelect={onSelect} quick={quick} />

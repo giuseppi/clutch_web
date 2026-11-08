@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ENTRANCE } from "./motion";
 
 /**
  * Resolves when the fonts are ready, so the headline words do not reflow mid-animation,
@@ -12,26 +13,50 @@ export function entranceStart(timeoutMs = 500): Promise<void> {
 }
 
 /** Once per page load: remounts (and the navbar and hero together) share one start. */
-let started = false;
+let startedAt: number | null = null;
 let waiting: Promise<void> | null = null;
 
-/** True once the entrance has started; it stays true for the rest of the page load. */
-export function useEntranceStart(): boolean {
-  const [ready, setReady] = useState(started);
+function whenStarted(): Promise<void> {
+  waiting ??= entranceStart().then(() => {
+    startedAt = performance.now();
+  });
+  return waiting;
+}
+
+const passed = (seconds: number) => startedAt !== null && performance.now() - startedAt >= seconds * 1000;
+
+/** True once `seconds` have passed since the entrance started; it stays true for the page load. */
+function useEntranceAfter(seconds: number): boolean {
+  const [ready, setReady] = useState(() => passed(seconds));
 
   useEffect(() => {
     if (ready) return;
     let live = true;
-    waiting ??= entranceStart().then(() => {
-      started = true;
-    });
-    void waiting.then(() => {
-      if (live) setReady(true);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    void whenStarted().then(() => {
+      if (!live) return;
+      const left = (startedAt ?? 0) + seconds * 1000 - performance.now();
+      if (left <= 0) setReady(true);
+      else timer = setTimeout(() => setReady(true), left);
     });
     return () => {
       live = false;
+      clearTimeout(timer);
     };
-  }, [ready]);
+  }, [ready, seconds]);
 
   return ready;
+}
+
+/** True once the entrance has started. */
+export function useEntranceStart(): boolean {
+  return useEntranceAfter(0);
+}
+
+/**
+ * True once the entrance has settled, at its first shot. Reveals outside the hero that are
+ * on screen at load wait for it, so the page has one entrance.
+ */
+export function useEntranceSettled(): boolean {
+  return useEntranceAfter(ENTRANCE.firstShot);
 }

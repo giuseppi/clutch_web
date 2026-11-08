@@ -84,4 +84,15 @@ describe("LiveCard", () => {
     render(<LiveCard state={stateAt(GAME)} selected="G" onSelect={() => {}} date={DAY} rootRef={rootRef} />);
     expect(rootRef.current).toBe(screen.getByTestId("live-card"));
   });
+
+  it("reads today's date once per mount, not on every frame", () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(2026, 10, 6, 23, 59));
+    const card = (t: number) => <LiveCard state={stateAt(t)} selected="G" onSelect={() => {}} />;
+    const { rerender } = render(card(1));
+    vi.setSystemTime(new Date(2026, 10, 7, 0, 1));
+    rerender(card(2));
+    expect(screen.getByText(/· FRI, NOV 6$/)).toBeInTheDocument();
+    vi.useRealTimers();
+  });
 });

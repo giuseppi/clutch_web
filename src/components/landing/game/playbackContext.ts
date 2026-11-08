@@ -1,4 +1,15 @@
 import { createContext, useContext } from "react";
+import type { Clock } from "./playback";
+
+export interface Frame extends Clock {
+  ff: boolean;
+}
+
+/**
+ * The hero clock for this page load. PlaybackProvider resumes from it when it mounts again
+ * (a return to the page through the router), so the game plays once per page load.
+ */
+export const pageClock: { current: Frame } = { current: { t: 0, lt: null, ff: false } };
 
 /** The hero clock and what feeds it. Everything the hero and leaderboard draw comes from t and lt. */
 export interface Playback {

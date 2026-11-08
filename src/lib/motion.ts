@@ -36,16 +36,20 @@ export const fadeVariants: Variants = {
 };
 
 /*
-  Chrome sizes a pathLength dash from an arc length estimate up to about 2.5% short, so a
-  dash of exactly 1 leaves circles, arcs and rounded corners open at their ends. Drawing to
-  a little past 1 closes them; past the end of a path a dash draws nothing more.
+  Lines drawing in, for SVG shapes with pathLength={1}: one dash slides in from the start
+  (offset 1 to 0, with a gap of 2 so nothing shows early) and is cleared once drawn. Chrome
+  sizes a pathLength dash from an arc length estimate up to about 2.5% short, so a dash left
+  in place would leave circles, arcs and rounded corners open at their ends. The shown target
+  names the dash too: framer stores a value it first meets in transitionEnd without
+  repainting it, so the clear would not show.
 */
-export const DRAWN = 1.05;
+const DRAW_DASH = "1 2";
+export const drawHidden = { strokeDasharray: DRAW_DASH, strokeDashoffset: 1 };
+export const drawShown = { strokeDasharray: DRAW_DASH, strokeDashoffset: 0, transitionEnd: { strokeDasharray: "none" } };
 
-/** For SVG paths: the line draws from its start to its end. */
 export const drawVariants: Variants = {
-  hidden: { pathLength: 0 },
-  visible: { pathLength: DRAWN, transition: { inherit: true, ...DRAW } },
+  hidden: drawHidden,
+  visible: { ...drawShown, transition: { inherit: true, ...DRAW } },
 };
 
 export function clamp01(x: number): number {

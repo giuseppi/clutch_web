@@ -73,20 +73,23 @@ const LAYOUT: Record<Layout, LayoutClasses> = {
   The game plays from the shared clock (PlaybackProvider). The entrance runs from `started`
   at the ENTRANCE times: the section goes from "hidden" to "visible" and every child with
   variants (body, card, key, and the court's lines, floor and hoop) follows with its own
-  delay. The headline runs its own word stagger. Under reduced motion all of it starts final.
+  delay. The headline runs its own word stagger. Under reduced motion, and when the hero mounts
+  again with the game already under way (a return to the page), all of it starts final.
 */
 const Hero = ({ mmrRef }: { mmrRef?: Ref<HTMLSpanElement> }) => {
   const layout = useLayout();
   const { t, ff, reduced, started, watchCard } = usePlayback();
   const [selected, setSelected] = useState<PlayerId>("G");
+  const [resumed] = useState(() => t > 0);
+  const still = reduced || resumed;
   const l = LAYOUT[layout];
 
   return (
     <motion.section
       data-layout={layout}
       className={`hero group paper-grain text-ink ${NAV_CLEARANCE}`}
-      initial={reduced ? false : "hidden"}
-      animate={started || reduced ? "visible" : "hidden"}
+      initial={still ? false : "hidden"}
+      animate={started || still ? "visible" : "hidden"}
     >
       <div className={CONTENT}>
         <div className={`grid items-center ${l.grid}`}>
@@ -96,19 +99,11 @@ const Hero = ({ mmrRef }: { mmrRef?: Ref<HTMLSpanElement> }) => {
               text={HEADLINE}
               whileInView={false}
               play={started}
-              instant={reduced}
+              instant={still}
               delay={ENTRANCE.headline}
               className={`text-balance font-semibold leading-[0.98] tracking-[-0.045em] ${l.h1}`}
             />
-            <motion.p
-              variants={riseVariants}
-              transition={{ delay: ENTRANCE.body }}
-              className={`text-balance leading-normal text-ink/[0.68] ${l.body}`}
-            >
-              Clutch turns a phone in a courtside corner into a{" "}
-              <span className="whitespace-nowrap">professional-grade</span> analytics rig, built for the leagues that
-              aren't on TV.
-            </motion.p>
+            <Body className={l.body} />
             <motion.div variants={riseVariants} transition={{ delay: ENTRANCE.card }} className={l.card}>
               <LiveCard
                 state={stateAt(t)}
@@ -126,6 +121,17 @@ const Hero = ({ mmrRef }: { mmrRef?: Ref<HTMLSpanElement> }) => {
     </motion.section>
   );
 };
+
+const Body = ({ className }: { className: string }) => (
+  <motion.p
+    variants={riseVariants}
+    transition={{ delay: ENTRANCE.body }}
+    className={`text-balance leading-normal text-ink/[0.68] ${className}`}
+  >
+    Clutch turns a phone in a courtside corner into a <span className="whitespace-nowrap">professional-grade</span>{" "}
+    analytics rig, built for the leagues that aren't on TV.
+  </motion.p>
+);
 
 /** The court, its summary for screen readers, and the player key. */
 const CourtColumn = ({ t, l }: { t: number; l: LayoutClasses }) => (

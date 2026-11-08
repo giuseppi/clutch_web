@@ -1,6 +1,8 @@
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
+import { motion } from "framer-motion";
 import { describe, expect, it } from "vitest";
-import { HOOP, landTime } from "./game";
+import { DRAW, ENTRANCE } from "@/lib/motion";
+import { HOOP, INK, landTime } from "./game";
 import { HalfCourt } from "./HalfCourt";
 import { GAME, START } from "./timeline";
 
@@ -60,6 +62,21 @@ describe("HalfCourt", () => {
     }
   });
 
+  it("clears each line's dash once it has drawn in, so closed shapes and arcs end closed", async () => {
+    const { container } = render(
+      <motion.div initial="hidden" animate="visible">
+        <HalfCourt t={0} />
+      </motion.div>,
+    );
+    const lines = [...container.querySelectorAll("[data-court-line]")];
+    for (const line of lines) expect(line).toHaveAttribute("stroke-dashoffset", "1");
+    await act(() => new Promise((r) => setTimeout(r, (ENTRANCE.courtLines + DRAW.duration) * 1000 + 300)));
+    for (const line of lines) {
+      expect(line).toHaveAttribute("stroke-dashoffset", "0");
+      expect(line).toHaveAttribute("stroke-dasharray", "none");
+    }
+  });
+
   it("joins the corner threes to the 23.75 ft arc at (-22, 14.2) and (22, 14.2)", () => {
     const { container } = render(<HalfCourt t={GAME} />);
     const d = container.querySelector('[data-court-line="three"]')?.getAttribute("d") ?? "";
@@ -83,6 +100,18 @@ describe("HalfCourt", () => {
     expect(rim).toHaveAttribute("stroke-width", "0.16");
     const connector = container.querySelector("[data-connector]");
     expect([connector?.getAttribute("y1"), connector?.getAttribute("y2")]).toEqual(["4", "4.5"]);
+  });
+
+  it("leaves the lane's top edge to the baseline, so the baseline is drawn once", () => {
+    const { container } = render(<HalfCourt t={GAME} />);
+    expect(container.querySelector('[data-court-line="lane"]')).toHaveAttribute("d", "M -8 0 V 19 H 8 V 0");
+  });
+
+  it("draws the lines as one layer of ink at 38%, so crossings and joins do not darken", () => {
+    const { container } = render(<HalfCourt t={GAME} />);
+    const layer = container.querySelector("[data-court-line]")?.parentElement;
+    expect(layer).toHaveAttribute("stroke", INK);
+    expect(layer).toHaveAttribute("opacity", "0.38");
   });
 
   it("keeps misses heavier than the rim", () => {
