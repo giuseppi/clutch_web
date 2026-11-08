@@ -23,6 +23,18 @@ const polaroids = [
   { index: "04", kicker: "COURT MATCHING", rotate: 2.4, translateY: 56 },
 ];
 
+/** Two lines, set as close as the other section headlines. */
+const Headline = () => (
+  <div className="md:col-span-12">
+    <SplitText as="h2" text="Everything a" className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-ink" />
+    <SplitText
+      as="h2"
+      text="serious player needs."
+      className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[min(16vw,230px)]"
+    />
+  </div>
+);
+
 const FeaturesPolaroidGrid = () => {
   const gridRef = useRef<HTMLDivElement>(null);
   // Reveals already on screen at load (tall screens) wait for the hero's entrance to settle.
@@ -42,16 +54,7 @@ const FeaturesPolaroidGrid = () => {
 
         {/* Headline */}
         <div className="grid md:grid-cols-12 gap-y-6 mb-16 md:mb-24">
-          <SplitText
-            as="h2"
-            text="Everything a"
-            className="md:col-span-12 font-display text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
-          />
-          <SplitText
-            as="h2"
-            text="serious player needs."
-            className="md:col-span-12 font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[min(16vw,230px)]"
-          />
+          <Headline />
           <motion.p
             variants={riseVariants}
             initial="hidden"
