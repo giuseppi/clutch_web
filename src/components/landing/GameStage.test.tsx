@@ -176,4 +176,14 @@ describe("Leaderboard reveal", () => {
     await realWait(900);
     for (const opacity of opacities()) expect(opacity).toBeGreaterThan(0);
   });
+
+  it("does not wait for a settle under reduced motion, where there is no entrance", async () => {
+    vi.mocked(useReducedMotion).mockReturnValue(true);
+    render(<GameStage />);
+    const copy = screen.getByRole("heading", { name: "Every win climbs your court's ladder." }).parentElement as HTMLElement;
+    act(() => setIntersection(copy.parentElement as HTMLElement, 0.2));
+    await realWait(900);
+    expect(Number(copy.style.opacity)).toBeGreaterThan(0);
+    expect(Number((ladderCard().parentElement as HTMLElement).style.opacity)).toBeGreaterThan(0);
+  });
 });

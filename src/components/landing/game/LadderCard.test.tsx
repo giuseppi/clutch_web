@@ -33,6 +33,22 @@ describe("LadderCard", () => {
     for (const r of rows) expect(r.querySelector("img")).toHaveAttribute("alt", "");
   });
 
+  it("pairs each row's photo with its own player", () => {
+    render(<LadderCard T={L_END} />);
+    for (const name of ["Johnny", "Giuseppi", "Andrew", "Dylan"]) {
+      expect(row(name).querySelector("img")?.getAttribute("src")).toContain(`/${name.toLowerCase()}.webp`);
+    }
+  });
+
+  it("draws no divider under the row in the last slot, before and after the swap", () => {
+    for (const T of [0, L_END]) {
+      const { unmount } = render(<LadderCard T={T} />);
+      expect(row("Dylan")).toHaveAttribute("data-last");
+      for (const name of ["Johnny", "Giuseppi", "Andrew"]) expect(row(name)).not.toHaveAttribute("data-last");
+      unmount();
+    }
+  });
+
   it("reserves every row's delta cell before any delta shows", () => {
     render(<LadderCard T={0} />);
     for (const name of ["Johnny", "Giuseppi", "Andrew", "Dylan"]) {

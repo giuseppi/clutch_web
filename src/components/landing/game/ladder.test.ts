@@ -29,6 +29,15 @@ describe("ladderAt", () => {
     expect(rows.some((r) => r.me)).toBe(false);
   });
 
+  it("carries each row's own name and photo, whatever the order", () => {
+    for (const T of [0, L_ARRIVE + 0.4, L_END]) {
+      for (const r of ladderAt(T)) {
+        const player = LADDER.find((p) => p.id === r.id);
+        expect(r).toMatchObject({ name: player?.name, photo: player?.photo });
+      }
+    }
+  });
+
   it("counts both MMRs toward their new values after the token arrives", () => {
     const T = L_ARRIVE + 0.2;
     const g = row(T, "G").mmr;

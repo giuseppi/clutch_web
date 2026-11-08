@@ -34,6 +34,8 @@ export const AFTER: readonly LadderId[] = ["G", "J", "A", "D"];
 
 export interface LadderRow {
   id: LadderId;
+  name: string;
+  photo: string;
   rank: number;
   /** Place in the list, 0 at the top; fractional while the rows swap. */
   slot: number;
@@ -64,18 +66,21 @@ const APPEAR = 0.15;
 const REORDER = L_END - L_REORDER;
 
 /**
- * The ladder at beat time T (design seconds, 0 to L_END), in LADDER order. The MMRs count
- * and the records and deltas switch when the token arrives; the rows then swap places,
- * and the ranks swap at the swap's halfway point.
+ * The ladder at beat time T (design seconds, 0 to L_END), one row per player in LADDER
+ * order, each with its own name and photo. The MMRs count and the records and deltas switch
+ * when the token arrives; the rows then swap places, and the ranks swap at the swap's
+ * halfway point.
  */
 export function ladderAt(T: number): LadderRow[] {
   const arrived = T >= L_ARRIVE;
   const f = clamp01((T - L_ARRIVE) / COUNT);
   const m = easeOutQuart(clamp01((T - L_REORDER) / REORDER));
-  return LADDER.map(({ id, before, after }) => {
+  return LADDER.map(({ id, name, photo, before, after }) => {
     const moved = arrived && after !== undefined;
     return {
       id,
+      name,
+      photo,
       rank: (m >= 0.5 ? AFTER : BEFORE).indexOf(id) + 1,
       slot: lerp(BEFORE.indexOf(id), AFTER.indexOf(id), m),
       mmr: moved ? Math.round(lerp(before.mmr, after.mmr, f)) : before.mmr,

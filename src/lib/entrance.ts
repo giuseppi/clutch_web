@@ -1,3 +1,4 @@
+import { useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ENTRANCE } from "./motion";
 
@@ -55,8 +56,11 @@ export function useEntranceStart(): boolean {
 
 /**
  * True once the entrance has settled, at its first shot. Reveals outside the hero that are
- * on screen at load wait for it, so the page has one entrance.
+ * on screen at load wait for it, so the page has one entrance. Under reduced motion there is
+ * no entrance to wait for, so it is true from the first render.
  */
 export function useEntranceSettled(): boolean {
-  return useEntranceAfter(ENTRANCE.firstShot);
+  const settled = useEntranceAfter(ENTRANCE.firstShot);
+  const reduced = useReducedMotion() ?? false;
+  return settled || reduced;
 }

@@ -3,7 +3,7 @@ import { memo, type CSSProperties, type Ref } from "react";
 import { VALUE_CHANGE } from "@/lib/motion";
 import { CARD, GREEN, MUTED, TEXT, cx } from "./cardStyle";
 import { BRAND, TRAIL } from "./game";
-import { LADDER, ladderAt, type LadderPlayer, type LadderRow } from "./ladder";
+import { LADDER, ladderAt, type LadderRow } from "./ladder";
 
 export interface LadderCardProps {
   /** Beat time, 0 (before) to L_END (after). */
@@ -22,12 +22,19 @@ export interface LadderCardProps {
 const SIZE =
   "text-[max(12.5px,1.35cqw)] group-data-[layout=medium]:text-[max(12.5px,2.26cqw)] group-data-[layout=stack]:text-[max(12.5px,4.1cqw)] [--rh:3.2em] group-data-[layout=stack]:[--rh:3.45em]";
 const SCOPE = "rounded-full border-[0.5px] border-black/10 px-[.95em] py-[.35em] text-[.8em] font-medium leading-[1.5] data-[active]:border-brand data-[active]:bg-brand/10";
-/** Columns: rank, photo, name over record, MMR, and the delta's reserved space. The divider starts at the name. */
+/*
+  Columns: rank, photo, name over record, MMR, and the delta's reserved space, set on the
+  list as --pad, --rank, --photo and --gap so the divider can start at the name column.
+  The row in the last slot has none (data-last), so no line sits on the card's bottom padding.
+*/
+const COLUMNS = "[--gap:.7em] [--pad:.5em] [--photo:2.1em] [--rank:1.4em]";
 const ROW =
-  "absolute inset-x-0 top-0 grid h-[var(--rh)] grid-cols-[1.4em_2.1em_minmax(0,1fr)_auto_3.1em] items-center gap-x-[.7em] rounded-[10px] px-[.5em] [transform:translateY(calc(var(--slot)*100%))]";
-const DIVIDER = "after:absolute after:bottom-0 after:left-[4.7em] after:right-[.5em] after:h-[0.5px] after:bg-black/[0.06] after:content-['']";
+  "absolute inset-x-0 top-0 grid h-[var(--rh)] grid-cols-[var(--rank)_var(--photo)_minmax(0,1fr)_auto_3.1em] items-center gap-x-[var(--gap)] rounded-[10px] px-[var(--pad)] [transform:translateY(calc(var(--slot)*100%))]";
+const DIVIDER =
+  "after:absolute after:bottom-0 after:left-[calc(var(--pad)+var(--rank)+var(--photo)+2*var(--gap))] after:right-[var(--pad)] after:h-[0.5px] after:bg-black/[0.06] after:content-[''] data-[last]:after:hidden";
 const TINT = "rgba(255,106,0,.08)";
 const SCOPES = ["Friends", "Court", "City"] as const;
+const LAST = LADDER.length - 1;
 
 /**
  * The court leaderboard, laid out like the Clutch app's Leaderboards screen, at beat time T.
@@ -53,27 +60,27 @@ export const LadderCard = memo(function LadderCard({ T, mmrRef, rootRef }: Ladde
           </p>
         </div>
       </div>
-      <ul className="relative h-[calc(4*var(--rh))] border-t-[0.5px] border-black/[0.06]">
-        {ladderAt(T).map((row, i) => (
-          <Row key={row.id} row={row} player={LADDER[i]} mmrRef={row.id === "G" ? mmrRef : undefined} />
+      <ul className={cx("relative h-[calc(4*var(--rh))] border-t-[0.5px] border-black/[0.06]", COLUMNS)}>
+        {ladderAt(T).map((row) => (
+          <Row key={row.id} row={row} mmrRef={row.id === "G" ? mmrRef : undefined} />
         ))}
       </ul>
     </div>
   );
 });
 
-function Row({ row, player, mmrRef }: { row: LadderRow; player: LadderPlayer; mmrRef?: Ref<HTMLSpanElement> }) {
-  const { rank, slot, mmr, record, delta, me } = row;
+function Row({ row, mmrRef }: { row: LadderRow; mmrRef?: Ref<HTMLSpanElement> }) {
+  const { name, photo, rank, slot, mmr, record, delta, me } = row;
   const style = { "--slot": slot, backgroundColor: me ? TINT : "transparent", transition: `background-color ${VALUE_CHANGE}s ease` };
   return (
-    <li className={cx(ROW, DIVIDER)} style={style as CSSProperties}>
+    <li className={cx(ROW, DIVIDER)} data-last={slot === LAST || undefined} style={style as CSSProperties}>
       <span data-testid="rank" className="font-mono tabular-nums" style={{ color: MUTED }}>
         {rank}
       </span>
-      <img src={player.photo} alt="" width={96} height={96} className="block h-[2.1em] w-[2.1em] rounded-full bg-[#F2F0EA] object-cover" />
+      <img src={photo} alt="" width={96} height={96} className="block h-[var(--photo)] w-[var(--photo)] rounded-full bg-[#F2F0EA] object-cover" />
       <span className="grid min-w-0 leading-[1.25]">
         <span className="truncate font-medium" style={{ color: me ? BRAND : undefined, transition: `color ${VALUE_CHANGE}s ease` }}>
-          {player.name}
+          {name}
         </span>
         <span className="font-mono text-[.8em]" style={{ color: MUTED }}>
           {record}

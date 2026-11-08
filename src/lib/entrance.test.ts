@@ -2,6 +2,13 @@ import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ENTRANCE } from "./motion";
 
+/* framer's reduced-motion answer, per test (the module is re-imported fresh each time). */
+const motion = vi.hoisted(() => ({ reduced: false }));
+vi.mock("framer-motion", async (orig) => ({
+  ...(await orig<typeof import("framer-motion")>()),
+  useReducedMotion: () => motion.reduced,
+}));
+
 /* entrance.ts keeps its state for the page load, so every test imports a fresh copy. */
 let entrance: typeof import("./entrance");
 
@@ -14,6 +21,7 @@ beforeEach(async () => {
 afterEach(() => {
   Reflect.deleteProperty(document, "fonts");
   vi.useRealTimers();
+  motion.reduced = false;
 });
 
 function setFontsReady(ready: Promise<unknown>) {
@@ -82,6 +90,11 @@ describe("useEntranceSettled", () => {
     expect(settled.result.current).toBe(false);
     await wait(1);
     expect(settled.result.current).toBe(true);
+  });
+
+  it("is true on the first render under reduced motion, with no entrance to wait for", () => {
+    motion.reduced = true;
+    expect(renderHook(() => entrance.useEntranceSettled()).result.current).toBe(true);
   });
 
   it("is true at once on a mount after the settle", async () => {
