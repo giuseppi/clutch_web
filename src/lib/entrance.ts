@@ -2,15 +2,26 @@ import { useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ENTRANCE } from "./motion";
 
+/** Work the entrance also waits for, within the same cap (the landing page's lazy sections). */
+const holds: Promise<unknown>[] = [];
+
 /**
- * Resolves when the fonts are ready, so the headline words do not reflow mid-animation,
- * or after `timeoutMs` at the latest. Browsers without document.fonts (and jsdom) wait
- * for the timeout.
+ * Holds the entrance until `until` settles, at most until its cap. Call it before the first
+ * render. A failed `until` only ends the wait: the code that awaits it reports the failure.
+ */
+export function holdEntrance(until: Promise<unknown>): void {
+  holds.push(until.catch(() => undefined));
+}
+
+/**
+ * Resolves when the fonts are ready, so the headline words do not reflow mid-animation, and
+ * any holds have settled, or after `timeoutMs` at the latest. Browsers without document.fonts
+ * (and jsdom) wait for the timeout.
  */
 export function entranceStart(timeoutMs = 500): Promise<void> {
   const timeout = new Promise<void>((resolve) => setTimeout(resolve, timeoutMs));
   if (!("fonts" in document)) return timeout;
-  return Promise.race([document.fonts.ready.then(() => undefined), timeout]);
+  return Promise.race([Promise.all([document.fonts.ready, ...holds]).then(() => undefined), timeout]);
 }
 
 /** Once per page load: remounts (and the navbar and hero together) share one start. */

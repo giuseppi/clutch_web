@@ -4,7 +4,7 @@
 
 Marketing and **coach portal** web app for **Clutch** (basketball analytics). This is **not** the React Native / Expo mobile app, which lives in a separate repo.
 
-- **Public site:** Landing at `/` (`src/pages/Index.tsx`): Navbar, the hero 1v1 and court leaderboard (`GameStage`), then Features, How It Works, PullQuote, the beta form (`FooterCTA`) and Footer, which load as one lazy chunk (`BelowFold`).
+- **Public site:** Landing at `/` (`src/pages/Index.tsx`): Navbar, the hero 1v1 and court leaderboard (`GameStage`), then Features, How It Works, PullQuote, the beta form (`FooterCTA`) and Footer, which load as one lazy chunk (`BelowFold`). A plugin in `vite.config.ts` preloads that chunk, and the entrance waits for its first paint (`holdEntrance` in `src/lib/entrance.ts`).
 - **Contact page:** `/contact` (`src/pages/ContactPage.tsx`) with team cards linking to LinkedIn.
 - **Coach portal (not routed):** pages under `src/pages/app/`, `src/components/app/`, `src/contexts/`, `src/hooks/api/` and `src/lib/api.ts` stay in the tree but nothing imports them. `App.tsx` redirects `/app/*` to `/`. The API shapes those pages expect are in `src/types/portal.ts` and differ from `server/` in places; reconcile before routing them again.
 

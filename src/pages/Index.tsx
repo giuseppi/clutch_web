@@ -1,9 +1,18 @@
 import { lazy, Suspense } from "react";
 import Navbar from "@/components/landing/Navbar";
 import GameStage from "@/components/landing/GameStage";
+import { holdEntrance } from "@/lib/entrance";
 
 /** Everything under the leaderboard loads as a separate chunk, so the hero's JS stays small. */
-const BelowFold = lazy(() => import("@/components/landing/BelowFold"));
+const loadBelowFold = () => import("@/components/landing/BelowFold");
+const BelowFold = lazy(loadBelowFold);
+
+/*
+  Their first paint costs a frame or two, so the entrance waits until they have mounted and
+  painted: two frames after the chunk (preloaded in index.html) arrives.
+*/
+const twoFrames = () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+holdEntrance(loadBelowFold().then(twoFrames));
 
 /*
   Stands in for those sections until they arrive, at least as tall as they are (How It Works is
