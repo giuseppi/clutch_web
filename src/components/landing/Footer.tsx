@@ -19,7 +19,7 @@ const Footer = () => {
   return (
     <footer className="bg-paper text-ink pt-20 md:pt-24 pb-10 border-t border-ink/10">
       <div className={GRID}>
-        <div className="grid grid-cols-2 md:grid-cols-12 gap-y-12 md:gap-x-12">
+        <div className="grid grid-cols-2 md:grid-cols-12 gap-y-12 md:gap-x-6 lg:gap-x-12">
           {/* Brand block */}
           <div className="col-span-2 md:col-span-5">
             <div className="flex items-center gap-3">
