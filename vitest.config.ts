@@ -9,6 +9,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    // CSS imports are empty in tests; let the raw index.css through for the font-face test.
+    css: { include: [/\/src\/index\.css\?raw/] },
   },
   resolve: {
     alias: { "@": path.resolve(__dirname, "./src") },

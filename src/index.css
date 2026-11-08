@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Geist and Geist Mono, self-hosted: the latin subset of each variable font, limited to the
+   weights the site uses. index.html preloads both files so they arrive before the entrance. */
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("@fontsource-variable/geist/files/geist-latin-wght-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url("@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2") format("woff2");
+}
+
 /* Paper palette: ink on cream paper (#F0EEE5). The named colors (paper, ink, brand) live in
    tailwind.config.ts; the shadcn HSL tokens below map onto them. */
 
