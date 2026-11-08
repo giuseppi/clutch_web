@@ -6,6 +6,8 @@ export const EASE_RISE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 export const EASE_DRAW: [number, number, number, number] = [0.65, 0, 0.35, 1];
 
 export const RISE = { y: 14, duration: 0.7, ease: EASE_RISE } as const;
+/** Standard rise timing for an element arriving after `delay` seconds. */
+export const arrive = (delay: number) => ({ duration: RISE.duration, ease: RISE.ease, delay });
 export const STAGGER = 0.055;
 export const DRAW = { duration: 0.9, ease: EASE_DRAW } as const;
 export const FADE = { duration: 0.55 } as const;
