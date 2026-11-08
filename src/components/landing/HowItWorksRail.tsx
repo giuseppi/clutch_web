@@ -1,4 +1,4 @@
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Smartphone, Crosshair, Play, TrendingUp } from "lucide-react";
 import { SplitText } from "./SplitText";
@@ -99,7 +99,9 @@ interface StepProps {
 
 const StepArticle = ({ step, index }: StepProps) => {
   const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { amount: 0.3 });
+  // Under reduced motion each step's animation shows its end state, on screen or not.
+  const reduced = useReducedMotion() ?? false;
+  const inView = useInView(ref, { amount: 0.3 }) || reduced;
   const Icon = step.icon;
 
   return (

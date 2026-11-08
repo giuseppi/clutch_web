@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { DashedDraw } from "../DashedDraw";
 import { DRAW, FADE, arrive } from "@/lib/motion";
 
@@ -59,50 +59,57 @@ const backStrands = Array.from({ length: 5 }, (_, i) => {
  * from the shooter's side: pole on the far right, backboard shown as its
  * side-edge sliver, rim extending forward (left) as a flat ellipse, full
  * conical net with strand fans, horizontal weave rings, and faded back
- * strands suggesting depth.
+ * strands suggesting depth. Under reduced motion it starts at the make.
  */
-export const ShotArcAnim = ({ inView }: { inView: boolean }) => (
-  <div className="relative h-40 bg-paperAlt border border-ink/10 overflow-hidden">
-    <svg viewBox="0 0 400 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
-      {/* Floor */}
-      <line x1="20" y1={FLOOR_Y} x2="380" y2={FLOOR_Y} stroke="#1A1A1A" strokeOpacity="0.25" strokeWidth="0.8" />
+export const ShotArcAnim = ({ inView }: { inView: boolean }) => {
+  const still = useReducedMotion() ?? false;
+  return (
+    <div className="relative h-40 bg-paperAlt border border-ink/10 overflow-hidden">
+      <svg viewBox="0 0 400 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+        {/* Floor */}
+        <line x1="20" y1={FLOOR_Y} x2="380" y2={FLOOR_Y} stroke="#1A1A1A" strokeOpacity="0.25" strokeWidth="0.8" />
 
-      {/* Shooter */}
-      <motion.circle
-        cx={SHOOTER_X} cy={SHOOTER_HEAD_Y} r="6" fill="#1A1A1A"
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : { opacity: 0 }}
-        transition={FADE}
-      />
-      <motion.line
-        x1={SHOOTER_X} y1={SHOOTER_HEAD_Y + 6} x2={SHOOTER_X} y2={FLOOR_Y}
-        stroke="#1A1A1A" strokeWidth="2"
-        initial={{ pathLength: 0 }}
-        animate={inView ? { pathLength: 1 } : { pathLength: 0 }}
-        transition={{ ...DRAW, delay: 0.2 }}
-      />
+        {/* Shooter */}
+        <motion.circle
+          cx={SHOOTER_X} cy={SHOOTER_HEAD_Y} r="6" fill="#1A1A1A"
+          initial={still ? false : { opacity: 0 }}
+          animate={inView ? { opacity: 1 } : { opacity: 0 }}
+          transition={FADE}
+        />
+        <motion.line
+          x1={SHOOTER_X} y1={SHOOTER_HEAD_Y + 6} x2={SHOOTER_X} y2={FLOOR_Y}
+          stroke="#1A1A1A" strokeWidth="2"
+          initial={still ? false : { pathLength: 0 }}
+          animate={inView ? { pathLength: 1 } : { pathLength: 0 }}
+          transition={{ ...DRAW, delay: 0.2 }}
+        />
 
-      {/* Shot arc */}
-      <DashedDraw d={ARC_PATH} dash="4 4" stroke="#FF6A00" strokeWidth={1.4} show={inView} delay={0.7} />
+        {/* Shot arc */}
+        <DashedDraw d={ARC_PATH} dash="4 4" stroke="#FF6A00" strokeWidth={1.4} show={inView} delay={0.7} />
 
-      <Hoop inView={inView} />
+        <Hoop inView={inView} still={still} />
 
-      {/* Ball traveling along the arc */}
-      <motion.circle r="5" fill="#FF6A00">
-        {inView && (
-          <animateMotion dur={`${DRAW.duration}s`} begin="0.7s" fill="freeze" path={ARC_PATH} />
+        {/* Ball traveling along the arc, or resting at its end under reduced motion */}
+        {still ? (
+          <circle cx={ARC_END_X} cy={ARC_END_Y} r="5" fill="#FF6A00" />
+        ) : (
+          <motion.circle r="5" fill="#FF6A00">
+            {inView && (
+              <animateMotion dur={`${DRAW.duration}s`} begin="0.7s" fill="freeze" path={ARC_PATH} />
+            )}
+          </motion.circle>
         )}
-      </motion.circle>
 
-      <Stamp inView={inView} />
-    </svg>
-  </div>
-);
+        <Stamp inView={inView} still={still} />
+      </svg>
+    </div>
+  );
+};
 
 /** Hoop assembly - side profile */
-const Hoop = ({ inView }: { inView: boolean }) => (
+const Hoop = ({ inView, still }: { inView: boolean; still: boolean }) => (
   <motion.g
-    initial={{ opacity: 0 }}
+    initial={still ? false : { opacity: 0 }}
     animate={inView ? { opacity: 1 } : { opacity: 0 }}
     transition={{ ...FADE, delay: 0.5 }}
   >
@@ -197,11 +204,11 @@ const STAMP_X = 302;
 const STAMP_Y = 90;
 
 /** SWISH stamp */
-const Stamp = ({ inView }: { inView: boolean }) => (
+const Stamp = ({ inView, still }: { inView: boolean; still: boolean }) => (
   <>
     <motion.text
       x={STAMP_X} y={STAMP_Y} textAnchor="end" className="font-mono" fontSize="11" fontWeight="500" fill="#FF6A00"
-      initial={{ opacity: 0, scale: 0 }}
+      initial={still ? false : { opacity: 0, scale: 0 }}
       animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
       transition={arrive(2.3)}
       style={{ transformOrigin: `${STAMP_X}px ${STAMP_Y}px` }}
@@ -210,7 +217,7 @@ const Stamp = ({ inView }: { inView: boolean }) => (
     </motion.text>
     <motion.text
       x={STAMP_X} y={STAMP_Y + 12} textAnchor="end" className="font-mono" fontSize="8" fill="#1A1A1A"
-      initial={{ opacity: 0 }}
+      initial={still ? false : { opacity: 0 }}
       animate={inView ? { opacity: 1 } : { opacity: 0 }}
       transition={{ ...FADE, delay: 2.5 }}
     >

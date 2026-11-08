@@ -26,8 +26,10 @@ const polaroids = [
 const FeaturesPolaroidGrid = () => {
   const gridRef = useRef<HTMLDivElement>(null);
   // Reveals already on screen at load (tall screens) wait for the hero's entrance to settle.
+  // Under reduced motion the bars, lines and numbers start drawn, so nothing grows or counts.
   const settled = useEntranceSettled();
-  const inView = useInView(gridRef, { once: true, amount: 0.2 }) && settled;
+  const reduced = useReducedMotion() ?? false;
+  const inView = (useInView(gridRef, { once: true, amount: 0.2 }) && settled) || reduced;
 
   return (
     <div id="features" className="paper-grain pt-20 md:pt-28 pb-24 md:pb-32">

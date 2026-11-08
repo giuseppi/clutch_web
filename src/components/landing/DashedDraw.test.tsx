@@ -1,7 +1,15 @@
 import { act, render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { useReducedMotion } from "framer-motion";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { DRAW } from "@/lib/motion";
 import { DashedDraw } from "./DashedDraw";
+
+vi.mock("framer-motion", async (orig) => ({
+  ...(await orig<typeof import("framer-motion")>()),
+  useReducedMotion: vi.fn(() => false),
+}));
+
+afterEach(() => vi.mocked(useReducedMotion).mockReturnValue(false));
 
 const ARC = "M 10 80 Q 200 6 390 80";
 
@@ -31,6 +39,14 @@ describe("DashedDraw", () => {
   it("ends in the dashed pattern: the mask clears its dash once drawn, the stroke keeps its own", async () => {
     const { mask, dashed } = renderArc(true);
     await act(() => new Promise((r) => setTimeout(r, DRAW.duration * 1000 + 300)));
+    expect(mask).toHaveAttribute("stroke-dasharray", "none");
+    expect(dashed).toHaveAttribute("stroke-dasharray", "4 4");
+  });
+
+  it("starts drawn under reduced motion", () => {
+    vi.mocked(useReducedMotion).mockReturnValue(true);
+    const { mask, dashed } = renderArc(true);
+    expect(mask).toHaveAttribute("stroke-dashoffset", "0");
     expect(mask).toHaveAttribute("stroke-dasharray", "none");
     expect(dashed).toHaveAttribute("stroke-dasharray", "4 4");
   });

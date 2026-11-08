@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useId } from "react";
 import { DRAW, drawHidden, drawShown } from "@/lib/motion";
 
@@ -18,11 +18,12 @@ interface DashedDrawProps {
  * A dashed stroke that draws in along its path and ends in its dash pattern. A line draws in
  * by animating its dash, so a dashed line cannot draw that way: a solid copy of the path draws
  * in as a mask and reveals the dashed stroke under it. The mask is in user space, as a straight
- * line's bounding box has no height.
+ * line's bounding box has no height. Under reduced motion it starts drawn when shown.
  */
 export function DashedDraw({ d, dash, stroke, strokeWidth, show, delay = 0 }: DashedDrawProps) {
   // useId gives ":r1:"; colons are dropped so the id is safe inside url(#...).
   const id = `draw-${useId().replace(/:/g, "")}`;
+  const still = useReducedMotion() ?? false;
   return (
     <>
       <mask id={id} maskUnits="userSpaceOnUse">
@@ -32,7 +33,7 @@ export function DashedDraw({ d, dash, stroke, strokeWidth, show, delay = 0 }: Da
           fill="none"
           stroke="#fff"
           strokeWidth={strokeWidth * 3}
-          initial={drawHidden}
+          initial={still ? false : drawHidden}
           animate={show ? drawShown : drawHidden}
           transition={{ ...DRAW, delay }}
         />

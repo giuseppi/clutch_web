@@ -1,3 +1,4 @@
+import { useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 interface AnimatedNumberProps {
@@ -13,6 +14,7 @@ interface AnimatedNumberProps {
 /**
  * Counts from 0 → value with cubic ease-out when `inView` becomes true.
  * Uses requestAnimationFrame; cancels on unmount or when value changes.
+ * Under reduced motion it shows the value at once.
  */
 export const AnimatedNumber = ({
   value,
@@ -24,9 +26,10 @@ export const AnimatedNumber = ({
   suffix = "",
 }: AnimatedNumberProps) => {
   const [display, setDisplay] = useState(0);
+  const reduced = useReducedMotion() ?? false;
 
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || reduced) return;
     let frame: number;
     const timeout = setTimeout(() => {
       const start = performance.now();
@@ -42,12 +45,12 @@ export const AnimatedNumber = ({
       clearTimeout(timeout);
       cancelAnimationFrame(frame);
     };
-  }, [inView, value, delay, duration]);
+  }, [inView, reduced, value, delay, duration]);
 
   return (
     <>
       {prefix}
-      {display.toFixed(decimals)}
+      {(reduced ? value : display).toFixed(decimals)}
       {suffix}
     </>
   );
