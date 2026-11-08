@@ -3,7 +3,8 @@ import { useState, type Ref } from "react";
 import { ENTRANCE, fadeVariants, riseVariants } from "@/lib/motion";
 import { BRAND, INK, stateAt, type PlayerId } from "./game/game";
 import { HalfCourt } from "./game/HalfCourt";
-import { useLayout, type Layout } from "./game/layout";
+import { inFlight } from "./game/ladder";
+import { CONTENT, useLayout, type Layout } from "./game/layout";
 import { LiveCard } from "./game/LiveCard";
 import { usePlayback } from "./game/playbackContext";
 import { SplitText } from "./SplitText";
@@ -15,9 +16,6 @@ const HEADLINE = "Talent doesn't wait for a camera crew.";
   py-5 around a 40 px row from md. It pads the hero's top and sizes the split's min-height.
 */
 const NAV_CLEARANCE = "[--nav-h:68px] md:[--nav-h:80px] pt-[var(--nav-h)]";
-
-/** Same content box as the Navbar and the other sections, so the edges line up. */
-const CONTENT = "mx-auto max-w-[1440px] px-6 md:px-12 [container-type:inline-size]";
 
 /*
   Three layouts (see layoutFor). Split: copy and card left of the court (44/56), at least
@@ -75,11 +73,14 @@ const LAYOUT: Record<Layout, LayoutClasses> = {
   variants (body, card, key, and the court's lines, floor and hoop) follows with its own
   delay. The headline runs its own word stagger. Under reduced motion, and when the hero mounts
   again with the game already under way (a return to the page), all of it starts final.
+  While the leaderboard's "+14" token flies from the MMR chip, Giuseppi is selected, and he
+  stays selected after it until the visitor picks a side.
 */
 const Hero = ({ mmrRef }: { mmrRef?: Ref<HTMLSpanElement> }) => {
   const layout = useLayout();
-  const { t, ff, reduced, started, watchCard } = usePlayback();
+  const { t, lt, ff, reduced, started, watchCard } = usePlayback();
   const [selected, setSelected] = useState<PlayerId>("G");
+  if (lt !== null && inFlight(lt) && selected !== "G") setSelected("G");
   const [resumed] = useState(() => t > 0);
   const still = reduced || resumed;
   const l = LAYOUT[layout];
@@ -87,7 +88,7 @@ const Hero = ({ mmrRef }: { mmrRef?: Ref<HTMLSpanElement> }) => {
   return (
     <motion.section
       data-layout={layout}
-      className={`hero group paper-grain text-ink ${NAV_CLEARANCE}`}
+      className={`hero group text-ink ${NAV_CLEARANCE}`}
       initial={still ? false : "hidden"}
       animate={started || still ? "visible" : "hidden"}
     >

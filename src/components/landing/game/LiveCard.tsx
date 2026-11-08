@@ -1,6 +1,7 @@
 import { useState, type Ref } from "react";
 import arcUrl from "@/assets/game/uci-arc.webp";
 import { VALUE_CHANGE } from "@/lib/motion";
+import { CARD, GREEN, MUTED, TEXT, cx } from "./cardStyle";
 import { FlipNumber } from "./FlipNumber";
 import { formatCardDate } from "./format";
 import { PLAYERS, TRAIL, scoreColor, zoneOf, type GameState, type PlayerId } from "./game";
@@ -17,10 +18,6 @@ export interface LiveCardProps {
   /** The MMR chip's value. */
   mmrRef?: Ref<HTMLSpanElement>;
 }
-
-const TEXT = "#11181C";
-const MUTED = "#8B8F98";
-const GREEN = "#00A57C";
 
 /*
   Sizes follow the hero's layout (data-layout on the hero root). Each entry gives the split
@@ -51,7 +48,6 @@ const SIZE = {
   captionStack: "group-data-[layout=stack]:mt-[2.67cqw] group-data-[layout=stack]:text-[max(11px,3.56cqw)]",
 };
 
-const CARD = "overflow-hidden rounded-[20px] border-[0.5px] border-black/[0.06] bg-white shadow-[0_4px_16px_rgba(0,0,0,.14)]";
 const PILL =
   "absolute inline-flex items-center gap-[5px] rounded-full border-[0.5px] border-black/[0.06] bg-white/[0.82] px-2 py-[3px] backdrop-blur-[8px]";
 const FADE = "bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_18%,rgba(255,255,255,.55)_62%,rgba(255,255,255,.97)_100%)]";
@@ -63,8 +59,6 @@ const FOCUS = "focus-visible:outline-none focus-visible:ring-2 focus-visible:rin
 const WIN_TAG = "rounded-[8px] border-[0.5px] border-[rgba(0,165,124,.3)] bg-[rgba(0,200,150,.13)] px-[7px] py-px";
 const CHIP = "grid justify-items-center gap-y-[2px] rounded-[12px] border-[0.5px] border-black/[0.05]";
 const CHIP_FILL = "bg-[linear-gradient(135deg,#FFFEF7_0%,#FCF7E9_40%,#F8F1DD_75%,#F2EBD0_100%)]";
-
-const cx = (...classes: (string | false | undefined)[]) => classes.filter(Boolean).join(" ");
 
 /**
  * The live game card, laid out like the Clutch app's Recap card and Match Details score

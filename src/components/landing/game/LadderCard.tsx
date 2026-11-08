@@ -1,0 +1,94 @@
+import { Trophy } from "lucide-react";
+import { memo, type CSSProperties, type Ref } from "react";
+import { VALUE_CHANGE } from "@/lib/motion";
+import { CARD, GREEN, MUTED, TEXT, cx } from "./cardStyle";
+import { BRAND, TRAIL } from "./game";
+import { LADDER, ladderAt, type LadderPlayer, type LadderRow } from "./ladder";
+
+export interface LadderCardProps {
+  /** Beat time, 0 (before) to L_END (after). */
+  T: number;
+  /** Giuseppi's MMR, where the token lands. */
+  mmrRef?: Ref<HTMLSpanElement>;
+  rootRef?: Ref<HTMLDivElement>;
+}
+
+/*
+  Everything inside is in em of the card's font size, which follows the leaderboard's layout
+  (data-layout on the section root): split, then medium, then stack, in container units of
+  the section's content box. The 12.5 px floor keeps the smallest text (0.8em) at 10 px.
+  --rh is the row height; the list is four rows tall whatever the order.
+*/
+const SIZE =
+  "text-[max(12.5px,1.35cqw)] group-data-[layout=medium]:text-[max(12.5px,2.26cqw)] group-data-[layout=stack]:text-[max(12.5px,4.1cqw)] [--rh:3.2em] group-data-[layout=stack]:[--rh:3.45em]";
+const SCOPE = "rounded-full border-[0.5px] border-black/10 px-[.95em] py-[.35em] text-[.8em] font-medium leading-[1.5] data-[active]:border-brand data-[active]:bg-brand/10";
+/** Columns: rank, photo, name over record, MMR, and the delta's reserved space. The divider starts at the name. */
+const ROW =
+  "absolute inset-x-0 top-0 grid h-[var(--rh)] grid-cols-[1.4em_2.1em_minmax(0,1fr)_auto_3.1em] items-center gap-x-[.7em] rounded-[10px] px-[.5em] [transform:translateY(calc(var(--slot)*100%))]";
+const DIVIDER = "after:absolute after:bottom-0 after:left-[4.7em] after:right-[.5em] after:h-[0.5px] after:bg-black/[0.06] after:content-['']";
+const TINT = "rgba(255,106,0,.08)";
+const SCOPES = ["Friends", "Court", "City"] as const;
+
+/**
+ * The court leaderboard, laid out like the Clutch app's Leaderboards screen, at beat time T.
+ * Rows keep their DOM order and move by transform, one row height per slot, so the card
+ * never changes size while they swap. Memoized: its parent renders on every game frame.
+ */
+export const LadderCard = memo(function LadderCard({ T, mmrRef, rootRef }: LadderCardProps) {
+  return (
+    <div ref={rootRef} data-testid="ladder-card" className={cx(CARD, SIZE, "px-[1.1em] pb-[.8em] pt-[1.1em]")} style={{ color: TEXT }}>
+      <div aria-hidden="true" className="mb-[.9em] flex gap-[.5em]">
+        {SCOPES.map((scope) => (
+          <span key={scope} data-active={scope === "Court" || undefined} className={SCOPE} style={{ color: scope === "Court" ? BRAND : TRAIL }}>
+            {scope}
+          </span>
+        ))}
+      </div>
+      <div className="flex items-center gap-[.8em] pb-[.8em]">
+        <Trophy aria-hidden="true" className="h-[1.45em] w-[1.45em] flex-none" style={{ color: BRAND }} />
+        <div className="min-w-0">
+          <p className="text-[1.15em] font-semibold leading-[1.2] tracking-[-0.02em]">Court · 1V1</p>
+          <p className="truncate text-[.82em] leading-[1.3]" style={{ color: MUTED }}>
+            UCI Anteater Recreation Center
+          </p>
+        </div>
+      </div>
+      <ul className="relative h-[calc(4*var(--rh))] border-t-[0.5px] border-black/[0.06]">
+        {ladderAt(T).map((row, i) => (
+          <Row key={row.id} row={row} player={LADDER[i]} mmrRef={row.id === "G" ? mmrRef : undefined} />
+        ))}
+      </ul>
+    </div>
+  );
+});
+
+function Row({ row, player, mmrRef }: { row: LadderRow; player: LadderPlayer; mmrRef?: Ref<HTMLSpanElement> }) {
+  const { rank, slot, mmr, record, delta, me } = row;
+  const style = { "--slot": slot, backgroundColor: me ? TINT : "transparent", transition: `background-color ${VALUE_CHANGE}s ease` };
+  return (
+    <li className={cx(ROW, DIVIDER)} style={style as CSSProperties}>
+      <span data-testid="rank" className="font-mono tabular-nums" style={{ color: MUTED }}>
+        {rank}
+      </span>
+      <img src={player.photo} alt="" width={96} height={96} className="block h-[2.1em] w-[2.1em] rounded-full bg-[#F2F0EA] object-cover" />
+      <span className="grid min-w-0 leading-[1.25]">
+        <span className="truncate font-medium" style={{ color: me ? BRAND : undefined, transition: `color ${VALUE_CHANGE}s ease` }}>
+          {player.name}
+        </span>
+        <span className="font-mono text-[.8em]" style={{ color: MUTED }}>
+          {record}
+        </span>
+      </span>
+      <span ref={mmrRef} data-testid="mmr" className="font-mono text-[1.2em] font-medium tracking-[-0.02em] tabular-nums">
+        {mmr}
+      </span>
+      <span
+        data-testid="delta"
+        className="text-right font-mono text-[.8em] tabular-nums"
+        style={{ color: delta?.startsWith("+") ? GREEN : MUTED, visibility: delta ? "visible" : "hidden" }}
+      >
+        {delta}
+      </span>
+    </li>
+  );
+}

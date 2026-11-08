@@ -1,6 +1,5 @@
 import Navbar from "@/components/landing/Navbar";
-import Hero from "@/components/landing/Hero";
-import { PlaybackProvider } from "@/components/landing/game/PlaybackProvider";
+import GameStage from "@/components/landing/GameStage";
 import FeaturesPolaroidGrid from "@/components/landing/FeaturesPolaroidGrid";
 import HowItWorksRail from "@/components/landing/HowItWorksRail";
 import PullQuote from "@/components/landing/PullQuote";
@@ -10,9 +9,7 @@ import Footer from "@/components/landing/Footer";
 const Index = () => (
   <main className="min-h-screen bg-paper text-ink">
     <Navbar animateIn />
-    <PlaybackProvider>
-      <Hero />
-    </PlaybackProvider>
+    <GameStage />
     <FeaturesPolaroidGrid />
     <HowItWorksRail />
     <PullQuote />

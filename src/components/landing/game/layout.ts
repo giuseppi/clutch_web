@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 
 export type Layout = "split" | "medium" | "stack";
 
+/** The site's content box (as the Navbar's), a size container for the hero and leaderboard type. */
+export const CONTENT = "mx-auto max-w-[1440px] px-6 md:px-12 [container-type:inline-size]";
+
 export function layoutFor(width: number, height: number): Layout {
   if (width < 620) return "stack";
   if (width / height >= 1.25 || width >= 1200) return "split";
