@@ -7,18 +7,24 @@ import path from "path";
   the main JS under 500 kB. Preloading it next to the main JS lets it mount right after the
   first render, before the entrance starts, instead of dropping a frame in the entrance.
 */
-const preloadBelowFold = (): Plugin => ({
-  name: "preload-below-fold",
-  apply: "build",
-  transformIndexHtml: {
-    order: "post",
-    handler(_html, { bundle }) {
-      const chunk = Object.values(bundle ?? {}).find((c) => c.type === "chunk" && c.name === "BelowFold");
-      if (!chunk) throw new Error("preload-below-fold: the build has no BelowFold chunk");
-      return [{ tag: "link", attrs: { rel: "modulepreload", crossorigin: true, href: `/${chunk.fileName}` }, injectTo: "head" }];
+const preloadBelowFold = (): Plugin => {
+  let base = "/";
+  return {
+    name: "preload-below-fold",
+    apply: "build",
+    configResolved(config) {
+      base = config.base;
     },
-  },
-});
+    transformIndexHtml: {
+      order: "post",
+      handler(_html, { bundle }) {
+        const chunk = Object.values(bundle ?? {}).find((c) => c.type === "chunk" && c.name === "BelowFold");
+        if (!chunk) throw new Error("preload-below-fold: the build has no BelowFold chunk");
+        return [{ tag: "link", attrs: { rel: "modulepreload", crossorigin: true, href: `${base}${chunk.fileName}` }, injectTo: "head" }];
+      },
+    },
+  };
+};
 
 export default defineConfig({
   server: {
