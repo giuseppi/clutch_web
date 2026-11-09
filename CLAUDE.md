@@ -43,7 +43,7 @@ src/
 ├── hooks/                  # use-toast.ts, api/ (react-query hooks for the portal)
 ├── lib/                    # motion.ts (motion values), entrance.ts (one entrance per page load), lenis.tsx, utils.ts (cn), api.ts, supabase.ts, mmrTier.ts
 ├── types/portal.ts         # Shapes the portal pages expect from the API
-├── test/                   # setup.ts (jest-dom, matchMedia), intersection.ts (IntersectionObserver stub), entrance.ts (stand-in for lib/entrance), siteCopy.test.ts
+├── test/                   # setup.ts (jest-dom, matchMedia), intersection.ts (IntersectionObserver stub), entrance.ts (stand-in for lib/entrance), reveal.ts (samples opacities to check reveal order), siteCopy.test.ts
 └── pages/
     ├── Index.tsx           # Landing
     ├── ContactPage.tsx     # /contact
