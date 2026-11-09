@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import Navbar from "@/components/landing/Navbar";
 import GameStage from "@/components/landing/GameStage";
+import { LazyBoundary } from "@/components/landing/LazyBoundary";
 import { holdEntrance } from "@/lib/entrance";
 
 /** Everything under the leaderboard loads as a separate chunk, so the hero's JS stays small. */
@@ -25,9 +26,11 @@ const Index = () => (
   <main className="min-h-screen bg-paper text-ink">
     <Navbar animateIn />
     <GameStage />
-    <Suspense fallback={<div style={{ height: BELOW_FOLD_HEIGHT }} />}>
-      <BelowFold />
-    </Suspense>
+    <LazyBoundary name="the sections under the leaderboard">
+      <Suspense fallback={<div style={{ height: BELOW_FOLD_HEIGHT }} />}>
+        <BelowFold />
+      </Suspense>
+    </LazyBoundary>
   </main>
 );
 
