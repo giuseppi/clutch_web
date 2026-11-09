@@ -14,13 +14,15 @@ interface SplitTextProps {
   /** Show the risen words at once, with no animation (reduced motion). Default false. */
   instant?: boolean;
   className?: string;
-  as?: keyof Pick<HTMLElementTagNameMap, "h1" | "h2" | "h3" | "p" | "span">;
+  as?: "h1" | "h2" | "h3";
 }
 
 /**
- * Splits text by word. Each word rises with the shared RISE motion, STAGGER
- * apart. Words stay whole inline-block units so they wrap naturally. Memoized:
- * the hero headline sits in a parent that renders on every game frame.
+ * Splits a heading by word. Each word rises with the shared RISE motion, STAGGER
+ * apart. Words stay whole inline-block units so they wrap naturally. The heading
+ * carries its full text as its label and the word pieces are hidden from screen
+ * readers, which would otherwise stop on every word. Memoized: the hero headline
+ * sits in a parent that renders on every game frame.
  */
 export const SplitText = memo(function SplitText({
   text,
@@ -38,6 +40,7 @@ export const SplitText = memo(function SplitText({
 
   return (
     <MotionTag
+      aria-label={text}
       className={className}
       initial={instant ? false : "hidden"}
       whileInView={whileInView && settled ? "visible" : undefined}
@@ -46,7 +49,7 @@ export const SplitText = memo(function SplitText({
       transition={{ delayChildren: delay, staggerChildren: STAGGER }}
     >
       {words.map((word, i) => (
-        <span key={`${word}-${i}`}>
+        <span key={`${word}-${i}`} aria-hidden="true">
           <motion.span className="inline-block" variants={riseVariants}>
             {word}
           </motion.span>
