@@ -13,6 +13,7 @@ const BelowFold = lazy(loadBelowFold);
   belowFoldPainted one frame after it mounts (all within the entrance's 500 ms cap). A chunk
   that fails to load ends the wait at once.
 */
+// App imports this module, so /contact also fetches the chunk and sets this hold: harmless, as nothing there waits for the entrance.
 const belowFoldPainted = holdEntrance(loadBelowFold());
 
 /*
