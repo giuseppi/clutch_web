@@ -19,7 +19,8 @@ Marketing and **coach portal** web app for **Clutch** (basketball analytics). Th
 | Routing | `react-router-dom` v6, routes declared in `src/App.tsx` |
 | Type | Geist 400-600 and Geist Mono 400-500, self-hosted from `@fontsource-variable` (latin) and preloaded in `index.html` |
 | Motion | framer-motion 12 and Lenis; values and variants in `src/lib/motion.ts` |
-| Data fetching (available) | `@tanstack/react-query` (provider in `App.tsx`; not required everywhere) |
+| Data fetching (portal only) | `@tanstack/react-query` hooks in `src/hooks/api/`. No provider is mounted: add a `QueryClientProvider` in `App.tsx` before routing the portal again |
+| Types | TypeScript strict, with `noUnusedLocals` and `noUnusedParameters` (`tsconfig.app.json`) |
 | Tests | Vitest + Testing Library (setup in `src/test/setup.ts`, tests sit next to the code as `*.test.tsx`) |
 
 **Nothing in the routed site talks to a backend.** `server/` (Express + Prisma) and `worker/` (Python) exist in the repo for the portal but are not wired to the routed pages. The portal's auth context and axios client are unrouted code.
@@ -28,7 +29,7 @@ Marketing and **coach portal** web app for **Clutch** (basketball analytics). Th
 
 ```
 src/
-├── App.tsx                 # Routes, QueryClientProvider, toasters, TooltipProvider, MotionConfig, Lenis
+├── App.tsx                 # Routes, MotionConfig, Lenis
 ├── main.tsx
 ├── index.css               # Global CSS, Geist @font-face, shadcn theme variables
 ├── assets/                 # clutch_logo.png, game/ (court photo, ball), ladder/ (player photos)
@@ -38,9 +39,9 @@ src/
 │   │   └── steps/          # How It Works step animations
 │   ├── app/                # AppLayout, PageTransition, ProtectedRoute (portal, not routed)
 │   ├── AppSidebar*.tsx     # Portal sidebar (not routed)
-│   └── ui/                 # shadcn primitives actually used: dropdown-menu, sheet, sonner, toast, toaster, tooltip
+│   └── ui/                 # shadcn primitives the portal uses: dropdown-menu, sheet
 ├── contexts/               # AuthContext.ts (context + useAuth), AuthProvider.tsx (portal, not routed)
-├── hooks/                  # use-toast.ts, api/ (react-query hooks for the portal)
+├── hooks/                  # api/ (react-query hooks for the portal)
 ├── lib/                    # motion.ts (motion values), entrance.ts (one entrance per page load), lenis.tsx, utils.ts (cn), api.ts, supabase.ts, mmrTier.ts
 ├── types/portal.ts         # Shapes the portal pages expect from the API
 ├── test/                   # setup.ts (jest-dom, matchMedia), intersection.ts (IntersectionObserver stub), entrance.ts (stand-in for lib/entrance), reveal.ts (samples opacities to check reveal order), siteCopy.test.ts
