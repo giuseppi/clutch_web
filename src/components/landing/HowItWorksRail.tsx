@@ -53,31 +53,31 @@ const HowItWorksRail = () => {
   const translateX = useTransform(scrollYProgress, [0.05, 0.95], ["0%", `-${((steps.length - 1) / steps.length) * 100}%`]);
 
   return (
-    <div ref={ref} id="how-it-works" className="relative bg-paper text-ink paper-grain" style={{ height: "320vh" }}>
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col">
-        {/* Section header */}
-        <div className={`${GRID} w-full pt-24 md:pt-28 pb-8`}>
-          <div className="flex items-baseline justify-between border-b border-ink/15 pb-5">
-            <span className="label text-inkMuted">HOW IT WORKS · 03</span>
-            <span className="label text-inkMuted hidden md:inline">4 STEPS / ZERO GEAR</span>
-          </div>
-
-          <div className="mt-8 md:mt-10">
-            <SplitText
-              as="h2"
-              text="Four steps."
-              className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
-            />
-            <SplitText
-              as="h2"
-              text="Zero gear."
-              className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[min(18vw,259px)]"
-            />
-          </div>
+    <div id="how-it-works" className="relative bg-paper text-ink paper-grain">
+      {/* Section header, which scrolls away before the steps pin */}
+      <div className={`${GRID} pt-24 md:pt-28 pb-8`}>
+        <div className="flex items-baseline justify-between border-b border-ink/15 pb-5">
+          <span className="label text-inkMuted">HOW IT WORKS · 03</span>
+          <span className="label text-inkMuted hidden md:inline">4 STEPS / ZERO GEAR</span>
         </div>
 
-        {/* Horizontal pinned rail */}
-        <div className="flex-1 flex items-center overflow-hidden">
+        <div className="mt-8 md:mt-10">
+          <SplitText
+            as="h2"
+            text="Four steps."
+            className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
+          />
+          <SplitText
+            as="h2"
+            text="Zero gear."
+            className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[min(18vw,259px)]"
+          />
+        </div>
+      </div>
+
+      {/* Horizontal pinned rail: one screen, its top padding clearing the fixed navbar (69 px, 81 px from md) */}
+      <div ref={ref} className="relative" style={{ height: "320vh" }}>
+        <div className="sticky top-0 h-screen w-full overflow-hidden pt-[4.5rem] md:pt-[5.25rem]">
           <motion.div
             className="flex h-full items-center"
             style={{ x: translateX, width: `${steps.length * 100}vw` }}
@@ -106,39 +106,39 @@ const StepArticle = ({ step, index }: StepProps) => {
 
   return (
     <article ref={ref} className="shrink-0 w-screen h-full flex items-center">
-      <div className={`${GRID} w-full grid md:grid-cols-12 gap-y-8 md:gap-x-12 items-center`}>
+      <div className={`${GRID} w-full grid md:grid-cols-12 gap-y-8 step-tight:gap-y-4 md:step-tight:gap-y-2 md:gap-x-12 items-center`}>
         {/* Left: oversized number + per-step animation */}
         <div className="md:col-span-5">
           <div className="flex items-center gap-6">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full border border-ink/20 flex items-center justify-center bg-paperAlt">
-              <Icon className="w-7 h-7 md:w-9 md:h-9 text-brand" aria-hidden />
+            <div className="w-16 h-16 md:w-20 md:h-20 step-tight:w-12 step-tight:h-12 rounded-full border border-ink/20 flex items-center justify-center bg-paperAlt">
+              <Icon className="w-7 h-7 md:w-9 md:h-9 step-tight:w-5 step-tight:h-5 text-brand" aria-hidden />
             </div>
             <span className="label-mono text-inkMuted">STEP {step.num}</span>
           </div>
-          <div className="font-display font-normal text-[clamp(8rem,22vw,18rem)] leading-[0.85] text-ink/[0.10] mt-4">
+          <div className="font-display font-normal text-[clamp(8rem,22vw,18rem)] leading-[0.85] text-ink/[0.10] mt-4 step-short:hidden">
             {step.num}
           </div>
         </div>
 
         {/* Right: copy + step animation panel */}
         <div className="md:col-span-7 md:pl-8 md:border-l border-ink/15">
-          <h3 className="font-display text-3xl md:text-5xl leading-tight text-ink">
+          <h3 className="font-display text-3xl md:text-5xl step-tight:text-2xl leading-tight text-ink">
             {step.title}
           </h3>
-          <p className="mt-5 max-w-md text-base md:text-lg text-ink/70 leading-relaxed">
+          <p className="mt-5 step-tight:mt-2 max-w-md text-base md:text-lg step-tight:text-sm text-ink/70 leading-relaxed">
             {step.description}
           </p>
 
-          <div className="mt-8 max-w-md">
+          <div className="mt-8 step-tight:mt-2 max-w-md">
             <StepAnimation index={index} inView={inView} />
           </div>
 
-          <span className="inline-block mt-6 label text-inkMuted border border-ink/15 px-3 py-2">
+          <span className="inline-block mt-6 step-tight:mt-2 label text-inkMuted border border-ink/15 px-3 py-2 step-tight:py-1.5">
             {step.spec}
           </span>
         </div>
 
-        <div className="md:col-span-12 flex items-center justify-end gap-3 mt-4 md:mt-0">
+        <div className="md:col-span-12 flex items-center justify-end gap-3 mt-4 md:mt-0 step-tight:mt-0">
           <span className="label-mono text-inkMuted">
             {String(index + 1).padStart(2, "0")} / {String(steps.length).padStart(2, "0")}
           </span>

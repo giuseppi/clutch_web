@@ -9,7 +9,7 @@ import { DRAW, FADE, arrive, drawHidden, drawShown } from "@/lib/motion";
 export const PhoneSetupAnim = ({ inView }: { inView: boolean }) => {
   const still = useReducedMotion() ?? false;
   return (
-    <div className="relative h-40 bg-paperAlt border border-ink/10 overflow-hidden">
+    <div className="relative h-40 step-tight:h-28 bg-paperAlt border border-ink/10 overflow-hidden">
       <svg viewBox="0 0 400 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
         <FadedCourt />
 

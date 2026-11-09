@@ -17,7 +17,7 @@ holdEntrance(loadBelowFold().then(twoFrames));
 /*
   Stands in for those sections until they arrive, at least as tall as they are, so a reload
   mid-page still restores its scroll position. The How It Works rail is 320vh; everything else
-  measures at most 4747 px, at 767 px wide, where the single-column layout is widest.
+  measures at most 5054 px, at 767 px wide, where the single-column layout is widest.
 */
 const BELOW_FOLD_HEIGHT = "calc(320vh + 5500px)";
 

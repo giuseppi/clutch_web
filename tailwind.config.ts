@@ -14,6 +14,20 @@ export default {
       },
     },
     extend: {
+      /*
+        How It Works pins one step at a time in a screen-tall panel under the navbar, so each
+        step must fit the screen's height. These are measured needs (step height plus the
+        panel's top padding, worst at 320 px wide), rounded up to the next 20 px:
+          step-short: phones under 800 px tall (the step needs 784) and wider screens under
+                      600 px hide the decorative numeral
+          step-tight: phones under 660 px (640 without the numeral) and wider screens under
+                      600 px (586) set the step tighter, with a smaller panel
+        As screens they sort after md and lg, so they override those sizes.
+      */
+      screens: {
+        "step-short": { raw: "(max-width: 767px) and (max-height: 799px), (min-width: 768px) and (max-height: 599px)" },
+        "step-tight": { raw: "(max-width: 767px) and (max-height: 659px), (min-width: 768px) and (max-height: 599px)" },
+      },
       fontFamily: {
         sans: ["Geist", "system-ui", "sans-serif"],
         mono: ['"Geist Mono"', "ui-monospace", "monospace"],

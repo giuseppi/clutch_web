@@ -64,7 +64,7 @@ const backStrands = Array.from({ length: 5 }, (_, i) => {
 export const ShotArcAnim = ({ inView }: { inView: boolean }) => {
   const still = useReducedMotion() ?? false;
   return (
-    <div className="relative h-40 bg-paperAlt border border-ink/10 overflow-hidden">
+    <div className="relative h-40 step-tight:h-28 bg-paperAlt border border-ink/10 overflow-hidden">
       <svg viewBox="0 0 400 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
         {/* Floor */}
         <line x1="20" y1={FLOOR_Y} x2="380" y2={FLOOR_Y} stroke="#1A1A1A" strokeOpacity="0.25" strokeWidth="0.8" />
