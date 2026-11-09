@@ -4,7 +4,7 @@
 
 Marketing and **coach portal** web app for **Clutch** (basketball analytics). This is **not** the React Native / Expo mobile app, which lives in a separate repo.
 
-- **Public site:** Landing at `/` (`src/pages/Index.tsx`): Navbar, the hero 1v1 and court leaderboard (`GameStage`), then Features, How It Works, PullQuote, the beta form (`FooterCTA`) and Footer, which load as one lazy chunk (`BelowFold`). A plugin in `vite.config.ts` preloads that chunk, and the entrance waits for its first paint (`holdEntrance` in `src/lib/entrance.ts`).
+- **Public site:** Landing at `/` (`src/pages/Index.tsx`): Navbar, the hero 1v1 and court leaderboard (`GameStage`), then Features, How It Works, PullQuote, the beta form (`FooterCTA`) and Footer, which load as one lazy chunk (`BelowFold`) inside an error boundary (`LazyBoundary`), so a failed chunk leaves the hero up. Footer also ships in the main JS, since `ContactPage` imports it. A plugin in `vite.config.ts` preloads that chunk, and the entrance waits until it has painted (`holdEntrance` in `src/lib/entrance.ts`, released by `BelowFold`), within its 500 ms cap.
 - **Contact page:** `/contact` (`src/pages/ContactPage.tsx`) with team cards linking to LinkedIn.
 - **Coach portal (not routed):** pages under `src/pages/app/`, `src/components/app/`, `src/contexts/`, `src/hooks/api/` and `src/lib/api.ts` stay in the tree but nothing imports them. `App.tsx` redirects `/app/*` to `/`. The API shapes those pages expect are in `src/types/portal.ts` and differ from `server/` in places; reconcile before routing them again.
 
@@ -33,7 +33,7 @@ src/
 ├── index.css               # Global CSS, Geist @font-face, shadcn theme variables
 ├── assets/                 # clutch_logo.png, game/ (court photo, ball), ladder/ (player photos)
 ├── components/
-│   ├── landing/            # Navbar, GameStage (Hero + Leaderboard), BelowFold, FeaturesPolaroidGrid, HowItWorksRail, PullQuote, FooterCTA, Footer, SplitText, DashedDraw, DemoVideo, RotatingGlobe
+│   ├── landing/            # Navbar, GameStage (Hero + Leaderboard), BelowFold, LazyBoundary, FeaturesPolaroidGrid, HowItWorksRail, PullQuote, FooterCTA, Footer, SplitText, AnimatedNumber, DashedDraw, DemoVideo, RotatingGlobe (with its court data in globeData.ts)
 │   │   ├── game/           # The hero 1v1 and court ladder: pure modules (game, timeline, playback, ladder, layout with the site GRID) and LiveCard, HalfCourt, FlipNumber, LadderCard, MmrToken, PlaybackProvider
 │   │   └── steps/          # How It Works step animations
 │   ├── app/                # AppLayout, PageTransition, ProtectedRoute (portal, not routed)
