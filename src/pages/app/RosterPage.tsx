@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePlayers, usePlayer, usePlayerEloHistory, usePlayerStats } from "@/hooks/api/usePlayers";
 import type { PortalEloEntry, PortalPlayer } from "@/types/portal";
@@ -65,7 +65,7 @@ function PlayerDetailPanel({ playerId }: { playerId: string }) {
           <div className="flex flex-col gap-1">
             <h1 className="text-slate-100 text-2xl font-bold leading-tight">{player.firstName} {player.lastName}</h1>
             <p className="text-[#a3a3a3] text-sm">
-              {player.team?.name || "—"}
+              {player.team?.name || "-"}
               <span className="mx-1.5 text-[#262626]">&bull;</span>
               Class of {player.graduationYear}
             </p>

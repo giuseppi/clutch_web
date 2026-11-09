@@ -146,7 +146,7 @@ const DashboardPage = () => {
                 const isHome = match.homeTeamId === teamId;
                 const teamScore = isHome ? match.homeScore : match.awayScore;
                 const opponentScore = isHome ? match.awayScore : match.homeScore;
-                const won = teamScore > opponentScore;
+                const won = (teamScore ?? 0) > (opponentScore ?? 0);
                 const opponentTeam = isHome ? match.awayTeam : match.homeTeam;
                 const date = new Date(match.scheduledDate);
                 const month = date.toLocaleString("default", { month: "short" });
