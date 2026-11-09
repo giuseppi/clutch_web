@@ -33,7 +33,7 @@ src/
 ├── index.css               # Global CSS, Geist @font-face, shadcn theme variables
 ├── assets/                 # clutch_logo.png, game/ (court photo, ball), ladder/ (player photos)
 ├── components/
-│   ├── landing/            # Navbar, GameStage (Hero + Leaderboard), BelowFold, LazyBoundary, FeaturesPolaroidGrid, HowItWorksRail, PullQuote, FooterCTA, Footer, SplitText, AnimatedNumber, DashedDraw, DemoVideo, RotatingGlobe (with its court data in globeData.ts)
+│   ├── landing/            # Navbar, GameStage (Hero + Leaderboard), BelowFold, LazyBoundary, FeaturesPolaroidGrid, HowItWorksRail, PullQuote, FooterCTA, Footer, SplitText, AnimatedNumber, DashedDraw, DemoVideo, RotatingGlobe (its courts inline, the continent dots in globeData.ts)
 │   │   ├── game/           # The hero 1v1 and court ladder: pure modules (game, timeline, playback, ladder, layout with the site GRID) and LiveCard, HalfCourt, FlipNumber, LadderCard, MmrToken, PlaybackProvider
 │   │   └── steps/          # How It Works step animations
 │   ├── app/                # AppLayout, PageTransition, ProtectedRoute (portal, not routed)
@@ -67,7 +67,7 @@ src/
 3. **Paths:** Use `@/` alias for `src/` (see `tsconfig`).
 4. **Scope:** Keep changes focused; avoid unrelated refactors when fixing a single feature.
 5. **App shell:** Portal pages wrap content in `components/app/AppLayout` + `PageTransition`. The landing and contact pages use `components/landing/Navbar` + `Footer`.
-6. **Motion:** Durations and easings come from `src/lib/motion.ts`. Reduced motion shows the final state with no movement (framer `MotionConfig reducedMotion="user"`, CSS guarded by `prefers-reduced-motion`, Lenis off).
+6. **Motion:** Durations and easings come from `src/lib/motion.ts`. Reduced motion shows the final state with no movement (framer `MotionConfig reducedMotion="user"`, CSS guarded by `prefers-reduced-motion`, Lenis off). Reveals below the hero wait for the entrance to settle (`useEntranceSettled`) only while the hero is on screen (`useEntranceStage`), and a section's content never shows before its headline (FooterCTA, PullQuote and How It Works each reveal from one trigger, headline first).
 
 ## Security architecture (non-negotiable)
 
