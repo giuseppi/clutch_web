@@ -1,6 +1,9 @@
-import { render } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { useReducedMotion } from "framer-motion";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { resetEntrance, settleEntrance } from "@/test/entrance";
+import { setIntersection } from "@/test/intersection";
+import { firstShown, sampleOpacities } from "@/test/reveal";
 import HowItWorksRail from "./HowItWorksRail";
 
 vi.mock("framer-motion", async (orig) => ({
@@ -17,6 +20,7 @@ beforeEach(() => {
 afterEach(() => {
   vi.restoreAllMocks();
   vi.mocked(useReducedMotion).mockReturnValue(false);
+  resetEntrance();
 });
 
 /** The first render, with no step on screen: what a reader sees before anything animates. */
@@ -43,6 +47,30 @@ describe("HowItWorksRail", () => {
     expect(step.ball).not.toHaveAttribute("cx");
     expect(step.bars).toEqual(["0%", "0%", "0%", "0%", "0%", "0%", "0%"]);
     expect(step.count).toBe("0%");
+  });
+
+  it("waits for the entrance to settle, then reveals the header and only after it the steps", async () => {
+    const { container } = render(<HowItWorksRail />);
+    const firstWord = screen.getByText("Four");
+    const lines = firstWord.closest("h2")?.parentElement as HTMLElement;
+    const panel = container.querySelector(".sticky") as HTMLElement;
+    const steps = panel.firstElementChild as HTMLElement;
+    const opacities = () => [Number(firstWord.style.opacity), Number(steps.style.opacity)];
+    // The header and the first step on screen at once, as on a load of /#how-it-works.
+    act(() => {
+      setIntersection(lines, 1);
+      setIntersection(panel, 1);
+      for (const article of container.querySelectorAll("article")) setIntersection(article, 1);
+    });
+    const before = await sampleOpacities(opacities, 600);
+    expect(before.every(([head, step]) => head === 0 && step === 0)).toBe(true);
+    expect(container.querySelector('path[d^="M 44 42"]')).toHaveAttribute("opacity", "0");
+
+    act(() => settleEntrance());
+    const after = await sampleOpacities(opacities, 1400);
+    expect(firstShown(after, 0)).toBeGreaterThanOrEqual(0);
+    expect(firstShown(after, 1)).toBeGreaterThan(firstShown(after, 0));
+    expect(after.every(([head, step]) => step === 0 || head > 0)).toBe(true);
   });
 
   it("starts every step at its end state under reduced motion, on screen or not", () => {

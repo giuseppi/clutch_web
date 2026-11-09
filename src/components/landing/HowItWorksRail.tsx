@@ -1,8 +1,10 @@
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, type RefObject } from "react";
 import { Smartphone, Crosshair, Play, TrendingUp } from "lucide-react";
 import { SplitText } from "./SplitText";
 import { DemoVideo } from "./DemoVideo";
+import { useEntranceSettled } from "@/lib/entrance";
+import { riseVariants } from "@/lib/motion";
 import { GRID } from "./game/layout";
 import { PhoneSetupAnim } from "./steps/PhoneSetupAnim";
 import { ShotArcAnim } from "./steps/ShotArcAnim";
@@ -45,6 +47,8 @@ const steps = [
 
 const HowItWorksRail = () => {
   const ref = useRef<HTMLDivElement>(null);
+  const linesRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end end"],
@@ -52,28 +56,16 @@ const HowItWorksRail = () => {
 
   const translateX = useTransform(scrollYProgress, [0.05, 0.95], ["0%", `-${((steps.length - 1) / steps.length) * 100}%`]);
 
+  // The header and the steps reveal from one trigger behind the entrance's settle (either in
+  // view), the steps 0.4 s after the header, so a step never shows before its headline.
+  const settled = useEntranceSettled();
+  const headerSeen = useInView(linesRef, { once: true, amount: 0.4 });
+  const stepsSeen = useInView(panelRef, { once: true, amount: 0.3 });
+  const shown = settled && (headerSeen || stepsSeen);
+
   return (
     <div id="how-it-works" className="relative bg-paper text-ink paper-grain">
-      {/* Section header, which scrolls away before the steps pin */}
-      <div className={`${GRID} pt-24 md:pt-28 pb-8`}>
-        <div className="flex items-baseline justify-between border-b border-ink/15 pb-5">
-          <span className="label text-inkMuted">HOW IT WORKS · 03</span>
-          <span className="label text-inkMuted hidden md:inline">4 STEPS / ZERO GEAR</span>
-        </div>
-
-        <div className="mt-8 md:mt-10">
-          <SplitText
-            as="h2"
-            text="Four steps."
-            className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
-          />
-          <SplitText
-            as="h2"
-            text="Zero gear."
-            className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[min(18vw,259px)]"
-          />
-        </div>
-      </div>
+      <Header linesRef={linesRef} shown={shown} />
 
       {/*
         Horizontal pinned rail. The panel is one small-viewport height (svh, vh where that is
@@ -81,14 +73,18 @@ const HowItWorksRail = () => {
         clears the fixed navbar (69 px, 81 px from md).
       */}
       <div ref={ref} className="relative" style={{ height: "320vh" }}>
-        <div className="sticky top-0 h-screen supports-[height:100svh]:h-svh w-full overflow-hidden pt-[4.5rem] md:pt-[5.25rem]">
+        <div ref={panelRef} className="sticky top-0 h-screen supports-[height:100svh]:h-svh w-full overflow-hidden pt-[4.5rem] md:pt-[5.25rem]">
           {/* Sized in % of the panel, not vw, so each step is the page's width without its scrollbar, like the navbar */}
           <motion.div
             className="flex h-full items-center"
             style={{ x: translateX, width: `${steps.length * 100}%` }}
+            variants={riseVariants}
+            initial="hidden"
+            animate={shown ? "visible" : "hidden"}
+            transition={{ delay: 0.4 }}
           >
             {steps.map((step, i) => (
-              <StepArticle key={step.num} step={step} index={i} />
+              <StepArticle key={step.num} step={step} index={i} shown={shown} />
             ))}
           </motion.div>
         </div>
@@ -97,16 +93,45 @@ const HowItWorksRail = () => {
   );
 };
 
+/** The section header, which scrolls away before the steps pin. */
+const Header = ({ linesRef, shown }: { linesRef: RefObject<HTMLDivElement>; shown: boolean }) => (
+  <div className={`${GRID} pt-24 md:pt-28 pb-8`}>
+    <div className="flex items-baseline justify-between border-b border-ink/15 pb-5">
+      <span className="label text-inkMuted">HOW IT WORKS · 03</span>
+      <span className="label text-inkMuted hidden md:inline">4 STEPS / ZERO GEAR</span>
+    </div>
+
+    <div ref={linesRef} className="mt-8 md:mt-10">
+      <SplitText
+        as="h2"
+        text="Four steps."
+        whileInView={false}
+        play={shown}
+        className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
+      />
+      <SplitText
+        as="h2"
+        text="Zero gear."
+        whileInView={false}
+        play={shown}
+        className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[min(18vw,259px)]"
+      />
+    </div>
+  </div>
+);
+
 interface StepProps {
   step: (typeof steps)[number];
   index: number;
+  /** The section has revealed, so the step's animation may play once it is on screen. */
+  shown: boolean;
 }
 
-const StepArticle = ({ step, index }: StepProps) => {
+const StepArticle = ({ step, index, shown }: StepProps) => {
   const ref = useRef<HTMLElement>(null);
   // Under reduced motion each step's animation shows its end state, on screen or not.
   const reduced = useReducedMotion() ?? false;
-  const inView = useInView(ref, { amount: 0.3 }) || reduced;
+  const inView = (useInView(ref, { amount: 0.3 }) && shown) || reduced;
   const Icon = step.icon;
 
   return (
