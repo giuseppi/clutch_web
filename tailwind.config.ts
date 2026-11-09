@@ -1,5 +1,34 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 import tailwindcssAnimate from "tailwindcss-animate";
+
+/*
+  How It Works pins one step at a time in a screen-tall panel under the navbar, so each step
+  must fit the screen's height. These are measured needs (step height plus the panel's top
+  padding, worst at the narrowest width), rounded up to the next 20 px:
+    step-short: phones under 800 px tall (the step needs 784) and wider screens under 600 px
+                hide the decorative numeral
+    step-tight: phones under 660 px (640 without the numeral) and wider screens under 600 px
+                (586) set the step tighter, with a smaller panel
+    step-flat:  landscape screens under 420 px tall (a tight step needs 410 at 568-767 px
+                wide, 370 at 844) put the copy beside the icon row, drop the tag and the
+                "01 / 04" counter, and shrink the panel again; it fits down to 280 px tall
+  Each tier sits inside the one before it, so step-flat also gets step-tight and step-short.
+*/
+const STEP_TIERS = {
+  "step-short": "(max-width: 767px) and (max-height: 799px), (min-width: 768px) and (max-height: 599px)",
+  "step-tight": "(max-width: 767px) and (max-height: 659px), (min-width: 768px) and (max-height: 599px)",
+  "step-flat": "(orientation: landscape) and (max-height: 419px)",
+};
+
+/*
+  The tiers are variants, not screens: a raw screen turns off the max-* and min-[...] variants
+  site-wide. Plugin variants sort before md and lg, so each one doubles its class (&&) to
+  outrank them, and step-tight:text-2xl still beats md:text-5xl.
+*/
+const stepTiers = plugin(({ addVariant }) => {
+  for (const [name, query] of Object.entries(STEP_TIERS)) addVariant(name, `@media ${query} { && }`);
+});
 
 export default {
   darkMode: ["class"],
@@ -15,9 +44,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
-        display: ['"Inter Tight"', "Inter", "sans-serif"],
+        sans: ["Geist", "system-ui", "sans-serif"],
+        mono: ['"Geist Mono"', "ui-monospace", "monospace"],
+        display: ["Geist", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -53,13 +82,11 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Mode-flip palette: cream paper (P1 parity) + dark obsidian for product moments
+        // Paper palette: cream paper, ink text, brand orange
         paper: "#F0EEE5",
         paperAlt: "#E9E5D8",
         ink: "#1A1A1A",
         inkMuted: "#7E7972",
-        obsidian: "#0A0A0F",
-        obsidianAlt: "#151515",
         brand: "#FF6A00",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -103,5 +130,5 @@ export default {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [tailwindcssAnimate, stepTiers],
 } satisfies Config;

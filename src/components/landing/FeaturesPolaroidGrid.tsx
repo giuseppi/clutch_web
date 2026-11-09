@@ -1,8 +1,11 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
 import { SplitText } from "./SplitText";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { RotatingGlobe } from "./RotatingGlobe";
+import { useEntranceSettled } from "@/lib/entrance";
+import { RISE, VALUE_CHANGE, riseVariants } from "@/lib/motion";
+import { GRID } from "./game/layout";
 
 const statLines = [
   { label: "PTS", value: 18.4, target: 78, decimals: 1 },
@@ -20,37 +23,44 @@ const polaroids = [
   { index: "04", kicker: "COURT MATCHING", rotate: 2.4, translateY: 56 },
 ];
 
+/** Two lines, set as close as the other section headlines. */
+const Headline = () => (
+  <div className="md:col-span-12">
+    <SplitText as="h2" text="Everything a" className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-ink" />
+    <SplitText
+      as="h2"
+      text="serious player needs."
+      className="font-display text-[clamp(2.5rem,7vw,5.5rem)] text-brand pl-[6vw] md:pl-[min(16vw,230px)]"
+    />
+  </div>
+);
+
 const FeaturesPolaroidGrid = () => {
   const gridRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(gridRef, { once: true, amount: 0.2 });
+  // Reveals already on screen at load (tall screens) wait for the hero's entrance to settle.
+  // Under reduced motion the bars, lines and numbers start drawn, so nothing grows or counts.
+  const settled = useEntranceSettled();
+  const reduced = useReducedMotion() ?? false;
+  const inView = (useInView(gridRef, { once: true, amount: 0.2 }) && settled) || reduced;
 
   return (
-    <div id="features" className="paper-grain pt-20 md:pt-28 pb-24 md:pb-32 px-6 md:px-12">
-      <div className="max-w-[1440px] mx-auto">
-        {/* Section header — TOC chrome */}
+    <div id="features" className="paper-grain pt-20 md:pt-28 pb-24 md:pb-32">
+      <div className={GRID}>
+        {/* Section header - TOC chrome */}
         <div className="flex items-baseline justify-between mb-10 md:mb-14 border-b border-ink/15 pb-5">
-          <span className="label-mono text-inkMuted">FEATURES — 02</span>
-          <span className="label-mono text-inkMuted hidden md:inline">04 / SYSTEMS</span>
+          <span className="label text-inkMuted">FEATURES · 02</span>
+          <span className="label text-inkMuted hidden md:inline">04 / SYSTEMS</span>
         </div>
 
         {/* Headline */}
         <div className="grid md:grid-cols-12 gap-y-6 mb-16 md:mb-24">
-          <SplitText
-            as="h2"
-            text="Everything a"
-            className="md:col-span-12 font-display font-medium text-[clamp(2.5rem,7vw,5.5rem)] text-ink"
-          />
-          <SplitText
-            as="h2"
-            text="serious player needs."
-            className="md:col-span-12 font-display font-medium italic text-[clamp(2.5rem,7vw,5.5rem)] text-ink pl-[6vw] md:pl-[16vw]"
-            stagger={0.03}
-          />
+          <Headline />
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            variants={riseVariants}
+            initial="hidden"
+            whileInView={settled ? "visible" : undefined}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ delay: 0.5 }}
             className="md:col-start-7 md:col-span-5 text-base md:text-lg text-ink/70 leading-relaxed mt-2"
           >
             Four systems running in concert behind a single phone camera.
@@ -60,34 +70,7 @@ const FeaturesPolaroidGrid = () => {
 
         <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-y-14 md:gap-y-20 md:gap-x-16 max-w-[1180px] mx-auto">
           {polaroids.map((p, i) => (
-            <motion.article
-              key={p.index}
-              initial={{ opacity: 0, y: 60, rotate: p.rotate * 1.6 }}
-              whileInView={{ opacity: 1, y: p.translateY, rotate: p.rotate }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={{ rotate: 0, y: p.translateY - 6, transition: { duration: 0.4 } }}
-              className="bg-paperAlt border border-ink/10 shadow-[0_24px_60px_-24px_rgba(26,26,26,0.18)] p-6 md:p-7 origin-center"
-            >
-              {/* Polaroid "image area" — cream inner panel with animated content */}
-              <div className="bg-paper text-ink aspect-[4/3] mb-5 relative overflow-hidden border border-ink/8">
-                <div className="absolute inset-0 p-5 md:p-6 flex flex-col">
-                  <div className="flex items-start justify-between mb-3">
-                    <span className="label-mono text-ink/60">{p.kicker}</span>
-                    <span className="font-display font-light italic text-3xl md:text-4xl text-ink/25">
-                      {p.index}
-                    </span>
-                  </div>
-                  {i === 0 && <StatTrackingContent inView={inView} />}
-                  {i === 1 && <PlayerRatingsContent inView={inView} />}
-                  {i === 2 && <LiveScoresContent inView={inView} />}
-                  {i === 3 && <CourtMatchingContent inView={inView} />}
-                </div>
-              </div>
-
-              {/* Polaroid caption — title + body */}
-              <Caption index={i} />
-            </motion.article>
+            <Polaroid key={p.index} p={p} i={i} inView={inView} settled={settled} />
           ))}
         </div>
       </div>
@@ -95,16 +78,51 @@ const FeaturesPolaroidGrid = () => {
   );
 };
 
+/** One feature card: it rises into its tilt once in view, after the entrance settles. */
+const Polaroid = ({ p, i, inView, settled }: { p: (typeof polaroids)[number]; i: number; inView: boolean; settled: boolean }) => (
+  <motion.article
+    initial={{ opacity: 0, y: p.translateY + RISE.y, rotate: p.rotate }}
+    whileInView={settled ? { opacity: 1, y: p.translateY, rotate: p.rotate } : undefined}
+    viewport={{ once: true, amount: 0.2 }}
+    transition={{ duration: RISE.duration, ease: RISE.ease }}
+    whileHover={{ rotate: 0, y: p.translateY - 6, transition: { duration: VALUE_CHANGE } }}
+    className="bg-paperAlt border border-ink/10 shadow-[0_24px_60px_-24px_rgba(26,26,26,0.18)] p-6 md:p-7 origin-center"
+  >
+    {/* Polaroid "image area" - cream inner panel with animated content */}
+    <div
+      className={`bg-paper text-ink mb-5 relative overflow-hidden border border-ink/8 ${
+        i === 3 ? "h-[17rem] md:h-auto md:aspect-[4/3]" : "aspect-[4/3]"
+      }`}
+    >
+      <div className="absolute inset-0 p-5 md:p-6 flex flex-col">
+        <div className="flex items-start justify-between mb-3">
+          <span className="label text-ink/60">{p.kicker}</span>
+          <span className="font-display font-normal text-3xl md:text-4xl text-ink/25">
+            {p.index}
+          </span>
+        </div>
+        {i === 0 && <StatTrackingContent inView={inView} />}
+        {i === 1 && <PlayerRatingsContent inView={inView} />}
+        {i === 2 && <LiveScoresContent inView={inView} />}
+        {i === 3 && <CourtMatchingContent />}
+      </div>
+    </div>
+
+    {/* Polaroid caption - title + body */}
+    <Caption index={i} />
+  </motion.article>
+);
+
 /* ---------------- Per-card animated content ---------------- */
 
 const StatTrackingContent = ({ inView }: { inView: boolean }) => (
   <div className="flex-1 flex flex-col">
     {/* Big focal stat */}
     <div className="mb-3">
-      <div className="font-display font-medium text-5xl md:text-6xl text-ink tabular-nums leading-none">
+      <div className="font-display text-5xl md:text-6xl text-ink tabular-nums leading-none">
         <AnimatedNumber value={18.4} inView={inView} duration={1600} delay={200} />
       </div>
-      <div className="label-mono text-ink/55 mt-1">PPG · LAST 5 GAMES</div>
+      <div className="label text-ink/55 mt-1">PPG · LAST 5 GAMES</div>
     </div>
 
     {/* Stat bars */}
@@ -151,12 +169,12 @@ const StatTrackingContent = ({ inView }: { inView: boolean }) => (
 const PlayerRatingsContent = ({ inView }: { inView: boolean }) => (
   <div className="flex-1 flex flex-col">
     <div className="flex items-end gap-3 mb-2">
-      <div className="font-display font-medium text-5xl md:text-6xl text-ink tabular-nums leading-none">
+      <div className="font-display text-5xl md:text-6xl text-ink tabular-nums leading-none">
         <AnimatedNumber value={1247} inView={inView} duration={1800} delay={200} decimals={0} />
       </div>
-      <span className="label-mono text-brand bg-brand/10 border border-brand/30 px-2 py-1">GOLD</span>
+      <span className="label text-brand bg-brand/10 border border-brand/30 px-2 py-1">GOLD</span>
     </div>
-    <div className="label-mono text-ink/55 mb-4">MMR · GLICKO-2</div>
+    <div className="label text-ink/55 mb-4">MMR · GLICKO-2</div>
 
     {/* Sparkline */}
     <div className="flex-1 relative">
@@ -174,7 +192,7 @@ const PlayerRatingsContent = ({ inView }: { inView: boolean }) => (
             transition: "stroke-dashoffset 1.6s cubic-bezier(0.16, 1, 0.3, 1) 700ms",
           }}
         />
-        <circle cx="100" cy="6" r="1.5" fill="#FF6A00" opacity={inView ? 1 : 0} className="transition-opacity duration-300 delay-[2200ms]" />
+        <circle cx="100" cy="6" r="1.5" fill="#FF6A00" opacity={inView ? 1 : 0} className="transition-opacity duration-300 [transition-delay:2200ms]" />
       </svg>
     </div>
 
@@ -194,22 +212,22 @@ const LiveScoresContent = ({ inView }: { inView: boolean }) => (
   <div className="flex-1 flex flex-col">
     <div className="flex items-center justify-between mb-3">
       <div className="flex items-center gap-2">
-        <span className="w-2 h-2 bg-brand rounded-full animate-pulse" />
-        <span className="label-mono text-ink/80">LIVE</span>
+        <span className="w-2 h-2 bg-brand rounded-full motion-safe:animate-pulse" />
+        <span className="label text-ink/80">LIVE</span>
       </div>
       <span className="font-mono text-[11px] text-ink/60">Q4 · 4:23</span>
     </div>
 
     <div className="flex-1 grid grid-cols-2 gap-3 items-center">
       <div className="text-center">
-        <div className="label-mono text-ink/55 mb-1">TEAM A</div>
-        <div className="font-display font-medium text-5xl md:text-6xl text-ink tabular-nums leading-none">
+        <div className="label text-ink/55 mb-1">TEAM A</div>
+        <div className="font-display text-5xl md:text-6xl text-ink tabular-nums leading-none">
           <AnimatedNumber value={72} inView={inView} duration={1300} delay={300} decimals={0} />
         </div>
       </div>
       <div className="text-center border-l border-ink/10">
-        <div className="label-mono text-ink/55 mb-1">TEAM B</div>
-        <div className="font-display font-medium text-5xl md:text-6xl text-ink/70 tabular-nums leading-none">
+        <div className="label text-ink/55 mb-1">TEAM B</div>
+        <div className="font-display text-5xl md:text-6xl text-ink/70 tabular-nums leading-none">
           <AnimatedNumber value={68} inView={inView} duration={1300} delay={400} decimals={0} />
         </div>
       </div>
@@ -222,32 +240,38 @@ const LiveScoresContent = ({ inView }: { inView: boolean }) => (
   </div>
 );
 
-const CourtMatchingContent = ({ inView }: { inView: boolean }) => (
-  <div className="flex-1 flex flex-col">
-    <div className="flex-1 flex items-center justify-center -mx-2">
-      <RotatingGlobe inView={inView} />
+const CourtMatchingContent = () => {
+  const globeRef = useRef<HTMLDivElement>(null);
+  const onScreen = useInView(globeRef, { amount: 0.2 });
+  const reduced = useReducedMotion();
+
+  return (
+    <div className="flex-1 min-h-0 flex flex-col">
+      <div ref={globeRef} data-testid="court-globe" className="flex-1 min-h-0 flex items-center justify-center -mx-2">
+        <RotatingGlobe inView={onScreen && !reduced} />
+      </div>
+      <div className="mt-auto pt-3 border-t border-ink/10 flex justify-between font-mono text-[11px]">
+        <span className="text-ink/60">12 ACTIVE COURTS</span>
+        <span className="text-brand">→ NEAR YOU</span>
+      </div>
     </div>
-    <div className="mt-auto pt-3 border-t border-ink/10 flex justify-between font-mono text-[11px]">
-      <span className="text-ink/60">12 ACTIVE COURTS</span>
-      <span className="text-brand">→ NEAR YOU</span>
-    </div>
-  </div>
-);
+  );
+};
 
 /* ---------------- Captions ---------------- */
 
 const captions = [
   {
     title: "Pro-grade box scores, automatic.",
-    body: "Every shot, assist, board, and turnover — extracted from the video. No clipboard, no scorer's table.",
+    body: "Every shot, assist, board, and turnover, extracted from the video. No clipboard, no scorer's table.",
   },
   {
     title: "MMR for the rest of us.",
-    body: "Performance converts into a competitive rating. Glicko-2 with custom modifiers — borrowed from chess, tuned for hoops.",
+    body: "Performance converts into a competitive rating. Glicko-2 with custom modifiers, borrowed from chess and tuned for hoops.",
   },
   {
     title: "The score keeps itself.",
-    body: "Real-time score and game clock, derived from the play. No manual input — the AI handles it as the game happens.",
+    body: "Real-time score and game clock, derived from the play. No manual input. The AI handles it as the game happens.",
   },
   {
     title: "Find a game at your level.",

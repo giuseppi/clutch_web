@@ -2,16 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
-  Mode-flip system:
-  Body background defaults to paper (cream). The Lenis-driven ModeSection
-  components animate it between #F0EEE5 (cream) and #0A0A0F (obsidian) as
-  the user scrolls. Section text/foreground inverts via Tailwind classes.
-*/
+/* Geist and Geist Mono, self-hosted: the latin subset of each variable font, limited to the
+   weights the site uses. index.html preloads both files so they arrive before the entrance. */
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("@fontsource-variable/geist/files/geist-latin-wght-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url("@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2") format("woff2");
+}
+
+/* Paper palette: ink on cream paper (#F0EEE5). The named colors (paper, ink, brand) live in
+   tailwind.config.ts; the shadcn HSL tokens below map onto them. */
 
 @layer base {
   :root {
-    /* Shadcn token bridge — mapped to paper/ink so existing UI primitives
+    /* Shadcn token bridge - mapped to paper/ink so existing UI primitives
        inherit the new palette without rewrites. */
     --background: 47 24% 92%;       /* #F0EEE5 paper */
     --foreground: 0 0% 10%;         /* #1A1A1A ink */
@@ -64,32 +78,43 @@
 
   body {
     @apply text-ink antialiased overflow-x-hidden;
-    font-family: "Inter", sans-serif;
+    font-family: "Geist", system-ui, sans-serif;
     background-color: #f0eee5;
   }
 }
 
 @layer utilities {
   .font-mono {
-    font-family: "JetBrains Mono", monospace;
+    font-family: "Geist Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
   }
 
   .font-display {
-    font-family: "Inter Tight", "Inter", sans-serif;
-    letter-spacing: -0.025em;
-    line-height: 0.95;
+    font-family: "Geist", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1;
   }
 
-  /* P1 signature: uppercase mono microcopy with wide tracking */
+  /* Uppercase microcopy label in Geist */
+  .label {
+    font-family: "Geist", system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  /* Data only: numbers, scores and stat readouts in Geist Mono */
   .label-mono {
-    font-family: "JetBrains Mono", monospace;
+    font-family: "Geist Mono", ui-monospace, monospace;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-size: 0.75rem;
     font-weight: 400;
   }
 
-  /* Subtle paper grain — only visible against cream */
+  /* Subtle paper grain - only visible against cream */
   .paper-grain {
     background-image:
       radial-gradient(circle at 20% 30%, rgba(126, 121, 114, 0.04) 0, transparent 50%),
@@ -103,22 +128,13 @@
     border-radius: 0;
   }
 
-  /* Glass HUD panel on cream — semi-transparent ink-tinted panel */
+  /* Glass HUD panel on cream - semi-transparent ink-tinted panel */
   .glass-panel-light {
     background: rgba(26, 26, 26, 0.06);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(26, 26, 26, 0.12);
     color: #1a1a1a;
-  }
-
-  /* Glass HUD panel for use over the dark BallZoom scene (legacy — keep for compat) */
-  .glass-panel-dark {
-    background: rgba(18, 18, 22, 0.62);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(240, 238, 229, 0.08);
-    color: #f0eee5;
   }
 
   .scanlines {
@@ -145,4 +161,119 @@
 
 .animate-page-enter {
   animation: page-enter 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-page-enter {
+    animation: none;
+  }
+}
+
+/*
+  Flip-card score (FlipNumber): the old top half folds away, then the new bottom half
+  folds into place, hinged on the number's midline. Every half has the card's white
+  background so the halves cover each other.
+*/
+.flip-num {
+  position: relative;
+  display: inline-block;
+  height: 1em;
+  line-height: 1;
+  perspective: 240px;
+}
+
+.flip-size {
+  color: transparent;
+}
+
+.flip-half {
+  position: absolute;
+  top: 0;
+  left: -50%;
+  right: -50%;
+  height: 1em;
+  text-align: center;
+  background: #fff;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-origin: 50% 50%;
+}
+
+.flip-top {
+  clip-path: inset(0 0 50% 0);
+}
+
+.flip-bottom {
+  clip-path: inset(50% 0 0 0);
+}
+
+.flip-out {
+  animation: flip-fold-out 0.18s cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+.flip-in {
+  animation: flip-fold-in 0.26s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+}
+
+.flip-num.quick .flip-out {
+  animation-duration: 0.07s;
+}
+
+.flip-num.quick .flip-in {
+  animation-duration: 0.1s;
+  animation-delay: 0.07s;
+}
+
+@keyframes flip-fold-out {
+  from {
+    transform: rotateX(0);
+  }
+  to {
+    transform: rotateX(90deg);
+  }
+}
+
+@keyframes flip-fold-in {
+  from {
+    transform: rotateX(-90deg);
+  }
+  to {
+    transform: rotateX(0);
+  }
+}
+
+/* The live card's pill dot */
+@keyframes live-pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-out {
+    display: none;
+  }
+
+  .flip-in {
+    animation: none;
+  }
+}
+
+/*
+  Hero units (Hero.tsx, LiveCard.tsx). In the split layout, --u sizes the copy and the card:
+  1cqw when there is room, less on a short screen, so the whole hero fits under the navbar
+  from about 600 px of viewport height up (below that it may run taller). 51 is the copy
+  column's height in --u (two headline lines, three body lines and the card, measured at
+  about 49.4) with headroom for the 10 px label floors. --court-w caps the court by the height left
+  once the key (1.09cqw gap, 1.5 line height) is taken off.
+*/
+.hero {
+  --u: 1cqw;
+}
+
+.hero[data-layout="split"] {
+  --pad: 2.2cqw;
+  --avail: calc(max(100svh, 600px) - var(--nav-h) - 2 * var(--pad));
+  --u: min(1cqw, var(--avail) / 51);
+  --court-w: min(100%, (var(--avail) - 1.09cqw - max(15px, 1.71cqw)) * 50.24 / 50);
 }

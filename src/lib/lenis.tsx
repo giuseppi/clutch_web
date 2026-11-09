@@ -3,6 +3,8 @@ import Lenis from "lenis";
 
 export const LenisProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const lenis = new Lenis({
       lerp: 0.1,
       smoothWheel: true,

@@ -1,67 +1,61 @@
-import { motion, type Variants } from "framer-motion";
+import { motion } from "framer-motion";
+import { memo } from "react";
+import { useEntranceSettled } from "@/lib/entrance";
+import { riseVariants, STAGGER } from "@/lib/motion";
 
 interface SplitTextProps {
   text: string;
-  /** Stagger delay between characters in seconds. Default 0.025. */
-  stagger?: number;
-  /** Per-character animation duration in seconds. Default 0.6. */
-  duration?: number;
-  /** Trigger reveal once when entering viewport. Default true. */
+  /** Seconds to wait before the first word rises. Default 0. */
+  delay?: number;
+  /** Rise when entering the viewport, once, and not before the entrance settles. Default true. */
   whileInView?: boolean;
-  /** Initial Y offset in pixels. Default 28. */
-  y?: number;
+  /** Rise on mount when whileInView is false. Default true. */
+  play?: boolean;
+  /** Show the risen words at once, with no animation (reduced motion). Default false. */
+  instant?: boolean;
   className?: string;
-  as?: keyof Pick<HTMLElementTagNameMap, "h1" | "h2" | "h3" | "p" | "span">;
+  as?: "h1" | "h2" | "h3";
 }
 
-const charVariants: Variants = {
-  hidden: (y: number) => ({ opacity: 0, y }),
-  visible: { opacity: 1, y: 0 },
-};
-
 /**
- * Splits text by word and character. Each character animates independently,
- * with words preserved as inline-block units so they wrap naturally without
- * breaking apart mid-word. Whitespace between words is preserved as a
- * non-staggered span.
+ * Splits a heading by word. Each word rises with the shared RISE motion, STAGGER
+ * apart. Words stay whole inline-block units so they wrap naturally. The heading
+ * carries its full text as its label and the word pieces are hidden from screen
+ * readers, which would otherwise stop on every word. Memoized: the hero headline
+ * sits in a parent that renders on every game frame.
  */
-export const SplitText = ({
+export const SplitText = memo(function SplitText({
   text,
-  stagger = 0.025,
-  duration = 0.6,
+  delay = 0,
   whileInView = true,
-  y = 28,
+  play = true,
+  instant = false,
   className = "",
   as: Tag = "h2",
-}: SplitTextProps) => {
+}: SplitTextProps) {
   const words = text.split(" ");
   const MotionTag = motion[Tag];
+  // A heading already on screen below a short hero would otherwise rise during the hero's entrance.
+  const settled = useEntranceSettled();
 
   return (
     <MotionTag
+      aria-label={text}
       className={className}
-      initial="hidden"
-      whileInView={whileInView ? "visible" : undefined}
-      animate={whileInView ? undefined : "visible"}
+      initial={instant ? false : "hidden"}
+      whileInView={whileInView && settled ? "visible" : undefined}
+      animate={whileInView ? undefined : play || instant ? "visible" : "hidden"}
       viewport={{ once: true, amount: 0.4 }}
-      transition={{ staggerChildren: stagger }}
+      transition={{ delayChildren: delay, staggerChildren: STAGGER }}
     >
-      {words.map((word, wIdx) => (
-        <span key={`${word}-${wIdx}`} className="inline-block whitespace-nowrap">
-          {Array.from(word).map((char, cIdx) => (
-            <motion.span
-              key={`${char}-${cIdx}`}
-              className="inline-block"
-              custom={y}
-              variants={charVariants}
-              transition={{ duration, ease: [0.16, 1, 0.3, 1] }}
-            >
-              {char}
-            </motion.span>
-          ))}
-          {wIdx < words.length - 1 && <span className="inline-block">&nbsp;</span>}
+      {words.map((word, i) => (
+        <span key={`${word}-${i}`} aria-hidden="true">
+          <motion.span className="inline-block" variants={riseVariants}>
+            {word}
+          </motion.span>
+          {i < words.length - 1 && " "}
         </span>
       ))}
     </MotionTag>
   );
-};
+});
