@@ -51,12 +51,15 @@ describe("FooterCTA", () => {
     expect(fetch).toHaveBeenCalledWith(expect.stringContaining("docs.google.com/forms"), expect.objectContaining({ method: "POST", body: "entry.2010243805=a%40b.co" }));
   });
 
-  it("asks the visitor to try again when the email cannot be sent", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new TypeError("Failed to fetch"));
+  it("asks the visitor to try again when the email cannot be sent, and logs why", async () => {
+    const failure = new TypeError("Failed to fetch");
+    vi.spyOn(globalThis, "fetch").mockRejectedValue(failure);
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
     renderSection();
     fireEvent.change(screen.getByLabelText("Email address"), { target: { value: "a@b.co" } });
     fireEvent.click(screen.getByRole("button", { name: "GET IN TOUCH" }));
 
     expect(await screen.findByText("Something went wrong. Try again.")).toBeInTheDocument();
+    expect(error).toHaveBeenCalledWith("[landing] The beta form could not send the email:", failure);
   });
 });

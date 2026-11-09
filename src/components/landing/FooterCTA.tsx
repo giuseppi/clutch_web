@@ -96,15 +96,13 @@ const BetaForm = () => {
       if (GOOGLE_FORM_ACTION && GOOGLE_FORM_EMAIL_FIELD) await joinBeta(email);
       setSubmitted(true);
       setEmail("");
-    } catch {
+    } catch (failure) {
+      console.error("[landing] The beta form could not send the email:", failure);
       setError("Something went wrong. Try again.");
     }
   };
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="md:col-span-7 md:col-start-6 flex flex-col sm:flex-row gap-3 md:items-end md:justify-end"
-    >
+    <form onSubmit={handleSubmit} className="md:col-span-7 md:col-start-6 flex flex-col sm:flex-row gap-3 md:items-end md:justify-end">
       {submitted ? (
         <div className="label text-brand bg-brand/10 border border-brand/30 px-6 py-4">
           ✓ YOU'RE ON THE LIST.

@@ -13,7 +13,11 @@ export const DemoVideo = () => {
     if (reduced || !onScreen) {
       video.pause();
     } else {
-      video.play().catch(() => {});
+      video.play().catch((error: unknown) => {
+        // A pause that interrupts the play (a quick scroll past) is expected; anything else is not.
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.warn("[landing] The demo video could not play:", error);
+      });
     }
   }, [onScreen, reduced]);
 

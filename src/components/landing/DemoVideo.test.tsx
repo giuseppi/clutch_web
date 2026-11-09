@@ -57,6 +57,21 @@ describe("DemoVideo", () => {
     expect(pause).toHaveBeenCalled();
   });
 
+  it("ignores a play cut short by a pause, and warns about any other failure to play", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    play.mockImplementationOnce(() => Promise.reject(new DOMException("The play() request was interrupted by a call to pause().", "AbortError")));
+    const first = render(<DemoVideo />);
+    await act(async () => setIntersection(getVideo(first.container), 0.5));
+    expect(warn).not.toHaveBeenCalled();
+    first.unmount();
+
+    const blocked = new DOMException("play() failed because the user didn't interact with the document first.", "NotAllowedError");
+    play.mockImplementationOnce(() => Promise.reject(blocked));
+    const second = render(<DemoVideo />);
+    await act(async () => setIntersection(getVideo(second.container), 0.5));
+    expect(warn).toHaveBeenCalledWith("[landing] The demo video could not play:", blocked);
+  });
+
   it("never plays under reduced motion", () => {
     vi.mocked(useReducedMotion).mockReturnValue(true);
     const { container } = render(<DemoVideo />);
