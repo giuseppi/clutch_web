@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import BelowFold from "./BelowFold";
 
@@ -23,6 +23,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.restoreAllMocks();
   scrolled.length = 0;
   window.history.replaceState(null, "", "/");
   delete (Element.prototype as Partial<Element>).scrollIntoView;
@@ -50,5 +51,18 @@ describe("BelowFold", () => {
   it("does nothing without a hash", () => {
     load("", "navigate");
     expect(scrolled).toEqual([]);
+  });
+
+  it("calls onPainted one frame after it mounts, so the hero's entrance can start", () => {
+    const frames: FrameRequestCallback[] = [];
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => frames.push(callback));
+    const onPainted = vi.fn();
+    render(<BelowFold onPainted={onPainted} />);
+
+    expect(screen.getByRole("contentinfo")).toBeInTheDocument();
+    expect(onPainted).not.toHaveBeenCalled();
+    expect(frames).toHaveLength(1);
+    frames[0](0);
+    expect(onPainted).toHaveBeenCalledTimes(1);
   });
 });

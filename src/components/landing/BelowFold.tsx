@@ -1,13 +1,21 @@
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import FeaturesPolaroidGrid from "./FeaturesPolaroidGrid";
 import HowItWorksRail from "./HowItWorksRail";
 import PullQuote from "./PullQuote";
 import FooterCTA from "./FooterCTA";
 import Footer from "./Footer";
 
-/** The landing sections under the leaderboard. Index loads them as their own chunk. */
-const BelowFold = () => {
+/**
+ * The landing sections under the leaderboard. Index loads them as their own chunk and holds
+ * the hero's entrance until `onPainted`, one frame after they mount.
+ */
+const BelowFold = ({ onPainted }: { onPainted?: () => void }) => {
   useLandOnHash();
+  useEffect(() => {
+    if (!onPainted) return;
+    const frame = requestAnimationFrame(() => onPainted());
+    return () => cancelAnimationFrame(frame);
+  }, [onPainted]);
   return (
     <>
       <FeaturesPolaroidGrid />

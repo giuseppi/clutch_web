@@ -6,11 +6,17 @@ import { ENTRANCE } from "./motion";
 const holds: Promise<unknown>[] = [];
 
 /**
- * Holds the entrance until `until` settles, at most until its cap. Call it before the first
- * render. A failed `until` only ends the wait: the code that awaits it reports the failure.
+ * Holds the entrance until the returned release is called, at most until its cap. Call it
+ * before the first render. If `loading` fails first, the wait ends at once: the code that
+ * awaits `loading` reports the failure.
  */
-export function holdEntrance(until: Promise<unknown>): void {
-  holds.push(until.catch(() => undefined));
+export function holdEntrance(loading: Promise<unknown>): () => void {
+  let release: () => void = () => {};
+  const released = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  holds.push(loading.then(() => released).catch(() => undefined));
+  return release;
 }
 
 /**

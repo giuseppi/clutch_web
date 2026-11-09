@@ -64,15 +64,24 @@ describe("entranceStart", () => {
     expect(await after(1)).toBe(true);
   });
 
-  it("waits for a hold as well as the fonts, within the same cap", async () => {
+  it("waits for a hold's release as well as the fonts, within the same cap", async () => {
     setFontsReady(Promise.resolve());
-    entrance.holdEntrance(new Promise((resolve) => setTimeout(resolve, 200)));
+    const release = entrance.holdEntrance(Promise.resolve());
+    setTimeout(release, 200);
     const after = track();
     expect(await after(199)).toBe(false);
     expect(await after(1)).toBe(true);
   });
 
-  it("stops waiting when a hold fails, and at 500 ms for one that never settles", async () => {
+  it("keeps waiting after the load until the release, at most until 500 ms", async () => {
+    setFontsReady(Promise.resolve());
+    entrance.holdEntrance(Promise.resolve());
+    const after = track();
+    expect(await after(499)).toBe(false);
+    expect(await after(1)).toBe(true);
+  });
+
+  it("stops waiting when the load fails, and at 500 ms for one that never settles", async () => {
     setFontsReady(Promise.resolve());
     entrance.holdEntrance(new Promise((_, reject) => setTimeout(() => reject(new Error("chunk")), 50)));
     const failed = track();
