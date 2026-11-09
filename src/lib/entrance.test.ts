@@ -25,8 +25,11 @@ afterEach(() => {
   motion.reduced = false;
 });
 
-function setFontsReady(ready: Promise<unknown>) {
-  Object.defineProperty(document, "fonts", { value: { ready }, configurable: true });
+/** A document.fonts whose load(font) answers with `load`. */
+function setFonts(load: (font: string) => Promise<unknown>) {
+  const fonts = { load: vi.fn(load) };
+  Object.defineProperty(document, "fonts", { value: fonts, configurable: true });
+  return fonts.load;
 }
 
 /** Starts entranceStart and reports whether it has resolved after each wait. */
@@ -59,22 +62,34 @@ describe("entranceStart", () => {
     expect(await after(1)).toBe(true);
   });
 
-  it("resolves when the fonts are ready, if that comes first", async () => {
-    setFontsReady(new Promise((resolve) => setTimeout(resolve, 100)));
+  it("resolves when Geist and Geist Mono have both loaded, if that comes first", async () => {
+    const load = setFonts((font) => new Promise((resolve) => setTimeout(resolve, font.includes("Mono") ? 300 : 100)));
     const after = track();
-    expect(await after(99)).toBe(false);
+    expect(load).toHaveBeenCalledWith("600 1em Geist");
+    expect(load).toHaveBeenCalledWith('500 1em "Geist Mono"');
+    expect(await after(299)).toBe(false);
     expect(await after(1)).toBe(true);
   });
 
-  it("resolves at 500 ms when the fonts never get ready", async () => {
-    setFontsReady(new Promise(() => {}));
+  it("resolves at 500 ms when the fonts never load", async () => {
+    setFonts(() => new Promise(() => {}));
     const after = track();
     expect(await after(499)).toBe(false);
     expect(await after(1)).toBe(true);
   });
 
+  it("stops waiting for a font that fails to load, and logs it", async () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    const failure = new Error("network");
+    setFonts((font) => (font.includes("Mono") ? Promise.reject(failure) : Promise.resolve()));
+    const after = track();
+    expect(await after(0)).toBe(true);
+    expect(error).toHaveBeenCalledWith("[entrance] A font did not load, so the entrance starts without it:", failure);
+    error.mockRestore();
+  });
+
   it("waits for a hold's release as well as the fonts, within the same cap", async () => {
-    setFontsReady(Promise.resolve());
+    setFonts(() => Promise.resolve());
     const release = entrance.holdEntrance(Promise.resolve());
     setTimeout(release, 200);
     const after = track();
@@ -83,7 +98,7 @@ describe("entranceStart", () => {
   });
 
   it("keeps waiting after the load until the release, at most until 500 ms", async () => {
-    setFontsReady(Promise.resolve());
+    setFonts(() => Promise.resolve());
     entrance.holdEntrance(Promise.resolve());
     const after = track();
     expect(await after(499)).toBe(false);
@@ -91,7 +106,7 @@ describe("entranceStart", () => {
   });
 
   it("stops waiting when the load fails, and at 500 ms for one that never settles", async () => {
-    setFontsReady(Promise.resolve());
+    setFonts(() => Promise.resolve());
     entrance.holdEntrance(new Promise((_, reject) => setTimeout(() => reject(new Error("chunk")), 50)));
     const failed = track();
     expect(await failed(50)).toBe(true);

@@ -19,15 +19,29 @@ export function holdEntrance(loading: Promise<unknown>): () => void {
   return release;
 }
 
+/*
+  The faces the entrance sets: the hero headline (Geist 600) and the live card's numbers and
+  labels (Geist Mono 500). Each is one variable file, so these load every weight in use. They
+  are asked for by name: document.fonts.ready can resolve before a face is even requested
+  (WebKit, on the first synchronous render).
+*/
+const ENTRANCE_FONTS = ["600 1em Geist", '500 1em "Geist Mono"'];
+
+function entranceFonts(): Promise<unknown> {
+  return Promise.all(ENTRANCE_FONTS.map((font) => document.fonts.load(font))).catch((error: unknown) => {
+    console.error("[entrance] A font did not load, so the entrance starts without it:", error);
+  });
+}
+
 /**
- * Resolves when the fonts are ready, so the headline words do not reflow mid-animation, and
- * any holds have settled, or after `timeoutMs` at the latest. Browsers without document.fonts
- * (and jsdom) wait for the timeout.
+ * Resolves when the entrance's fonts have loaded, so the headline words do not reflow
+ * mid-animation, and any holds have settled, or after `timeoutMs` at the latest. Browsers
+ * without document.fonts (and jsdom) wait for the timeout.
  */
 export function entranceStart(timeoutMs = 500): Promise<void> {
   const timeout = new Promise<void>((resolve) => setTimeout(resolve, timeoutMs));
   if (!("fonts" in document)) return timeout;
-  return Promise.race([Promise.all([document.fonts.ready, ...holds]).then(() => undefined), timeout]);
+  return Promise.race([Promise.all([entranceFonts(), ...holds]).then(() => undefined), timeout]);
 }
 
 /** Once per page load: remounts (and the navbar and hero together) share one start. */
