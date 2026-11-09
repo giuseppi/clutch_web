@@ -143,7 +143,7 @@ const LeaderboardPage = () => {
                   players.map((player: PortalPlayer) => (
                     <tr key={player.id} className="hover:bg-white/[0.03] transition-colors cursor-pointer">
                       <td className="px-4 py-3">
-                        <span className={`text-sm font-bold ${player.rank <= 3 ? "text-[#ff6a00]" : "text-slate-400"}`}>#{player.rank}</span>
+                        <span className={`text-sm font-bold ${player.rank !== undefined && player.rank <= 3 ?"text-[#ff6a00]" : "text-slate-400"}`}>#{player.rank}</span>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">

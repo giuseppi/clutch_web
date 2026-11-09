@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { useEffect, useState, type ReactNode } from "react";
 import clutchLogo from "@/assets/clutch_logo.png";

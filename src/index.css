@@ -127,25 +127,6 @@
   .btn-sharp {
     border-radius: 0;
   }
-
-  /* Glass HUD panel on cream - semi-transparent ink-tinted panel */
-  .glass-panel-light {
-    background: rgba(26, 26, 26, 0.06);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(26, 26, 26, 0.12);
-    color: #1a1a1a;
-  }
-
-  .scanlines {
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      hsla(0, 0%, 0%, 0.15) 2px,
-      hsla(0, 0%, 0%, 0.15) 4px
-    );
-  }
 }
 
 @keyframes page-enter {

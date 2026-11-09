@@ -23,7 +23,7 @@ const AnalyticsPage = () => {
   const teamId = user?.team?.id;
 
   // Match selector
-  const { data: matchData, isLoading: matchesLoading } = useMatches({ teamId, limit: 20 });
+  const { data: matchData } = useMatches({ teamId, limit: 20 });
   const allMatches = matchData?.data || [];
   const processedMatches = allMatches.filter((m: PortalMatch) => m.isProcessed);
 
@@ -121,7 +121,7 @@ const AnalyticsPage = () => {
           </div>
         ) : (
           <>
-            {/* AI Assistant Takeaways — from highlights */}
+            {/* AI Assistant Takeaways, from highlights */}
             <section>
               <div className="flex items-center gap-2 mb-4">
                 <span className="material-symbols-outlined text-[#ff6a00] text-[20px]">auto_awesome</span>
