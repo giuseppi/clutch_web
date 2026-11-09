@@ -4,14 +4,14 @@ import { AnimatedNumber } from "../AnimatedNumber";
 export const StatGrowthAnim = ({ inView }: { inView: boolean }) => {
   const bars = [38, 45, 52, 49, 58, 64, 71];
   return (
-    <div className="relative h-40 step-tight:h-28 bg-paperAlt border border-ink/10 p-4 step-tight:p-3 overflow-hidden">
+    <div className="relative h-40 step-tight:h-28 step-flat:h-24 bg-paperAlt border border-ink/10 p-4 step-tight:p-3 overflow-hidden">
       <div className="flex items-baseline justify-between mb-2 step-tight:mb-1">
         <span className="label text-ink/60">FG% · 7 SESSIONS</span>
         <span className="font-display text-2xl text-ink tabular-nums leading-none">
           <AnimatedNumber value={71} inView={inView} duration={1500} delay={300} decimals={0} suffix="%" />
         </span>
       </div>
-      <div className="flex items-end gap-2 h-20 step-tight:h-10">
+      <div className="flex items-end gap-2 h-20 step-tight:h-10 step-flat:h-6">
         {bars.map((h, i) => (
           <div
             key={i}

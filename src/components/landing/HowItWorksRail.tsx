@@ -75,9 +75,13 @@ const HowItWorksRail = () => {
         </div>
       </div>
 
-      {/* Horizontal pinned rail: one screen, its top padding clearing the fixed navbar (69 px, 81 px from md) */}
+      {/*
+        Horizontal pinned rail. The panel is one small-viewport height (svh, vh where that is
+        missing), so a phone browser's toolbars never cover its bottom, and its top padding
+        clears the fixed navbar (69 px, 81 px from md).
+      */}
       <div ref={ref} className="relative" style={{ height: "320vh" }}>
-        <div className="sticky top-0 h-screen w-full overflow-hidden pt-[4.5rem] md:pt-[5.25rem]">
+        <div className="sticky top-0 h-screen supports-[height:100svh]:h-svh w-full overflow-hidden pt-[4.5rem] md:pt-[5.25rem]">
           {/* Sized in % of the panel, not vw, so each step is the page's width without its scrollbar, like the navbar */}
           <motion.div
             className="flex h-full items-center"
@@ -107,9 +111,9 @@ const StepArticle = ({ step, index }: StepProps) => {
 
   return (
     <article ref={ref} className="shrink-0 h-full flex items-center" style={{ width: `${100 / steps.length}%` }}>
-      <div className={`${GRID} w-full grid md:grid-cols-12 gap-y-8 step-tight:gap-y-4 md:step-tight:gap-y-2 md:gap-x-12 items-center`}>
+      <div className={`${GRID} w-full grid md:grid-cols-12 step-flat:grid-cols-12 gap-y-8 step-tight:gap-y-4 md:step-tight:gap-y-2 md:gap-x-12 step-flat:gap-x-8 items-center`}>
         {/* Left: oversized number + per-step animation */}
-        <div className="md:col-span-5">
+        <div className="md:col-span-5 step-flat:col-span-5">
           <div className="flex items-center gap-6">
             <div className="w-16 h-16 md:w-20 md:h-20 step-tight:w-12 step-tight:h-12 rounded-full border border-ink/20 flex items-center justify-center bg-paperAlt">
               <Icon className="w-7 h-7 md:w-9 md:h-9 step-tight:w-5 step-tight:h-5 text-brand" aria-hidden />
@@ -122,7 +126,7 @@ const StepArticle = ({ step, index }: StepProps) => {
         </div>
 
         {/* Right: copy + step animation panel */}
-        <div className="md:col-span-7 md:pl-8 md:border-l border-ink/15">
+        <div className="md:col-span-7 step-flat:col-span-7 md:pl-8 step-flat:pl-6 md:border-l step-flat:border-l border-ink/15">
           <h3 className="font-display text-3xl md:text-5xl step-tight:text-2xl leading-tight text-ink">
             {step.title}
           </h3>
@@ -134,12 +138,12 @@ const StepArticle = ({ step, index }: StepProps) => {
             <StepAnimation index={index} inView={inView} />
           </div>
 
-          <span className="inline-block mt-6 step-tight:mt-2 label text-inkMuted border border-ink/15 px-3 py-2 step-tight:py-1.5">
+          <span className="inline-block step-flat:hidden mt-6 step-tight:mt-2 label text-inkMuted border border-ink/15 px-3 py-2 step-tight:py-1.5">
             {step.spec}
           </span>
         </div>
 
-        <div className="md:col-span-12 flex items-center justify-end gap-3 mt-4 md:mt-0 step-tight:mt-0">
+        <div className="md:col-span-12 flex step-flat:hidden items-center justify-end gap-3 mt-4 md:mt-0 step-tight:mt-0">
           <span className="label-mono text-inkMuted">
             {String(index + 1).padStart(2, "0")} / {String(steps.length).padStart(2, "0")}
           </span>

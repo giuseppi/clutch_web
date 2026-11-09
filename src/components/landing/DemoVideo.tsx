@@ -18,7 +18,7 @@ export const DemoVideo = () => {
   }, [onScreen, reduced]);
 
   return (
-    <div className="relative h-40 step-tight:h-28 bg-paperAlt border border-ink/10 rounded-sm overflow-hidden">
+    <div className="relative h-40 step-tight:h-28 step-flat:h-24 bg-paperAlt border border-ink/10 rounded-sm overflow-hidden">
       <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-3 py-2 z-10">
         <span className="label text-ink text-[10px] bg-paper/90 px-2 py-0.5">CLUTCH · DEMO</span>
         <span className="label text-brand text-[10px] bg-paper/90 px-2 py-0.5">● LIVE</span>
