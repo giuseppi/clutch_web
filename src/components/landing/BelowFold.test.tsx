@@ -41,6 +41,12 @@ describe("BelowFold", () => {
     expect(scrolled).toEqual([]);
   });
 
+  it("ignores a malformed hash instead of throwing", () => {
+    expect(() => load("#%", "navigate")).not.toThrow();
+    expect(() => load("#%E0%A4%A", "navigate")).not.toThrow();
+    expect(scrolled).toEqual([]);
+  });
+
   it("does nothing without a hash", () => {
     load("", "navigate");
     expect(scrolled).toEqual([]);
