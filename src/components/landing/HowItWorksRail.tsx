@@ -78,9 +78,10 @@ const HowItWorksRail = () => {
       {/* Horizontal pinned rail: one screen, its top padding clearing the fixed navbar (69 px, 81 px from md) */}
       <div ref={ref} className="relative" style={{ height: "320vh" }}>
         <div className="sticky top-0 h-screen w-full overflow-hidden pt-[4.5rem] md:pt-[5.25rem]">
+          {/* Sized in % of the panel, not vw, so each step is the page's width without its scrollbar, like the navbar */}
           <motion.div
             className="flex h-full items-center"
-            style={{ x: translateX, width: `${steps.length * 100}vw` }}
+            style={{ x: translateX, width: `${steps.length * 100}%` }}
           >
             {steps.map((step, i) => (
               <StepArticle key={step.num} step={step} index={i} />
@@ -105,7 +106,7 @@ const StepArticle = ({ step, index }: StepProps) => {
   const Icon = step.icon;
 
   return (
-    <article ref={ref} className="shrink-0 w-screen h-full flex items-center">
+    <article ref={ref} className="shrink-0 h-full flex items-center" style={{ width: `${100 / steps.length}%` }}>
       <div className={`${GRID} w-full grid md:grid-cols-12 gap-y-8 step-tight:gap-y-4 md:step-tight:gap-y-2 md:gap-x-12 items-center`}>
         {/* Left: oversized number + per-step animation */}
         <div className="md:col-span-5">
