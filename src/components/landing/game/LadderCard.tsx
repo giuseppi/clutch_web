@@ -3,7 +3,7 @@ import { memo, type CSSProperties, type Ref } from "react";
 import { VALUE_CHANGE } from "@/lib/motion";
 import { CARD, GREEN, MUTED, TEXT, cx } from "./cardStyle";
 import { BRAND, TRAIL } from "./game";
-import { LADDER, ladderAt, type LadderRow } from "./ladder";
+import { AFTER, LADDER, ladderAt, type LadderRow } from "./ladder";
 
 export interface LadderCardProps {
   /** Beat time, 0 (before) to L_END (after). */
@@ -36,10 +36,25 @@ const TINT = "rgba(255,106,0,.08)";
 const SCOPES = ["Friends", "Court", "City"] as const;
 const LAST = LADDER.length - 1;
 
+/*
+  The moving rows keep their DOM order (Johnny before Giuseppi) while they swap on screen, so
+  screen readers get this list instead: the ladder after the game, in rank order.
+*/
+const FINAL_RANKING = (
+  <ol className="sr-only" aria-label="Court ladder after the game">
+    {AFTER.map((id) => {
+      const { name, before, after } = LADDER.find((p) => p.id === id)!;
+      const { mmr, record } = after ?? before;
+      return <li key={id}>{`${name}: ${mmr} MMR${after ? ` (${after.delta})` : ""}, record ${record}`}</li>;
+    })}
+  </ol>
+);
+
 /**
  * The court leaderboard, laid out like the Clutch app's Leaderboards screen, at beat time T.
  * Rows keep their DOM order and move by transform, one row height per slot, so the card
- * never changes size while they swap. Memoized: its parent renders on every game frame.
+ * never changes size while they swap; they are hidden from screen readers, which read
+ * FINAL_RANKING. Memoized: its parent renders on every game frame.
  */
 export const LadderCard = memo(function LadderCard({ T, mmrRef, rootRef }: LadderCardProps) {
   return (
@@ -60,11 +75,12 @@ export const LadderCard = memo(function LadderCard({ T, mmrRef, rootRef }: Ladde
           </p>
         </div>
       </div>
-      <ul className={cx("relative h-[calc(4*var(--rh))] border-t-[0.5px] border-black/[0.06]", COLUMNS)}>
+      <ul aria-hidden="true" className={cx("relative h-[calc(4*var(--rh))] border-t-[0.5px] border-black/[0.06]", COLUMNS)}>
         {ladderAt(T).map((row) => (
           <Row key={row.id} row={row} mmrRef={row.id === "G" ? mmrRef : undefined} />
         ))}
       </ul>
+      {FINAL_RANKING}
     </div>
   );
 });

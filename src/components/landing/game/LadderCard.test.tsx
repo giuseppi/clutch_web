@@ -26,11 +26,23 @@ describe("LadderCard", () => {
     expect(within(card()).getByText("UCI Anteater Recreation Center")).toBeInTheDocument();
   });
 
-  it("has four rows with decorative photos", () => {
+  it("has four moving rows with decorative photos, hidden from screen readers", () => {
     render(<LadderCard T={0} />);
-    const rows = within(card()).getAllByRole("listitem");
+    const rows = within(card()).getAllByRole("listitem", { hidden: true }).filter((li) => li.querySelector("img"));
     expect(rows).toHaveLength(4);
     for (const r of rows) expect(r.querySelector("img")).toHaveAttribute("alt", "");
+    expect(rows[0].closest("ul")).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("reads screen readers the ladder after the game, in rank order, whatever the beat", () => {
+    const final = ["Giuseppi: 1301 MMR (+14), record 24-9", "Johnny: 1284 MMR (-12), record 21-9", "Andrew: 1251 MMR, record 18-10", "Dylan: 1218 MMR, record 15-11"];
+    for (const T of [0, L_END]) {
+      const { unmount } = render(<LadderCard T={T} />);
+      const list = within(card()).getByRole("list", { name: "Court ladder after the game" });
+      expect(within(list).getAllByRole("listitem").map((li) => li.textContent)).toEqual(final);
+      expect(within(card()).getAllByRole("listitem")).toHaveLength(4);
+      unmount();
+    }
   });
 
   it("pairs each row's photo with its own player", () => {
