@@ -7,7 +7,7 @@ import { pageClock } from "./game/playbackContext";
 import { PlaybackProvider } from "./game/PlaybackProvider";
 import Hero from "./Hero";
 
-vi.mock("@/lib/entrance", () => ({ useEntranceStart: vi.fn(() => true), useEntranceSettled: () => true }));
+vi.mock("@/lib/entrance", () => ({ useEntranceStart: vi.fn(() => true), useEntranceSettled: () => true, useEntranceStage: () => {} }));
 
 vi.mock("framer-motion", async (orig) => ({
   ...(await orig<typeof import("framer-motion")>()),

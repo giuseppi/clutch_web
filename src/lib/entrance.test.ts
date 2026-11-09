@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { setIntersection } from "@/test/intersection";
 import { ENTRANCE } from "./motion";
 
 /* framer's reduced-motion answer, per test (the module is re-imported fresh each time). */
@@ -41,6 +42,14 @@ function track() {
 }
 
 const wait = (ms: number) => act(() => vi.advanceTimersByTimeAsync(ms));
+
+/** A hero element marked as the entrance's stage. */
+function stage() {
+  const hero = document.createElement("section");
+  document.body.append(hero);
+  renderHook(() => entrance.useEntranceStage({ current: hero }));
+  return hero;
+}
 
 describe("entranceStart", () => {
   it("resolves at 500 ms when the browser has no document.fonts", async () => {
@@ -126,6 +135,24 @@ describe("useEntranceSettled", () => {
   it("is true on the first render under reduced motion, with no entrance to wait for", () => {
     motion.reduced = true;
     expect(renderHook(() => entrance.useEntranceSettled()).result.current).toBe(true);
+  });
+
+  it("is true at once when the load lands off the hero, as a hash link or a restored scroll does", () => {
+    const hero = stage();
+    const settled = renderHook(() => entrance.useEntranceSettled());
+    expect(settled.result.current).toBe(false);
+    act(() => setIntersection(hero, 0));
+    expect(settled.result.current).toBe(true);
+  });
+
+  it("still waits for the first shot on a load that lands on the hero", async () => {
+    const hero = stage();
+    const settled = renderHook(() => entrance.useEntranceSettled());
+    act(() => setIntersection(hero, 1));
+    await wait(500 + ENTRANCE.firstShot * 1000 - 1);
+    expect(settled.result.current).toBe(false);
+    await wait(1);
+    expect(settled.result.current).toBe(true);
   });
 
   it("is true at once on a mount after the settle", async () => {

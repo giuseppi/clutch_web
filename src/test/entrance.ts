@@ -21,6 +21,8 @@ export function useEntranceStart(): boolean {
   return true;
 }
 
+export function useEntranceStage(): void {}
+
 export function useEntranceSettled(): boolean {
   const now = useSyncExternalStore(subscribe, () => settled);
   const reduced = useReducedMotion() ?? false;

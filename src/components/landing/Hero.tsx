@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { useState, type Ref } from "react";
+import { useRef, useState, type Ref } from "react";
+import { useEntranceStage } from "@/lib/entrance";
 import { ENTRANCE, fadeVariants, riseVariants } from "@/lib/motion";
 import { BRAND, INK, stateAt, type PlayerId } from "./game/game";
 import { HalfCourt } from "./game/HalfCourt";
@@ -74,7 +75,8 @@ const LAYOUT: Record<Layout, LayoutClasses> = {
   delay. The headline runs its own word stagger. Under reduced motion, and when the hero mounts
   again with the game already under way (a return to the page), all of it starts final.
   While the leaderboard's "+14" token flies from the MMR chip, Giuseppi is selected, and he
-  stays selected after it until the visitor picks a side.
+  stays selected after it until the visitor picks a side. The section is the entrance's stage:
+  once it is off screen, nothing below waits for the entrance to settle.
 */
 const Hero = ({ mmrRef }: { mmrRef?: Ref<HTMLSpanElement> }) => {
   const layout = useLayout();
@@ -84,9 +86,12 @@ const Hero = ({ mmrRef }: { mmrRef?: Ref<HTMLSpanElement> }) => {
   const [resumed] = useState(() => t > 0);
   const still = reduced || resumed;
   const l = LAYOUT[layout];
+  const stageRef = useRef<HTMLElement>(null);
+  useEntranceStage(stageRef);
 
   return (
     <motion.section
+      ref={stageRef}
       data-layout={layout}
       className={`hero group text-ink ${NAV_CLEARANCE}`}
       initial={still ? false : "hidden"}

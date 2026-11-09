@@ -1,5 +1,5 @@
 import { useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore, type RefObject } from "react";
 import { ENTRANCE } from "./motion";
 
 /** Work the entrance also waits for, within the same cap (the landing page's lazy sections). */
@@ -71,13 +71,47 @@ export function useEntranceStart(): boolean {
   return useEntranceAfter(0);
 }
 
+/*
+  The settle wait is only for content that shares the screen with the hero's entrance. Once
+  the hero has been off screen (a load of /#download, a reload that restores a scroll below
+  it, or a reader who scrolls on before the first shot), nothing waits for it any more, for
+  the rest of the page load.
+*/
+let offStage = false;
+const offStageListeners = new Set<() => void>();
+
+function subscribeOffStage(listener: () => void) {
+  offStageListeners.add(listener);
+  return () => {
+    offStageListeners.delete(listener);
+  };
+}
+
+/** Marks the element the entrance plays in (the hero), so useEntranceSettled knows when it is off screen. */
+export function useEntranceStage(ref: RefObject<Element | null>): void {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || offStage) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting || offStage) return;
+      offStage = true;
+      observer.disconnect();
+      for (const listener of offStageListeners) listener();
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [ref]);
+}
+
 /**
  * True once the entrance has settled, at its first shot. Reveals outside the hero that are
- * on screen at load wait for it, so the page has one entrance. Under reduced motion there is
- * no entrance to wait for, so it is true from the first render.
+ * on screen at load wait for it, so the page has one entrance. It is true at once when the
+ * hero is off screen (see useEntranceStage), and from the first render under reduced motion,
+ * with no entrance to wait for.
  */
 export function useEntranceSettled(): boolean {
   const settled = useEntranceAfter(ENTRANCE.firstShot);
+  const away = useSyncExternalStore(subscribeOffStage, () => offStage);
   const reduced = useReducedMotion() ?? false;
-  return settled || reduced;
+  return settled || away || reduced;
 }
