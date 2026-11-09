@@ -15,11 +15,11 @@ const twoFrames = () => new Promise<void>((resolve) => requestAnimationFrame(() 
 holdEntrance(loadBelowFold().then(twoFrames));
 
 /*
-  Stands in for those sections until they arrive, at least as tall as they are (How It Works is
-  320vh and the rest stays under 4500 px at every checked size), so a reload mid-page still
-  restores its scroll position.
+  Stands in for those sections until they arrive, at least as tall as they are, so a reload
+  mid-page still restores its scroll position. The How It Works rail is 320vh; everything else
+  measures at most 4747 px, at 767 px wide, where the single-column layout is widest.
 */
-const BELOW_FOLD_HEIGHT = "calc(320vh + 4500px)";
+const BELOW_FOLD_HEIGHT = "calc(320vh + 5500px)";
 
 const Index = () => (
   <main className="min-h-screen bg-paper text-ink">
