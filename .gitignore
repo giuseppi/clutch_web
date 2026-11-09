@@ -85,7 +85,7 @@ worker/models/
 **/*.pyd
 .python-version
 
-# Prisma — migration files and migration_lock.toml SHOULD be committed
+# Prisma - migration files and migration_lock.toml SHOULD be committed
 # (they are required by other engineers to sync their local databases)
 
 # Python test / coverage artifacts

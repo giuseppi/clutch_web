@@ -22,7 +22,7 @@ describe("site copy and type system", () => {
   });
 
   it.each(files)("%s has no em dash", (_name, src) => {
-    expect(src).not.toContain("—");
+    expect(src).not.toContain("\u2014");
   });
 
   it.each(files)("%s uses no italics or unloaded weights", (_name, src) => {
