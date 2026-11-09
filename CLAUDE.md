@@ -118,6 +118,8 @@ Clutch is an AI basketball analytics platform with two products: Casual (the mob
 - **Chrome left drawn circles and arcs slightly open.** Found 2026-11-07. Resolved 2026-11-07. Resolution: Chrome sizes a `pathLength` dash from an arc length estimate up to about 2.5% short, so the dash is cleared (`strokeDasharray: "none"`) once the draw ends (`drawShown` in `src/lib/motion.ts`).
 - **framer-motion never repaints a key that appears only in `transitionEnd`.** Found 2026-11-07. Resolved 2026-11-07. Resolution: name the key in the animated target as well (`drawShown` in `src/lib/motion.ts`).
 - **Headline words widened mid-entrance on slow first loads.** Found 2026-11-07. Resolved 2026-11-08. Resolution: Geist from Google Fonts arrived after the 500 ms entrance cap; Geist and Geist Mono are now self-hosted and preloaded in `index.html`, and land before the entrance starts.
+- **A failed lazy chunk, or a malformed hash such as `/#%`, blanked the whole landing page.** Found 2026-11-08. Resolved 2026-11-09. Resolution: React 18 unmounts the root on an uncaught error in render or an effect. `LazyBoundary` now wraps the lazy sections and logs the failure, and `BelowFold` uses the hash without decoding it.
+- **How It Works steps sat a scrollbar's width off the navbar's edges** (Windows, or macOS with a mouse). Found 2026-11-08. Resolved 2026-11-09. Resolution: the steps were 100vw, which includes a classic scrollbar; they are now sized in % of the pinned panel. Do not set `overflow` on `html`: body's `overflow-x: hidden` would stop passing to the viewport, and the rail would no longer stick.
 
 ## Where knowledge lives
 
